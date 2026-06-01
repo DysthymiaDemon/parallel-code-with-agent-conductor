@@ -1,8 +1,8 @@
 # Project Runbook: Safe Development Workflow for the Role-Aware Conductor
 
-**Project:** Role-Aware Conductor / Parallel Code-style Electron fork  
-**Purpose:** Define how the project will be run so Codex, Claude, Gemini/Antigravity, and the human lead avoid known failure modes in AI coding tools.  
-**Status:** Draft operating protocol  
+**Project:** Role-Aware Conductor / Parallel Code-style Electron fork
+**Purpose:** Define how the project will be run so Codex, Claude, Gemini/Antigravity, and the human lead avoid known failure modes in AI coding tools.
+**Status:** Draft operating protocol
 **Date:** 2026-06-01
 
 ---
@@ -171,14 +171,14 @@ Add a settings page that lets users choose a conductor preset and assign agents 
 ## Likely Files
 
 - src/renderer/settings/*
-- src/shared/conductor-config.ts
+- src/ipc/conductor-types.ts
 - src/main/config-store.ts
 
 ## Acceptance Criteria
 
 - User can select "Ameen's Default".
 - Role dropdowns display installed agents.
-- Settings persist to `.zed-conductor/conductor.yaml`.
+- Settings persist to `.parallel-code/conductor.yaml`.
 - Invalid YAML displays a recoverable error.
 
 ## Test Plan
@@ -256,7 +256,7 @@ Example:
 git checkout main
 git pull
 
-git worktree add .zed-conductor/worktrees/feat-role-settings -b feat/role-settings
+git worktree add .worktrees/feat-role-settings -b feat/role-settings
 ```
 
 Rules:
@@ -273,15 +273,15 @@ Rules:
 Worktree naming:
 
 ```text
-.zed-conductor/worktrees/<task-type>-<short-slug>-<date>/
+.worktrees/<task-type>-<short-slug>-<date>/
 ```
 
 Examples:
 
 ```text
-.zed-conductor/worktrees/feat-role-settings-20260601/
-.zed-conductor/worktrees/fix-auth-warning-20260601/
-.zed-conductor/worktrees/ui-dashboard-review-20260601/
+.worktrees/feat-role-settings-20260601/
+.worktrees/fix-auth-warning-20260601/
+.worktrees/ui-dashboard-review-20260601/
 ```
 
 ---
@@ -586,7 +586,7 @@ Required process log fields:
   "agent": "codex",
   "command": "codex",
   "args": ["..."],
-  "cwd": ".zed-conductor/worktrees/feat-role-settings-20260601",
+  "cwd": ".worktrees/feat-role-settings-20260601",
   "started_at": "...",
   "ended_at": "...",
   "exit_code": 0
@@ -688,10 +688,10 @@ Rules:
 Required config files:
 
 ```text
-.zed-conductor/conductor.yaml
-.zed-conductor/policies/permissions.yaml
-.zed-conductor/policies/protected-paths.yaml
-.zed-conductor/workflows/*.yaml
+.parallel-code/conductor.yaml
+.parallel-code/policies/permissions.yaml
+.parallel-code/policies/protected-paths.yaml
+.parallel-code/workflows/*.yaml
 ```
 
 Config validation must check:
@@ -748,7 +748,7 @@ Artifact rules:
 Example artifact path:
 
 ```text
-.zed-conductor/artifacts/runs/run_20260601_001/plan.md
+.parallel-code/artifacts/runs/run_20260601_001/plan.md
 ```
 
 ---
@@ -985,7 +985,7 @@ Good prompt:
 Implement Phase 1 only: YAML-backed role profile loading.
 
 Scope:
-- Add parser for `.zed-conductor/conductor.yaml`.
+- Add parser for `.parallel-code/conductor.yaml`.
 - Add validation for roles and agents.
 - Add unit tests.
 - Do not implement UI.

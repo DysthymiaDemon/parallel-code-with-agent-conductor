@@ -1,10 +1,11 @@
 # Feature Specification: Role-Aware Conductor
 
-**Feature name:** Role-Aware Conductor  
-**Suggested file name:** `role-aware-conductor-feature-with-antfrarm-and-gas-town-and-subscription-capacity-constraint.md`  
-**Project context:** Parallel Code-style Electron app first; Zed bridge or Zed fork later  
-**Feature type:** Local desktop multi-agent CLI orchestration with editor bridge  
-**Status:** Draft feature specification  
+**Feature name:** Role-Aware Conductor
+**Suggested file name:** `role-aware-conductor-feature-with-antfarm-and-gas-town-and-subscription-capacity-constraint.md`
+**Product context:** Parallel Code with Agent Conductor
+**Project context:** Parallel Code/Electron app first; optional editor bridge later
+**Feature type:** Local desktop multi-agent CLI orchestration with editor bridge
+**Status:** Draft feature specification
 **Date:** 2026-06-01
 
 ---
@@ -19,7 +20,7 @@ The current implementation decision is:
 Start with a Parallel Code-style Electron desktop app.
 Use real local CLIs for Codex, Claude, and Gemini/Antigravity.
 Use git worktrees for isolated writable work.
-Use Zed as the preferred editor via "Open in Zed" and editor-bridge actions.
+Use the configured editor through generic "open in editor" actions; do not couple the MVP to Zed.
 Do not fork Zed first.
 ```
 
@@ -37,30 +38,30 @@ retry/escalation
 human approval gates
 ```
 
-Zed remains strategically important, but as an integration target first:
+Editors remain strategically important, but as integration targets first:
 
 ```text
 MVP:
-  Electron conductor app + real CLIs + worktrees + Open in Zed.
+  Electron conductor app + real CLIs + .worktrees + generic Open in Editor.
 
 Later:
-  Zed extension, ACP bridge, or Zed fork if deep editor-native integration becomes necessary.
+  Zed extension, ACP bridge, or another editor-native path if deep integration becomes necessary.
 ```
 
 This corrects the earlier Zed-first language in older documents. When this file says “editor cockpit,” the MVP interpretation is:
 
 ```text
 the conductor app is the workflow cockpit
-Zed is the code editor
+the configured editor is the code editor
 Git is the source of truth
 ```
 
-The future Zed-native version should be treated as a later product path, not the first implementation.
+The future editor-native version should be treated as a later product path, not the first implementation.
 
 
 ## 1. Feature Summary
 
-The **Role-Aware Conductor** is a local desktop orchestration feature that lets the user assign external coding agents to explicit roles, then execute structured multi-agent workflows through real first-party CLIs. The first implementation should be an Electron/Parallel Code-style sidecar app, with Zed used as the editor bridge. A Zed fork remains a later option, not the starting base.
+The **Role-Aware Conductor** is a local desktop orchestration feature that lets the user assign external coding agents to explicit roles, then execute structured multi-agent workflows through real first-party CLIs. The first implementation should be an Electron/Parallel Code-style sidecar app, with editor integration kept optional. A future editor-native path remains a later option, not the starting base.
 
 The feature should support agents such as:
 
@@ -225,7 +226,7 @@ Expected behavior:
 The feature should use a dedicated project-local directory:
 
 ```text
-.zed-conductor/
+.parallel-code/
   conductor.yaml
   roles.yaml
   workflows/
@@ -252,6 +253,11 @@ The feature should use a dedicated project-local directory:
     runs.sqlite
     leases.json
 ```
+
+Current caveat: this repository already treats `.parallel-code/` as ignored
+runtime state for MCP/Docker coordination. If `.parallel-code/` also becomes
+canonical project configuration, separate durable config files from generated
+runtime state inside that directory.
 
 This feature spec is separate from a future `roadmap.md`.
 
@@ -329,43 +335,43 @@ Required additions:
 - merge queue discipline
 ```
 
-### 7A.3 Zed integration path
+### 7A.3 Editor integration path
 
 The Electron app should include editor bridge actions:
 
 ```text
-Open Worktree in Zed
-Open Changed File in Zed
-Open Diff in Zed
+Open Worktree in Editor
+Open Changed File in Editor
+Open Diff in Editor
 Copy Artifact Path
 Reveal Artifact Folder
 ```
 
-The app should not assume Zed-specific internals in the MVP. It should work with a generic editor bridge, with Zed as the preferred configured editor:
+The app should not assume editor-specific internals in the MVP. It should work with a generic editor bridge:
 
 ```yaml
 editor_bridge:
-  preferred_editor: zed
+  preferred_editor: configured_editor
   commands:
-    open_project: "zed {worktree_path}"
-    open_file: "zed {file_path}"
+    open_project: "{editor} {worktree_path}"
+    open_file: "{editor} {file_path}"
 ```
 
 
-## 8. Main Config: `.zed-conductor/conductor.yaml`
+## 8. Main Config: `.parallel-code/conductor.yaml`
 
 This is the main machine-readable configuration for the feature.
 
 Example:
 
 ```yaml
-schema: zed-conductor/v1
+schema: parallel-code-conductor/v1
 
 project:
   name: example-app
   default_branch: main
-  artifact_root: .zed-conductor/artifacts/runs
-  state_db: .zed-conductor/state/runs.sqlite
+  artifact_root: .parallel-code/artifacts/runs
+  state_db: .parallel-code/state/runs.sqlite
 
 agents:
   codex:
@@ -439,14 +445,14 @@ roles:
 
 workflow:
   default: plan-implement-review
-  templates_dir: .zed-conductor/workflows
+  templates_dir: .parallel-code/workflows
   require_plan_approval: true
   require_final_approval: true
   allow_parallel_review: true
 
 worktrees:
   enabled: true
-  root: .zed-conductor/worktrees
+  root: .worktrees
   naming: "{workflow}-{role}-{slug}-{timestamp}"
   writable_roles:
     - implementer
@@ -539,8 +545,8 @@ Role resolution order:
 
 ```text
 1. explicit command override
-2. .zed-conductor/conductor.yaml
-3. .zed-conductor/roles.yaml
+2. .parallel-code/conductor.yaml
+3. .parallel-code/roles.yaml
 4. built-in defaults
 ```
 
@@ -559,7 +565,7 @@ Workflow templates define the order of execution and the handoff between roles.
 ### 10.1 `plan-implement-review.yaml`
 
 ```yaml
-schema: zed-conductor-workflow/v1
+schema: parallel-code-conductor-workflow/v1
 name: plan-implement-review
 description: "Claude plans, Codex implements, Claude reviews, Codex fixes."
 
@@ -648,7 +654,7 @@ steps:
 ### 10.2 `ui-build-verify.yaml`
 
 ```yaml
-schema: zed-conductor-workflow/v1
+schema: parallel-code-conductor-workflow/v1
 name: ui-build-verify
 description: "Codex implements UI, Google Visual verifies, Claude reviews if needed."
 
@@ -772,7 +778,7 @@ Claude
 Path:
 
 ```text
-.zed-conductor/artifacts/runs/<run-id>/plan.md
+.parallel-code/artifacts/runs/<run-id>/plan.md
 ```
 
 Required fields:
@@ -803,8 +809,8 @@ Codex
 Paths:
 
 ```text
-.zed-conductor/artifacts/runs/<run-id>/implementation.diff
-.zed-conductor/artifacts/runs/<run-id>/test-report.json
+.parallel-code/artifacts/runs/<run-id>/implementation.diff
+.parallel-code/artifacts/runs/<run-id>/test-report.json
 ```
 
 Required fields:
@@ -834,8 +840,8 @@ Gemini / Antigravity
 Paths:
 
 ```text
-.zed-conductor/artifacts/runs/<run-id>/ui-review.md
-.zed-conductor/artifacts/runs/<run-id>/screenshots/
+.parallel-code/artifacts/runs/<run-id>/ui-review.md
+.parallel-code/artifacts/runs/<run-id>/screenshots/
 ```
 
 Required fields:
@@ -866,7 +872,7 @@ Claude
 Path:
 
 ```text
-.zed-conductor/artifacts/runs/<run-id>/code-review.md
+.parallel-code/artifacts/runs/<run-id>/code-review.md
 ```
 
 Required fields:
@@ -897,7 +903,7 @@ Codex + Conductor synthesis
 Path:
 
 ```text
-.zed-conductor/artifacts/runs/<run-id>/final-summary.md
+.parallel-code/artifacts/runs/<run-id>/final-summary.md
 ```
 
 Required fields:
@@ -1012,7 +1018,7 @@ Gemini / Antigravity UI verifier:
 Example worktree layout:
 
 ```text
-.zed-conductor/worktrees/
+.worktrees/
   plan-implement-review-implementer-login-bug-20260601/
   ui-build-verify-implementer-dashboard-20260601/
 ```
@@ -1086,7 +1092,7 @@ permissions:
 File:
 
 ```text
-.zed-conductor/policies/protected-paths.yaml
+.parallel-code/policies/protected-paths.yaml
 ```
 
 Example:
@@ -1189,7 +1195,7 @@ The feature should add a new primary view:
 Conductor Run View
 ```
 
-If the product later becomes a Zed fork or Zed extension, this can map to a Zed `Conductor Thread`.
+If the product later becomes a future editor-native path or Zed extension, this can map to a Zed `Conductor Thread`.
 
 The Conductor Run View should show:
 
@@ -1342,7 +1348,7 @@ UserCancelled
 The feature is complete when:
 
 ```text
-1. The app can read `.zed-conductor/conductor.yaml`.
+1. The app can read `.parallel-code/conductor.yaml`.
 2. The user can bind Codex, Claude, and Gemini/Antigravity to roles.
 3. `/conduct` creates a Conductor Run.
 4. The run resolves a workflow template.
@@ -1353,7 +1359,7 @@ The feature is complete when:
 9. The UI verifier role can consume implementation artifacts and produce UI artifacts.
 10. The reviewer role consumes diff/test/UI artifacts and produces a review artifact.
 11. The fixer role applies accepted fixes only.
-12. Artifacts are written to `.zed-conductor/artifacts/runs/<run-id>/`.
+12. Artifacts are written to `.parallel-code/artifacts/runs/<run-id>/`.
 13. The user must approve plan and final merge.
 14. The app warns if API keys may bypass preferred subscription auth.
 15. The app blocks or asks before protected operations.
@@ -1368,7 +1374,7 @@ The feature is complete when:
 Deliver:
 
 ```text
-- `.zed-conductor/conductor.yaml` parser
+- `.parallel-code/conductor.yaml` parser
 - default config generator
 - role-to-agent resolver
 - command-level role overrides
@@ -1447,63 +1453,68 @@ Deliver:
 
 ---
 
-## 22. Suggested Rust Module Sketch
+## 22. Suggested Electron/TypeScript Module Sketch
 
 ```text
-crates/agent_conductor/
-  src/
-    lib.rs
-    config.rs
-    roles.rs
-    workflows.rs
-    runs.rs
-    thread_bridge.rs
-    auth_inspector.rs
-    worktrees.rs
-    artifacts.rs
-    permissions.rs
-    ui_model.rs
+electron/conductor/
+  config.ts
+  roles.ts
+  workflows.ts
+  runs.ts
+  dispatcher.ts
+  auth-inspector.ts
+  artifacts.ts
+  permissions.ts
+  scheduler.ts
+
+src/conductor/
+  ConductorDashboard.tsx
+  RoleSettings.tsx
+  RunTimeline.tsx
+  artifacts.ts
+
+src/ipc/conductor-types.ts
 ```
 
-Key structs:
+Key types:
 
-```rust
-struct ConductorConfig {
-    project: ProjectConfig,
-    agents: HashMap<AgentId, AgentConfig>,
-    roles: HashMap<RoleName, RoleBinding>,
-    workflow: WorkflowConfig,
-    worktrees: WorktreeConfig,
-    artifacts: ArtifactConfig,
-    approval: ApprovalConfig,
-    auth_policy: AuthPolicy,
-    budget_policy: BudgetPolicy,
+```ts
+interface ConductorConfig {
+  project: ProjectConfig;
+  agents: Record<AgentId, AgentConfig>;
+  roles: Record<RoleName, RoleBinding>;
+  workflow: WorkflowConfig;
+  worktrees: WorktreeConfig;
+  artifacts: ArtifactConfig;
+  approval: ApprovalConfig;
+  authPolicy: AuthPolicy;
+  budgetPolicy: BudgetPolicy;
 }
 
-struct RoleBinding {
-    primary: AgentId,
-    fallback: Vec<AgentId>,
-    mode: RoleMode,
-    purpose: String,
+interface RoleBinding {
+  primary: AgentId;
+  fallback: AgentId[];
+  mode: RoleMode;
+  purpose: string;
 }
 
-struct ConductorRun {
-    id: RunId,
-    task: String,
-    workflow: WorkflowTemplate,
-    role_assignments: HashMap<RoleName, AgentId>,
-    status: RunStatus,
-    artifacts: Vec<ArtifactRef>,
+interface ConductorRun {
+  id: RunId;
+  task: string;
+  workflow: WorkflowTemplate;
+  roleAssignments: Record<RoleName, AgentId>;
+  status: RunStatus;
+  artifacts: ArtifactRef[];
 }
 ```
 
 Agent bridge:
 
-```rust
-trait AgentThreadBridge {
-    fn create_thread(&self, agent: AgentId, worktree: WorktreeRef) -> Result<ThreadId>;
-    fn send_prompt(&self, thread: ThreadId, prompt: String, context: ContextPack) -> Result<()>;
-    fn collect_artifacts(&self, thread: ThreadId) -> Result<Vec<Artifact>>;
+```ts
+interface AgentTaskBridge {
+  createTask(input: CreateConductorTaskInput): Promise<TaskId>;
+  sendPrompt(taskId: TaskId, prompt: string, context: ContextPack): Promise<void>;
+  collectArtifacts(taskId: TaskId): Promise<ArtifactRef[]>;
 }
 ```
 
@@ -1514,7 +1525,7 @@ trait AgentThreadBridge {
 The Role-Aware Conductor is:
 
 ```text
-A Zed-native workflow controller that assigns external coding agents to explicit roles,
+A Parallel Code/Electron workflow controller that assigns external coding agents to explicit roles,
 routes task steps by those roles, preserves first-party CLI/subscription auth where possible,
 runs writable work in isolated worktrees, passes structured artifacts between agents,
 enforces workflow and permission policy, and keeps the human as final approval authority.
@@ -1538,7 +1549,7 @@ human approval
 
 # Research Update: Antfarm and Gas Town Feature Delta
 
-**Update date:** 2026-06-01  
+**Update date:** 2026-06-01
 **Purpose:** Identify features, rules, and operating patterns present in Antfarm and Gas Town that are not present in Parallel Code and were not fully captured in the earlier Role-Aware Conductor spec.
 
 This update is based on:
@@ -1844,7 +1855,7 @@ on_failure:
 Escalation artifact:
 
 ```text
-.zed-conductor/artifacts/runs/<run-id>/escalation.md
+.parallel-code/artifacts/runs/<run-id>/escalation.md
 ```
 
 Escalation must include:
@@ -2119,13 +2130,13 @@ agent_identities:
   codex_implementer:
     agent: codex
     role: implementer
-    history_file: .zed-conductor/agents/codex-implementer/history.md
+    history_file: .parallel-code/agents/codex-implementer/history.md
     memory_scope: project_safe_summary
 
   claude_reviewer:
     agent: claude
     role: reviewer
-    history_file: .zed-conductor/agents/claude-reviewer/history.md
+    history_file: .parallel-code/agents/claude-reviewer/history.md
     memory_scope: review_patterns
 ```
 
@@ -2577,14 +2588,16 @@ The previous MVP should be adjusted.
 2. Ameen’s Default preset
 3. Automatic task classification
 4. Deterministic workflow templates
-5. Fresh context per step
-6. Structured artifacts
-7. Worktree isolation
-8. Auth/billing inspector
-9. Scheduler/concurrency limits
-10. Health states: running/stalled/blocked/zombie/needs_human
-11. Retry/escalate policy
-12. Human approval gates
+5. Fixed workflow recipe schema for the MVP presets
+6. Fresh context per step
+7. Structured artifacts
+8. Per-run role/agent/task/artifact traceability
+9. Worktree isolation
+10. Auth/billing inspector
+11. Scheduler/concurrency limits
+12. Basic states: ready_for_review/ready_for_merge/blocked/failed/needs_human/retry_once
+13. Simple retry/escalate policy
+14. Human approval gates
 ```
 
 ### P1 Strong Additions
@@ -2592,12 +2605,12 @@ The previous MVP should be adjusted.
 ```text
 1. Problems view
 2. Activity feed
-3. Workflow recipes
-4. Persistent agent identity summaries
+3. Workflow recipe manager UI
+4. Persistent long-term agent identity summaries
 5. Resume failed/interrupted runs
 6. Nudge/handoff/reassign actions
 7. Workflow pack security review
-8. Simple merge queue
+8. Autonomous or batched merge queue
 9. Prime context recovery
 ```
 
@@ -2635,10 +2648,13 @@ The starting MVP is:
 9. git worktree creation
 10. artifact folder per run
 11. run dashboard
-12. Open in Zed
+12. Open in Editor
 13. auth/billing warnings
 14. max 3 active agents by default, max 6 hard cap in Consumer Subscription mode
-15. human approval before merge/push/protected operations
+15. queue excess steps and show capacity plan before launch
+16. per-run role/agent/task/artifact traceability
+17. basic run states: ready-for-review, ready-for-merge, blocked, failed, needs-human, retry-once
+18. human approval before merge/push/protected operations
 ```
 
 Explicitly defer:
@@ -2647,9 +2663,12 @@ Explicitly defer:
 - remote workflow registry
 - 20–30 agent swarms
 - autonomous background patrol agents
-- bors-style bisecting merge queue
+- autonomous/batched merge queue, including bors-style bisecting merge queue
+- persistent long-term agent identity or memory
+- general workflow DSL editor
+- full ACP rewrite
 - multi-project federation
-- Zed fork
+- future editor-native path
 - VS Code extension
 - enterprise API-budget mode
 ```
@@ -2716,7 +2735,7 @@ Human approves merge
 
 ## 31. Updated YAML Configuration Additions
 
-Add these fields to `.zed-conductor/conductor.yaml`:
+Add these fields to `.parallel-code/conductor.yaml`:
 
 ```yaml
 context_policy:
@@ -2778,12 +2797,12 @@ agent_identity:
   enabled: true
   store_summaries_only: true
   forbid_secret_storage: true
-  identity_root: .zed-conductor/agents
+  identity_root: .parallel-code/agents
 
 activity_feed:
   enabled: true
   persist_events: true
-  event_log: .zed-conductor/state/events.jsonl
+  event_log: .parallel-code/state/events.jsonl
 ```
 
 ## 32. Updated Run State Model
@@ -3012,7 +3031,7 @@ scheduler limits
 health states
 retry/escalation
 human approval gates
-open worktree in Zed
+open worktree in configured editor
 ```
 
 The long-term version can add:
@@ -3032,7 +3051,7 @@ Gas Town-style operational scale
 
 # Subscription Capacity Constraint: Plus/Pro Cannot Support 20–30 Concurrent Agents
 
-**Update date:** 2026-06-01  
+**Update date:** 2026-06-01
 **Purpose:** Add a hard product constraint: the Role-Aware Conductor must be designed around realistic consumer subscription capacity, not enterprise-scale agent swarms.
 
 ## 36. Subscription Reality
@@ -3575,7 +3594,7 @@ This aligns the product with the user’s actual subscription reality.
 
 # Final Review Update: Starting Spec Consolidation
 
-**Update date:** 2026-06-01  
+**Update date:** 2026-06-01
 **Purpose:** Consolidate the current decision into this file so it can be used as the starting implementation specification.
 
 ## 47. What Changed in This Review
@@ -3584,11 +3603,11 @@ This review updates the spec to match the current plan:
 
 ```text
 Before:
-  The feature was framed mainly as a Zed-native conductor or Zed fork feature.
+  The feature was framed mainly as a editor-native conductor or future editor-native path feature.
 
 Now:
   The feature starts as a Parallel Code-style Electron desktop app,
-  with Zed used through an editor bridge.
+  with the configured editor used through a generic editor bridge.
 ```
 
 This is the correct starting point because the first product risk is not editor integration. The first product risk is whether the role-aware conductor can reliably:
@@ -3615,17 +3634,17 @@ Supporting documents:
 project-runbook-safe-ai-agent-development.md
   Operating protocol for building the project safely with AI agents.
 
-gemini_claude_codex_strengths_architecture_handoff.md
+Deep Research/gemini_claude_codex_strengths_architecture_handoff.md
   Rationale for role assignment across Codex, Claude, and Gemini/Antigravity.
 
 online_research_agent_orchestrator_consensus_and_products.md
   Market/product research and gap analysis.
 
-zed_meta_orchestrator_rationale.md
+meta_orchestrator_rationale.md
   Original rationale for preserving first-party subscriptions and role-based orchestration.
 
-zed_meta_orchestrator_architecture.md
-  Original Zed-native architecture path, now treated as a later-stage option.
+meta_orchestrator_architecture.md
+  Original editor-native architecture path, now treated as a later-stage option.
 ```
 
 Precedence order:
@@ -3656,7 +3675,7 @@ It uses:
   - artifacts for handoff
   - health monitoring and retry/escalation for reliability
   - subscription-aware scheduling for capacity control
-  - Zed as the preferred editor bridge
+  - the configured editor as an optional bridge
 ```
 
 The one-line differentiator:
@@ -3687,28 +3706,28 @@ The first implementation should be intentionally conservative:
 The product/repo can still use:
 
 ```text
-zed-agent-conductor
+parallel-code-with-agent-conductor
 ```
 
-but the MVP is not a Zed fork.
+but the MVP is not a future editor-native path.
 
 Recommended naming stack:
 
 ```text
-Repo:              zed-agent-conductor
-App name:          Agent Conductor for Zed
+Repo:              parallel-code-with-agent-conductor
+App name:          Parallel Code with Agent Conductor
 Feature name:      Role-Aware Conductor
 Default profile:   Ameen’s Default — Subscription Aware
-Config dir:         .zed-conductor/
-Main config:        .zed-conductor/conductor.yaml
+Config dir:         .parallel-code/
+Main config:        .parallel-code/conductor.yaml
 Command:            /conduct
 ```
 
 Reason:
 
 ```text
-The name keeps the Zed-centered workflow identity,
-while the implementation remains a local Electron sidecar first.
+The name keeps the Parallel Code base visible,
+while making the new conductor layer explicit.
 ```
 
 ## 52. First Build Tickets
@@ -3732,7 +3751,7 @@ Acceptance:
 
 ```text
 Goal:
-  Add `.zed-conductor/conductor.yaml` with Ameen’s Default.
+  Add `.parallel-code/conductor.yaml` with Ameen’s Default.
 
 Acceptance:
   - config loads
@@ -3776,7 +3795,7 @@ Acceptance:
   - worktree path created under configured root
   - branch created safely
   - dirty repo state handled
-  - Open in Zed works
+  - Open in Editor works
 ```
 
 ### Ticket 6: First Real Workflow
@@ -3803,7 +3822,7 @@ Do not implement these in the first milestone:
 - autonomous cron agents
 - bors-style bisecting merge queue
 - persistent long-term memory beyond safe summaries
-- full Zed fork
+- full future editor-native path
 - cloud sync
 - team collaboration
 - paid model proxy
@@ -3899,7 +3918,7 @@ This check strengthens the current fork strategy:
 2. Add the Role-Aware Conductor layer.
 3. Borrow workflow discipline from Antfarm.
 4. Borrow operational safety patterns from Gas Town.
-5. Keep Zed as the preferred editor bridge.
+5. Keep the configured editor as an optional bridge.
 6. Do not fork Zed first.
 ```
 
@@ -3909,4 +3928,3 @@ The differentiator remains:
 Parallel Code asks the user to pick an agent.
 Role-Aware Conductor lets the user describe the task and automatically dispatches the configured role-agent workflow.
 ```
-

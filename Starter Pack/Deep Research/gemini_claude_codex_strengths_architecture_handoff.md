@@ -1,7 +1,7 @@
 # Gemini vs Claude vs Codex: Strengths, Role Assignment, and Ideal Multi-Agent Architecture
 
-**Date:** 2026-06-01  
-**Goal:** Compare Gemini/Antigravity, Claude/Claude Code, and OpenAI Codex for an agentic coding workflow, then define an ideal architecture and handoff model for a Zed-based multi-agent orchestrator.
+**Date:** 2026-06-01
+**Goal:** Compare Gemini/Antigravity, Claude/Claude Code, and OpenAI Codex for an agentic coding workflow, then define an ideal architecture and handoff model for a Parallel Code-based multi-agent orchestrator.
 
 ---
 
@@ -457,7 +457,7 @@ Google announced that Gemini CLI and Gemini Code Assist IDE extensions would sto
 
 Source: [Google Developers Blog: Transitioning Gemini CLI to Antigravity CLI](https://developers.googleblog.com/an-important-update-transitioning-gemini-cli-to-antigravity-cli/)
 
-This matters for a Zed fork because Zed’s current external-agent docs list Gemini CLI. The architecture should therefore avoid hard-coding Gemini CLI as the long-term Google adapter.
+This matters for a future editor-native path because Zed’s current external-agent docs list Gemini CLI. The architecture should therefore avoid hard-coding Gemini CLI as the long-term Google adapter.
 
 Correct abstraction:
 
@@ -872,9 +872,9 @@ The orchestrator should create worktrees automatically.
 
 ```text
 main
-  ├── .zed-conductor/worktrees/feat-auth-codex
-  ├── .zed-conductor/worktrees/feat-dashboard-ui
-  └── .zed-conductor/worktrees/review-auth-claude
+  ├── .worktrees/feat-auth-codex
+  ├── .worktrees/feat-dashboard-ui
+  └── .worktrees/review-auth-claude
 ```
 
 Default policy:
@@ -1047,7 +1047,7 @@ deployment config
 
 ---
 
-## 12. Ideal Zed Fork Implementation
+## 12. Ideal Future Editor-Native Path Implementation
 
 ## 12.1 Add Conductor Thread
 
@@ -1207,7 +1207,7 @@ unset ANTHROPIC_API_KEY
 
 ## 14.3 Zed
 
-Use Zed’s Agent Panel:
+Use the configured editor/agent surface only as an optional bridge:
 
 ```text
 New Codex Thread
@@ -1270,7 +1270,7 @@ Human:
   "Approve the plan, accept the risk, merge the code."
 ```
 
-The strongest reason to build the Zed fork is that it would combine four things that current tools rarely combine cleanly:
+The strongest reason to build the future editor-native path is that it would combine four things that current tools rarely combine cleanly:
 
 ```text
 1. first-party subscription preservation

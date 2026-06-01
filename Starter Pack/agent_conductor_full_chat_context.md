@@ -1,7 +1,7 @@
-# Full Chat Context: Local Agent Conductor / Role-Aware Conductor
+# Full Chat Context: Parallel Code with Agent Conductor / Role-Aware Conductor
 
-**Generated:** 2026-06-01 13:05:59 UTC  
-**Purpose:** Preserve the full project context from this conversation so it can be reused in future chats, agent sessions, GitHub issues, implementation planning, or repository documentation.  
+**Generated:** 2026-06-01 13:05:59 UTC
+**Purpose:** Preserve the full project context from this conversation so it can be reused in future chats, agent sessions, GitHub issues, implementation planning, or repository documentation.
 **Scope:** This document consolidates the reasoning, decisions, product direction, feature requirements, safety runbook, research findings, and generated Markdown artifacts from the chat.
 
 ---
@@ -26,13 +26,13 @@ Important precedence:
 1. The current primary feature spec is authoritative.
 2. The runbook controls how development should be performed safely.
 3. Research/supporting docs provide background and justification.
-4. Older Parallel Code-first docs are historical context, not the current MVP path.
+4. Older Zed-first docs are historical context, not the current MVP path.
 ```
 
 Current primary feature file:
 
 ```text
-role-aware-conductor-feature-with-antfrarm-and-gas-town-and-subscription-capacity-constraint.md
+role-aware-conductor-feature-with-antfarm-and-gas-town-and-subscription-capacity-constraint.md
 ```
 
 Current safety/runbook file:
@@ -57,10 +57,10 @@ We do not want Zed editor integration yet.
 Updated naming:
 
 ```text
-Repo:      local-agent-conductor
-App:       Local Agent Conductor
+Repo:      parallel-code-with-agent-conductor
+App:       Parallel Code with Agent Conductor
 Base:      Parallel Code fork
-Config:    .agent-conductor/conductor.yaml
+Config:    .parallel-code/conductor.yaml
 Command:   /conduct
 ```
 
@@ -108,7 +108,7 @@ MVP:
   Electron conductor app + real CLIs + worktrees + Open in Editor.
 
 Later:
-  Zed extension, ACP bridge, or Parallel Code fork only if deeper editor integration becomes necessary.
+  Zed extension, ACP bridge, or another editor-native path only if deeper editor integration becomes necessary.
 ```
 
 ---
@@ -541,13 +541,13 @@ The Role-Aware Conductor should include:
 Primary config directory:
 
 ```text
-.agent-conductor/
+.parallel-code/
 ```
 
 Primary config file:
 
 ```text
-.agent-conductor/conductor.yaml
+.parallel-code/conductor.yaml
 ```
 
 Primary command:
@@ -768,7 +768,7 @@ FinalSummaryArtifact
 Artifact paths:
 
 ```text
-.agent-conductor/artifacts/runs/<run-id>/
+.parallel-code/artifacts/runs/<run-id>/
   run.json
   classification.json
   role-map.yaml
@@ -1088,12 +1088,12 @@ Recommended repo/product naming stack:
 
 ```text
 Repo:              local-agent-conductor
-App name:          Local Agent Conductor
+App name:          Parallel Code with Agent Conductor
 Base:              Parallel Code fork
 Feature name:      Role-Aware Conductor
 Default profile:   Ameen’s Default — Subscription Aware
-Config dir:         .agent-conductor/
-Main config:        .agent-conductor/conductor.yaml
+Config dir:         .parallel-code/
+Main config:        .parallel-code/conductor.yaml
 Command:            /conduct
 ```
 
@@ -1125,7 +1125,7 @@ Acceptance:
 
 ```text
 Goal:
-  Add `.agent-conductor/conductor.yaml` with Ameen’s Default.
+  Add `.parallel-code/conductor.yaml` with Ameen’s Default.
 
 Acceptance:
   - config loads
@@ -1216,7 +1216,7 @@ This chat produced or updated these Markdown files.
 Current primary docs:
 
 ```text
-role-aware-conductor-feature-with-antfrarm-and-gas-town-and-subscription-capacity-constraint.md
+role-aware-conductor-feature-with-antfarm-and-gas-town-and-subscription-capacity-constraint.md
 project-runbook-safe-ai-agent-development.md
 ```
 
@@ -1329,7 +1329,7 @@ The immediate next action should be:
 Fork or inspect Parallel Code.
 Assess architecture, license, code quality, and coupling to manual agent selection.
 Create branch: feat/role-aware-conductor-mvp
-Add `.agent-conductor/conductor.yaml`
+Add `.parallel-code/conductor.yaml`
 Implement dry-run dispatcher before running any agents.
 ```
 
@@ -1359,20 +1359,20 @@ The following appendices include the generated Markdown artifacts from the conve
 
 ---
 
-# Appendix: role-aware-conductor-feature-with-antfrarm-and-gas-town-and-subscription-capacity-constraint.md — CURRENT PRIMARY FEATURE SPEC
+# Appendix: role-aware-conductor-feature-with-antfarm-and-gas-town-and-subscription-capacity-constraint.md — CURRENT PRIMARY FEATURE SPEC
 
 ```text
-File path: /mnt/data/role-aware-conductor-feature-with-antfrarm-and-gas-town-and-subscription-capacity-constraint.md
+File path: /mnt/data/role-aware-conductor-feature-with-antfarm-and-gas-town-and-subscription-capacity-constraint.md
 Size: 81600 bytes
 ```
 
 # Feature Specification: Role-Aware Conductor
 
-**Feature name:** Role-Aware Conductor  
-**Suggested file name:** `role-aware-conductor-feature-with-antfrarm-and-gas-town-and-subscription-capacity-constraint.md`  
-**Project context:** Parallel Code-style Electron app first; optional editor bridge or Parallel Code fork later  
-**Feature type:** Local desktop multi-agent CLI orchestration with editor bridge  
-**Status:** Draft feature specification  
+**Feature name:** Role-Aware Conductor
+**Suggested file name:** `role-aware-conductor-feature-with-antfarm-and-gas-town-and-subscription-capacity-constraint.md`
+**Project context:** Parallel Code-style Electron app first; optional editor bridge or Parallel Code fork later
+**Feature type:** Local desktop multi-agent CLI orchestration with editor bridge
+**Status:** Draft feature specification
 **Date:** 2026-06-01
 
 ---
@@ -1428,7 +1428,7 @@ The future local desktop version should be treated as a later product path, not 
 
 ## 1. Feature Summary
 
-The **Role-Aware Conductor** is a local desktop orchestration feature that lets the user assign external coding agents to explicit roles, then execute structured multi-agent workflows through real first-party CLIs. The first implementation should be an Electron/Parallel Code-style sidecar app, with Zed used as the editor bridge. A Parallel Code fork remains a later option, not the starting base.
+The **Role-Aware Conductor** is a local desktop orchestration feature that lets the user assign external coding agents to explicit roles, then execute structured multi-agent workflows through real first-party CLIs. The first implementation should be an Electron/Parallel Code-style sidecar app, with editor integration kept optional. A Parallel Code fork remains a later option, not the starting base.
 
 The feature should support agents such as:
 
@@ -1593,7 +1593,7 @@ Expected behavior:
 The feature should use a dedicated project-local directory:
 
 ```text
-.agent-conductor/
+.parallel-code/
   conductor.yaml
   roles.yaml
   workflows/
@@ -1720,7 +1720,7 @@ editor_bridge:
 ```
 
 
-## 8. Main Config: `.agent-conductor/conductor.yaml`
+## 8. Main Config: `.parallel-code/conductor.yaml`
 
 This is the main machine-readable configuration for the feature.
 
@@ -1732,8 +1732,8 @@ schema: agent-conductor/v1
 project:
   name: example-app
   default_branch: main
-  artifact_root: .agent-conductor/artifacts/runs
-  state_db: .agent-conductor/state/runs.sqlite
+  artifact_root: .parallel-code/artifacts/runs
+  state_db: .parallel-code/state/runs.sqlite
 
 agents:
   codex:
@@ -1807,14 +1807,14 @@ roles:
 
 workflow:
   default: plan-implement-review
-  templates_dir: .agent-conductor/workflows
+  templates_dir: .parallel-code/workflows
   require_plan_approval: true
   require_final_approval: true
   allow_parallel_review: true
 
 worktrees:
   enabled: true
-  root: .agent-conductor/worktrees
+  root: .worktrees
   naming: "{workflow}-{role}-{slug}-{timestamp}"
   writable_roles:
     - implementer
@@ -1907,8 +1907,8 @@ Role resolution order:
 
 ```text
 1. explicit command override
-2. .agent-conductor/conductor.yaml
-3. .agent-conductor/roles.yaml
+2. .parallel-code/conductor.yaml
+3. .parallel-code/roles.yaml
 4. built-in defaults
 ```
 
@@ -2140,7 +2140,7 @@ Claude
 Path:
 
 ```text
-.agent-conductor/artifacts/runs/<run-id>/plan.md
+.parallel-code/artifacts/runs/<run-id>/plan.md
 ```
 
 Required fields:
@@ -2171,8 +2171,8 @@ Codex
 Paths:
 
 ```text
-.agent-conductor/artifacts/runs/<run-id>/implementation.diff
-.agent-conductor/artifacts/runs/<run-id>/test-report.json
+.parallel-code/artifacts/runs/<run-id>/implementation.diff
+.parallel-code/artifacts/runs/<run-id>/test-report.json
 ```
 
 Required fields:
@@ -2202,8 +2202,8 @@ Gemini / Antigravity
 Paths:
 
 ```text
-.agent-conductor/artifacts/runs/<run-id>/ui-review.md
-.agent-conductor/artifacts/runs/<run-id>/screenshots/
+.parallel-code/artifacts/runs/<run-id>/ui-review.md
+.parallel-code/artifacts/runs/<run-id>/screenshots/
 ```
 
 Required fields:
@@ -2234,7 +2234,7 @@ Claude
 Path:
 
 ```text
-.agent-conductor/artifacts/runs/<run-id>/code-review.md
+.parallel-code/artifacts/runs/<run-id>/code-review.md
 ```
 
 Required fields:
@@ -2265,7 +2265,7 @@ Codex + Conductor synthesis
 Path:
 
 ```text
-.agent-conductor/artifacts/runs/<run-id>/final-summary.md
+.parallel-code/artifacts/runs/<run-id>/final-summary.md
 ```
 
 Required fields:
@@ -2380,7 +2380,7 @@ Gemini / Antigravity UI verifier:
 Example worktree layout:
 
 ```text
-.agent-conductor/worktrees/
+.worktrees/
   plan-implement-review-implementer-login-bug-20260601/
   ui-build-verify-implementer-dashboard-20260601/
 ```
@@ -2454,7 +2454,7 @@ permissions:
 File:
 
 ```text
-.agent-conductor/policies/protected-paths.yaml
+.parallel-code/policies/protected-paths.yaml
 ```
 
 Example:
@@ -2710,7 +2710,7 @@ UserCancelled
 The feature is complete when:
 
 ```text
-1. The app can read `.agent-conductor/conductor.yaml`.
+1. The app can read `.parallel-code/conductor.yaml`.
 2. The user can bind Codex, Claude, and Gemini/Antigravity to roles.
 3. `/conduct` creates a Conductor Run.
 4. The run resolves a workflow template.
@@ -2721,7 +2721,7 @@ The feature is complete when:
 9. The UI verifier role can consume implementation artifacts and produce UI artifacts.
 10. The reviewer role consumes diff/test/UI artifacts and produces a review artifact.
 11. The fixer role applies accepted fixes only.
-12. Artifacts are written to `.agent-conductor/artifacts/runs/<run-id>/`.
+12. Artifacts are written to `.parallel-code/artifacts/runs/<run-id>/`.
 13. The user must approve plan and final merge.
 14. The app warns if API keys may bypass preferred subscription auth.
 15. The app blocks or asks before protected operations.
@@ -2736,7 +2736,7 @@ The feature is complete when:
 Deliver:
 
 ```text
-- `.agent-conductor/conductor.yaml` parser
+- `.parallel-code/conductor.yaml` parser
 - default config generator
 - role-to-agent resolver
 - command-level role overrides
@@ -2815,7 +2815,7 @@ Deliver:
 
 ---
 
-## 22. Suggested Rust Module Sketch
+## 22. Suggested Electron/TypeScript Module Sketch
 
 ```text
 src/conductor/
@@ -2906,7 +2906,7 @@ human approval
 
 # Research Update: Antfarm and Gas Town Feature Delta
 
-**Update date:** 2026-06-01  
+**Update date:** 2026-06-01
 **Purpose:** Identify features, rules, and operating patterns present in Antfarm and Gas Town that are not present in Parallel Code and were not fully captured in the earlier Role-Aware Conductor spec.
 
 This update is based on:
@@ -3212,7 +3212,7 @@ on_failure:
 Escalation artifact:
 
 ```text
-.agent-conductor/artifacts/runs/<run-id>/escalation.md
+.parallel-code/artifacts/runs/<run-id>/escalation.md
 ```
 
 Escalation must include:
@@ -3487,13 +3487,13 @@ agent_identities:
   codex_implementer:
     agent: codex
     role: implementer
-    history_file: .agent-conductor/agents/codex-implementer/history.md
+    history_file: .parallel-code/agents/codex-implementer/history.md
     memory_scope: project_safe_summary
 
   claude_reviewer:
     agent: claude
     role: reviewer
-    history_file: .agent-conductor/agents/claude-reviewer/history.md
+    history_file: .parallel-code/agents/claude-reviewer/history.md
     memory_scope: review_patterns
 ```
 
@@ -3961,11 +3961,11 @@ The previous MVP should be adjusted.
 1. Problems view
 2. Activity feed
 3. Workflow recipes
-4. Persistent agent identity summaries
+4. Persistent long-term agent identity summaries
 5. Resume failed/interrupted runs
 6. Nudge/handoff/reassign actions
 7. Workflow pack security review
-8. Simple merge queue
+8. Autonomous or batched merge queue
 9. Prime context recovery
 ```
 
@@ -4084,7 +4084,7 @@ Human approves merge
 
 ## 31. Updated YAML Configuration Additions
 
-Add these fields to `.agent-conductor/conductor.yaml`:
+Add these fields to `.parallel-code/conductor.yaml`:
 
 ```yaml
 context_policy:
@@ -4146,12 +4146,12 @@ agent_identity:
   enabled: true
   store_summaries_only: true
   forbid_secret_storage: true
-  identity_root: .agent-conductor/agents
+  identity_root: .parallel-code/agents
 
 activity_feed:
   enabled: true
   persist_events: true
-  event_log: .agent-conductor/state/events.jsonl
+  event_log: .parallel-code/state/events.jsonl
 ```
 
 ## 32. Updated Run State Model
@@ -4400,7 +4400,7 @@ Gas Town-style operational scale
 
 # Subscription Capacity Constraint: Plus/Pro Cannot Support 20–30 Concurrent Agents
 
-**Update date:** 2026-06-01  
+**Update date:** 2026-06-01
 **Purpose:** Add a hard product constraint: the Role-Aware Conductor must be designed around realistic consumer subscription capacity, not enterprise-scale agent swarms.
 
 ## 36. Subscription Reality
@@ -4943,7 +4943,7 @@ This aligns the product with the user’s actual subscription reality.
 
 # Final Review Update: Starting Spec Consolidation
 
-**Update date:** 2026-06-01  
+**Update date:** 2026-06-01
 **Purpose:** Consolidate the current decision into this file so it can be used as the starting implementation specification.
 
 ## 47. What Changed in This Review
@@ -5058,18 +5058,18 @@ The product/repo can still use:
 local-agent-conductor
 ```
 
-but the MVP is not a Zed fork.
+but the MVP is not a future editor-native path.
 
 Recommended naming stack:
 
 ```text
 Repo:              local-agent-conductor
-App name:          Local Agent Conductor
+App name:          Parallel Code with Agent Conductor
 Base:              Parallel Code fork
 Feature name:      Role-Aware Conductor
 Default profile:   Ameen’s Default — Subscription Aware
-Config dir:         .agent-conductor/
-Main config:        .agent-conductor/conductor.yaml
+Config dir:         .parallel-code/
+Main config:        .parallel-code/conductor.yaml
 Command:            /conduct
 ```
 
@@ -5101,7 +5101,7 @@ Acceptance:
 
 ```text
 Goal:
-  Add `.agent-conductor/conductor.yaml` with Ameen’s Default.
+  Add `.parallel-code/conductor.yaml` with Ameen’s Default.
 
 Acceptance:
   - config loads
@@ -5294,9 +5294,9 @@ Size: 24302 bytes
 
 # Project Runbook: Safe Development Workflow for the Role-Aware Conductor
 
-**Project:** Role-Aware Conductor / Parallel Code-style Electron fork  
-**Purpose:** Define how the project will be run so Codex, Claude, Gemini/Antigravity, and the human lead avoid known failure modes in AI coding tools.  
-**Status:** Draft operating protocol  
+**Project:** Role-Aware Conductor / Parallel Code-style Electron fork
+**Purpose:** Define how the project will be run so Codex, Claude, Gemini/Antigravity, and the human lead avoid known failure modes in AI coding tools.
+**Status:** Draft operating protocol
 **Date:** 2026-06-01
 
 ---
@@ -5465,14 +5465,14 @@ Add a settings page that lets users choose a conductor preset and assign agents 
 ## Likely Files
 
 - src/renderer/settings/*
-- src/shared/conductor-config.ts
+- src/ipc/conductor-types.ts
 - src/main/config-store.ts
 
 ## Acceptance Criteria
 
 - User can select "Ameen's Default".
 - Role dropdowns display installed agents.
-- Settings persist to `.agent-conductor/conductor.yaml`.
+- Settings persist to `.parallel-code/conductor.yaml`.
 - Invalid YAML displays a recoverable error.
 
 ## Test Plan
@@ -5550,7 +5550,7 @@ Example:
 git checkout main
 git pull
 
-git worktree add .agent-conductor/worktrees/feat-role-settings -b feat/role-settings
+git worktree add .worktrees/feat-role-settings -b feat/role-settings
 ```
 
 Rules:
@@ -5567,15 +5567,15 @@ Rules:
 Worktree naming:
 
 ```text
-.agent-conductor/worktrees/<task-type>-<short-slug>-<date>/
+.worktrees/<task-type>-<short-slug>-<date>/
 ```
 
 Examples:
 
 ```text
-.agent-conductor/worktrees/feat-role-settings-20260601/
-.agent-conductor/worktrees/fix-auth-warning-20260601/
-.agent-conductor/worktrees/ui-dashboard-review-20260601/
+.worktrees/feat-role-settings-20260601/
+.worktrees/fix-auth-warning-20260601/
+.worktrees/ui-dashboard-review-20260601/
 ```
 
 ---
@@ -5880,7 +5880,7 @@ Required process log fields:
   "agent": "codex",
   "command": "codex",
   "args": ["..."],
-  "cwd": ".agent-conductor/worktrees/feat-role-settings-20260601",
+  "cwd": ".worktrees/feat-role-settings-20260601",
   "started_at": "...",
   "ended_at": "...",
   "exit_code": 0
@@ -5982,10 +5982,10 @@ Rules:
 Required config files:
 
 ```text
-.agent-conductor/conductor.yaml
-.agent-conductor/policies/permissions.yaml
-.agent-conductor/policies/protected-paths.yaml
-.agent-conductor/workflows/*.yaml
+.parallel-code/conductor.yaml
+.parallel-code/policies/permissions.yaml
+.parallel-code/policies/protected-paths.yaml
+.parallel-code/workflows/*.yaml
 ```
 
 Config validation must check:
@@ -6042,7 +6042,7 @@ Artifact rules:
 Example artifact path:
 
 ```text
-.agent-conductor/artifacts/runs/run_20260601_001/plan.md
+.parallel-code/artifacts/runs/run_20260601_001/plan.md
 ```
 
 ---
@@ -6279,7 +6279,7 @@ Good prompt:
 Implement Phase 1 only: YAML-backed role profile loading.
 
 Scope:
-- Add parser for `.agent-conductor/conductor.yaml`.
+- Add parser for `.parallel-code/conductor.yaml`.
 - Add validation for roles and agents.
 - Add unit tests.
 - Do not implement UI.
@@ -6654,7 +6654,7 @@ Size: 32410 bytes
 
 # Gemini vs Claude vs Codex: Strengths, Role Assignment, and Ideal Multi-Agent Architecture
 
-**Date:** 2026-06-01  
+**Date:** 2026-06-01
 **Goal:** Compare Gemini/Antigravity, Claude/Claude Code, and OpenAI Codex for an agentic coding workflow, then define an ideal architecture and handoff model for a Parallel Code-based multi-agent orchestrator.
 
 ---
@@ -7207,7 +7207,7 @@ Return screenshots and a summary of files changed.
 ```text
 User task
   ↓
-Local Agent Conductor
+Parallel Code with Agent Conductor
   ↓
 Task classifier / router
   ↓
@@ -7230,7 +7230,7 @@ Merge / PR
 ## 6.2 Main components
 
 ```text
-Local Agent Conductor
+Parallel Code with Agent Conductor
   The meta-orchestrator UI and workflow engine.
 
 Agent Registry
@@ -7472,7 +7472,7 @@ FinalizationArtifact
 
 ```text
 1. User writes task.
-2. Local Agent Conductor classifies task as backend feature.
+2. Parallel Code with Agent Conductor classifies task as backend feature.
 3. Claude receives planning context pack.
 4. Claude produces PlanArtifact.
 5. Human approves or edits plan.
@@ -7493,7 +7493,7 @@ FinalizationArtifact
 
 ```text
 1. User writes UI task.
-2. Local Agent Conductor classifies task as UI feature.
+2. Parallel Code with Agent Conductor classifies task as UI feature.
 3. Claude produces functional plan if needed.
 4. Codex implements functional structure.
 5. Gemini/Antigravity receives UI context pack.
@@ -7526,9 +7526,9 @@ The orchestrator should create worktrees automatically.
 
 ```text
 main
-  ├── .agent-conductor/worktrees/feat-auth-codex
-  ├── .agent-conductor/worktrees/feat-dashboard-ui
-  └── .agent-conductor/worktrees/review-auth-claude
+  ├── .worktrees/feat-auth-codex
+  ├── .worktrees/feat-dashboard-ui
+  └── .worktrees/review-auth-claude
 ```
 
 Default policy:
@@ -7701,7 +7701,7 @@ deployment config
 
 ---
 
-## 12. Ideal Zed Fork Implementation
+## 12. Ideal Future Editor-Native Path Implementation
 
 ## 12.1 Add Conductor Thread
 
@@ -7861,7 +7861,7 @@ unset ANTHROPIC_API_KEY
 
 ## 14.3 Zed
 
-Use Zed’s Agent Panel:
+Use the configured editor/agent surface only as an optional bridge:
 
 ```text
 New Codex Thread
@@ -7880,7 +7880,7 @@ Source: [Zed External Agents](https://zed.dev/docs/ai/external-agents)
 The ideal architecture is:
 
 ```text
-Local Agent Conductor
+Parallel Code with Agent Conductor
   controls workflow state
 
 Codex
@@ -7917,7 +7917,7 @@ Claude:
 Gemini / Antigravity:
   "Does this look and behave right in the browser?"
 
-Local Agent Conductor:
+Parallel Code with Agent Conductor:
   "Route the work, preserve context, capture artifacts, enforce boundaries."
 
 Human:
@@ -7947,9 +7947,9 @@ File path: /mnt/data/online_research_agent_orchestrator_consensus_and_products.m
 Size: 36311 bytes
 ```
 
-# Online Research: Is the Local Agent Conductor Idea Common, and Does a Product Already Exist?
+# Online Research: Is the Parallel Code with Agent Conductor Idea Common, and Does a Product Already Exist?
 
-**Date:** 2026-06-01  
+**Date:** 2026-06-01
 **Question:** Is the reasoning behind a Parallel Code-based meta-orchestrator for Codex, Claude, and Gemini/Antigravity common among agent-using developers? Does a product already exist that serves this need, and what are its cons versus Zed?
 
 ---
@@ -8093,7 +8093,7 @@ A Reddit thread in r/ClaudeCode frames the exact coordination problem: once deve
 
 Source: [Reddit: Managing multiple coding agents in parallel](https://www.reddit.com/r/ClaudeCode/comments/1st213z/how_are_you_managing_multiple_coding_agents_in/)
 
-This is extremely close to the reasoning behind the proposed Local Agent Conductor.
+This is extremely close to the reasoning behind the proposed Parallel Code with Agent Conductor.
 
 ## 2.2 Worktrees are the strongest common pattern
 
@@ -8676,12 +8676,12 @@ Source: [The Verge: GitHub adds Claude and Codex AI coding agents](https://www.t
 
 ```text
 GitHub Agent HQ validates the multi-agent direction.
-It does not replace the need for a local Zed-centered cockpit if the user wants first-party CLI/subscription preservation.
+It does not replace the need for a local Parallel Code-centered cockpit if the user wants first-party CLI/subscription preservation.
 ```
 
 ---
 
-## 12. The API-vs-CLI/Subcription Usage Question
+## 12. The API-vs-CLI/Subscription Usage Question
 
 This is a central part of your hypothesis, and it is supported by official docs.
 
@@ -9008,14 +9008,14 @@ Google-centric; not the neutral Codex + Claude + Gemini subscription-preserving 
 
 ---
 
-## 16. Implications for the Zed Fork
+## 16. Implications for the Future Editor-Native Path
 
 The online research suggests the Parallel Code fork should not try to prove that multi-agent coding is useful from scratch. That is already happening.
 
 Instead, it should target the unsolved gap:
 
 ```text
-Make Zed the native cockpit for multi-provider, subscription-preserving agent orchestration.
+Make a Parallel Code/Electron app the local cockpit for multi-provider, subscription-preserving agent orchestration.
 ```
 
 The fork should implement:
@@ -9127,7 +9127,7 @@ The desired workflow is not simply “use more AI models.” The desired workflo
 Use Codex where Codex is economically and technically strongest.
 Use Claude where Claude is most useful for planning, review, and reasoning.
 Use Gemini or Antigravity where the UI/browser/visual workflow is strongest.
-Use Local Agent Conductor as the neutral cockpit.
+Use Parallel Code with Agent Conductor as the neutral cockpit.
 Use Git worktrees as the safety and isolation layer.
 Keep the human as the final approval authority.
 ```
@@ -9804,7 +9804,7 @@ not:
 
 ---
 
-## 16. Why This Should Be a Zed Fork Rather Than a Separate App
+## 16. Why This Should Be a Future Editor-Native Path Rather Than a Separate App
 
 A separate orchestration app is possible, but a Parallel Code fork has advantages:
 
@@ -9817,7 +9817,7 @@ A separate orchestration app is possible, but a Parallel Code fork has advantage
 - the user needs one cockpit, not another dashboard
 ```
 
-Zed is already desktop, so orchestration can be close to:
+Parallel Code is already desktop, so orchestration can be close to:
 
 ```text
 - file tree
@@ -9893,7 +9893,7 @@ A meta-orchestrator directly targets that bottleneck.
 
 ## 19. Final Rationale
 
-The Local Agent Conductor architecture exists because the user wants the benefits of multiple first-party AI coding agents without the waste of multiple uncoordinated workflows.
+The Parallel Code with Agent Conductor architecture exists because the user wants the benefits of multiple first-party AI coding agents without the waste of multiple uncoordinated workflows.
 
 The reason behind the design is:
 
@@ -9913,7 +9913,7 @@ The reason behind the design is:
 The desired product is therefore:
 
 ```text
-Local Agent Conductor as a neutral cockpit.
+Parallel Code with Agent Conductor as a neutral cockpit.
 Codex as implementer.
 Claude as planner and reviewer.
 Gemini/Antigravity as UI and visual verifier.
@@ -9935,7 +9935,7 @@ File path: /mnt/data/zed_meta_orchestrator_architecture.md
 Size: 25769 bytes
 ```
 
-# Local Agent Conductor Architecture
+# Parallel Code with Agent Conductor Architecture
 
 ## Purpose
 
@@ -9988,7 +9988,7 @@ Diff Review / Test Gate / Merge Proposal
 Human approval
 ```
 
-The Parallel Code fork should behave as a **workflow-aware ACP conductor**.
+The Parallel Code fork should behave as a **workflow-aware local CLI conductor**.
 
 It should:
 
@@ -10007,12 +10007,12 @@ The fork should not simply add more chat windows. It should add a workflow layer
 
 ---
 
-## 2. Product Concept: Local Agent Conductor
+## 2. Product Concept: Parallel Code with Agent Conductor
 
 A possible product name:
 
 ```text
-Local Agent Conductor
+Parallel Code with Agent Conductor
 ```
 
 The main user-facing feature should be:
@@ -10105,13 +10105,13 @@ The missing layer is explicit orchestration:
 Add a new top-level crate:
 
 ```text
-crates/agent_orchestrator/
+electron/conductor/
 ```
 
 Suggested module layout:
 
 ```text
-crates/agent_orchestrator/
+electron/conductor/
   src/
     lib.rs
     orchestrator.rs
@@ -10503,9 +10503,9 @@ Example layout:
 
 ```text
 main
-  ├── .agent-conductor/worktrees/feat-dashboard-codex
-  ├── .agent-conductor/worktrees/ui-dashboard-gemini
-  └── .agent-conductor/worktrees/review-dashboard-claude
+  ├── .worktrees/feat-dashboard-codex
+  ├── .worktrees/ui-dashboard-gemini
+  └── .worktrees/review-dashboard-claude
 ```
 
 Default rules:
@@ -10744,7 +10744,7 @@ enum ArtifactKind {
 Suggested storage layout:
 
 ```text
-.agent-conductor/
+.parallel-code/
   runs/
     2026-06-01T10-15-dashboard/
       workflow.yaml
@@ -11093,7 +11093,7 @@ Use Claude to plan, Codex to implement, Gemini/Antigravity to verify UI,
 then Claude to review. Do not merge without approval.
 ```
 
-Zed renders:
+The Conductor dashboard renders:
 
 ```text
 Conductor Run: Responsive onboarding flow
@@ -11215,7 +11215,7 @@ The default policy should be:
 Claude = planner / reviewer / risk analyst
 Codex = main implementer / test fixer
 Gemini or Antigravity = UI designer / visual verifier
-Zed = cockpit / diff surface / workflow state machine
+Parallel Code with Agent Conductor = cockpit / diff surface / workflow state machine
 Git = source of truth
 Human = merge authority
 ```
@@ -11246,7 +11246,7 @@ Reference:
 The Parallel Code fork should become:
 
 ```text
-A workflow-aware ACP conductor.
+A workflow-aware local CLI conductor.
 
 It knows available agents.
 It knows their roles.
@@ -11276,7 +11276,7 @@ The architecture should preserve the most important economic and workflow advant
 Codex through ChatGPT Pro
 Claude through Claude Pro / Claude Code
 Gemini or Antigravity through Google entitlement
-Local Agent Conductor as the neutral cockpit
+Parallel Code with Agent Conductor as the neutral cockpit
 Git as the safety boundary
 Human as the final decision-maker
 ```
@@ -11295,11 +11295,11 @@ Size: 31515 bytes
 
 # Feature Specification: Role-Aware Conductor
 
-**Feature name:** Role-Aware Conductor  
-**Suggested file name:** `role-aware-conductor-feature.md`  
-**Project context:** `local-agent-conductor` or standalone Electron conductor app  
-**Feature type:** Role-aware multi-agent orchestration for coding agents  
-**Status:** Expanded feature specification  
+**Feature name:** Role-Aware Conductor
+**Suggested file name:** `role-aware-conductor-feature.md`
+**Project context:** `local-agent-conductor` or standalone Electron conductor app
+**Feature type:** Role-aware multi-agent orchestration for coding agents
+**Status:** Expanded feature specification
 **Date:** 2026-06-01
 
 ---
@@ -11687,7 +11687,7 @@ The settings UI should write to a YAML file.
 Recommended path:
 
 ```text
-.agent-conductor/conductor.yaml
+.parallel-code/conductor.yaml
 ```
 
 This YAML file should be human-readable, versionable, and project-local.
@@ -11846,11 +11846,11 @@ approval:
 worktrees:
   enabled: true
   strategy: isolated_per_task
-  root: .agent-conductor/worktrees
+  root: .worktrees
   naming: "{workflow}-{role}-{slug}-{timestamp}"
 
 artifacts:
-  root: .agent-conductor/artifacts/runs
+  root: .parallel-code/artifacts/runs
   write_markdown_summaries: true
   write_json_metadata: true
   keep_raw_agent_logs: true
@@ -11908,7 +11908,7 @@ Open YAML
 The user should be able to directly edit:
 
 ```text
-.agent-conductor/conductor.yaml
+.parallel-code/conductor.yaml
 ```
 
 When saved, the UI should reload the settings.
@@ -12124,7 +12124,7 @@ Test generation:
 Workflow templates should be stored as YAML:
 
 ```text
-.agent-conductor/workflows/
+.parallel-code/workflows/
   plan-implement-review.yaml
   ui-build-verify.yaml
   bug-hunt.yaml
@@ -12449,7 +12449,7 @@ FinalSummaryArtifact
 ### 13.2 Artifact paths
 
 ```text
-.agent-conductor/artifacts/runs/<run-id>/
+.parallel-code/artifacts/runs/<run-id>/
   run.json
   classification.json
   role-map.yaml
@@ -12592,7 +12592,7 @@ Test Runner:
 Example worktree layout:
 
 ```text
-.agent-conductor/worktrees/
+.worktrees/
   ui-build-verify-implementer-onboarding-flow-20260601/
   bug-hunt-implementer-login-redirect-20260601/
   refactor-safe-implementer-payment-module-20260601/
@@ -12800,7 +12800,7 @@ The feature is complete when:
 - Add Role-Aware Conductor settings page.
 - Add preset dropdown.
 - Add role dropdowns.
-- Persist to `.agent-conductor/conductor.yaml`.
+- Persist to `.parallel-code/conductor.yaml`.
 - Load YAML on app start.
 ```
 
@@ -12908,11 +12908,11 @@ Size: 33247 bytes
 
 # Roadmap: Role-Aware Conductor for Zed Agent Workflows
 
-**Feature name:** Role-Aware Conductor  
-**Proposed repo/product name:** `local-agent-conductor`  
-**Canonical project file:** `.agent-conductor/roadmap.md`  
-**Primary config file:** `.agent-conductor/conductor.yaml`  
-**Status:** Feature specification / implementation roadmap  
+**Feature name:** Role-Aware Conductor
+**Proposed repo/product name:** `local-agent-conductor`
+**Canonical project file:** `.parallel-code/roadmap.md`
+**Primary config file:** `.parallel-code/conductor.yaml`
+**Status:** Feature specification / implementation roadmap
 **Date:** 2026-06-01
 
 ---
@@ -13112,8 +13112,8 @@ Do not merge without approval.
 The conductor should then:
 
 ```text
-1. Read .agent-conductor/roadmap.md.
-2. Read .agent-conductor/conductor.yaml.
+1. Read .parallel-code/roadmap.md.
+2. Read .parallel-code/conductor.yaml.
 3. Resolve agent bindings for roles.
 4. Pick a workflow template.
 5. Create worktrees if needed.
@@ -13131,7 +13131,7 @@ The conductor should then:
 The feature should use project-local files.
 
 ```text
-.agent-conductor/
+.parallel-code/
   roadmap.md
   conductor.yaml
   roles.yaml
@@ -13167,19 +13167,19 @@ This is the human-readable project roadmap and source of truth for goals, milest
 The app should pick it up from:
 
 ```text
-.agent-conductor/roadmap.md
+.parallel-code/roadmap.md
 ```
 
 Fallback search order:
 
 ```text
-1. .agent-conductor/roadmap.md
+1. .parallel-code/roadmap.md
 2. ROADMAP.md
 3. docs/roadmap.md
 4. docs/ROADMAP.md
 ```
 
-If multiple are found, the `.agent-conductor/roadmap.md` file wins.
+If multiple are found, the `.parallel-code/roadmap.md` file wins.
 
 ### 3.2 `conductor.yaml`
 
@@ -13188,7 +13188,7 @@ This is the main machine-readable config.
 The app should pick it up from:
 
 ```text
-.agent-conductor/conductor.yaml
+.parallel-code/conductor.yaml
 ```
 
 This file defines:
@@ -13263,9 +13263,9 @@ Goals:
 
 Acceptance Criteria:
 - `/conduct` creates a run
-- conductor reads `.agent-conductor/conductor.yaml`
+- conductor reads `.parallel-code/conductor.yaml`
 - conductor creates role-bound agent threads
-- conductor writes artifacts to `.agent-conductor/artifacts/runs/<run-id>/`
+- conductor writes artifacts to `.parallel-code/artifacts/runs/<run-id>/`
 - human approval is required before merge
 ```
 
@@ -13280,10 +13280,10 @@ schema: agent-conductor/v1
 
 project:
   name: example-app
-  roadmap_file: .agent-conductor/roadmap.md
+  roadmap_file: .parallel-code/roadmap.md
   default_branch: main
-  artifact_root: .agent-conductor/artifacts/runs
-  state_db: .agent-conductor/state/runs.sqlite
+  artifact_root: .parallel-code/artifacts/runs
+  state_db: .parallel-code/state/runs.sqlite
 
 agents:
   codex:
@@ -13357,14 +13357,14 @@ roles:
 
 workflow:
   default: plan-implement-review
-  templates_dir: .agent-conductor/workflows
+  templates_dir: .parallel-code/workflows
   require_plan_approval: true
   require_final_approval: true
   allow_parallel_review: true
 
 worktrees:
   enabled: true
-  root: .agent-conductor/worktrees
+  root: .worktrees
   naming: "{workflow}-{role}-{slug}-{timestamp}"
   writable_roles:
     - implementer
@@ -13489,8 +13489,8 @@ The app should resolve roles in this order:
 
 ```text
 1. explicit `/conduct --planner=... --implementer=...` flags
-2. `.agent-conductor/conductor.yaml`
-3. `.agent-conductor/roles.yaml`
+2. `.parallel-code/conductor.yaml`
+3. `.parallel-code/roles.yaml`
 4. built-in defaults
 ```
 
@@ -13501,7 +13501,7 @@ The app should resolve roles in this order:
 File:
 
 ```text
-.agent-conductor/workflows/plan-implement-review.yaml
+.parallel-code/workflows/plan-implement-review.yaml
 ```
 
 Example:
@@ -13516,7 +13516,7 @@ steps:
     type: system
     action: load_roadmap
     input:
-      file: .agent-conductor/roadmap.md
+      file: .parallel-code/roadmap.md
 
   - id: plan
     type: agent
@@ -13606,7 +13606,7 @@ steps:
 File:
 
 ```text
-.agent-conductor/workflows/ui-build-verify.yaml
+.parallel-code/workflows/ui-build-verify.yaml
 ```
 
 Example:
@@ -13708,7 +13708,7 @@ The app should construct context packs per role.
 context_packs:
   planner_context:
     include:
-      - .agent-conductor/roadmap.md
+      - .parallel-code/roadmap.md
       - AGENTS.md
       - CLAUDE.md
       - docs/architecture.md
@@ -13792,7 +13792,7 @@ Claude
 Path:
 
 ```text
-.agent-conductor/artifacts/runs/<run-id>/plan.md
+.parallel-code/artifacts/runs/<run-id>/plan.md
 ```
 
 Required fields:
@@ -13823,8 +13823,8 @@ Codex
 Path:
 
 ```text
-.agent-conductor/artifacts/runs/<run-id>/implementation.diff
-.agent-conductor/artifacts/runs/<run-id>/test-report.json
+.parallel-code/artifacts/runs/<run-id>/implementation.diff
+.parallel-code/artifacts/runs/<run-id>/test-report.json
 ```
 
 Required fields:
@@ -13854,8 +13854,8 @@ Google Visual Agent: Gemini / Antigravity
 Path:
 
 ```text
-.agent-conductor/artifacts/runs/<run-id>/ui-review.md
-.agent-conductor/artifacts/runs/<run-id>/screenshots/
+.parallel-code/artifacts/runs/<run-id>/ui-review.md
+.parallel-code/artifacts/runs/<run-id>/screenshots/
 ```
 
 Required fields:
@@ -13886,7 +13886,7 @@ Claude
 Path:
 
 ```text
-.agent-conductor/artifacts/runs/<run-id>/code-review.md
+.parallel-code/artifacts/runs/<run-id>/code-review.md
 ```
 
 Required fields:
@@ -13917,7 +13917,7 @@ Codex + Conductor synthesis
 Path:
 
 ```text
-.agent-conductor/artifacts/runs/<run-id>/final-summary.md
+.parallel-code/artifacts/runs/<run-id>/final-summary.md
 ```
 
 Required fields:
@@ -13941,8 +13941,8 @@ The application should load the roadmap at the start of each conductor run.
 
 ```text
 1. CLI flag: /conduct --roadmap path/to/file.md
-2. .agent-conductor/conductor.yaml project.roadmap_file
-3. .agent-conductor/roadmap.md
+2. .parallel-code/conductor.yaml project.roadmap_file
+3. .parallel-code/roadmap.md
 4. ROADMAP.md
 5. docs/roadmap.md
 ```
@@ -14114,7 +14114,7 @@ permissions:
 File:
 
 ```text
-.agent-conductor/policies/protected-paths.yaml
+.parallel-code/policies/protected-paths.yaml
 ```
 
 Example:
@@ -14232,7 +14232,7 @@ Example UI:
 ```text
 Conductor Run: Build onboarding flow
 
-Roadmap: .agent-conductor/roadmap.md
+Roadmap: .parallel-code/roadmap.md
 Workflow: ui-build-verify
 
 Roles:
@@ -14318,10 +14318,10 @@ Dry run should output:
 If no project config exists, the conductor should offer to create:
 
 ```text
-.agent-conductor/roadmap.md
-.agent-conductor/conductor.yaml
-.agent-conductor/workflows/
-.agent-conductor/policies/
+.parallel-code/roadmap.md
+.parallel-code/conductor.yaml
+.parallel-code/workflows/
+.parallel-code/policies/
 ```
 
 Default role map:
@@ -14368,8 +14368,8 @@ ui-build-verify
 The feature is complete when:
 
 ```text
-1. The app can read `.agent-conductor/roadmap.md`.
-2. The app can read `.agent-conductor/conductor.yaml`.
+1. The app can read `.parallel-code/roadmap.md`.
+2. The app can read `.parallel-code/conductor.yaml`.
 3. The user can bind Codex, Claude, and Gemini/Antigravity to roles.
 4. `/conduct` creates a Conductor Run.
 5. The run resolves a workflow template.
@@ -14380,7 +14380,7 @@ The feature is complete when:
 10. The UI verifier role can consume the implementation artifact and produce UI artifacts.
 11. The reviewer role consumes diff/test/UI artifacts and produces a review artifact.
 12. The fixer role applies accepted fixes only.
-13. Artifacts are written to `.agent-conductor/artifacts/runs/<run-id>/`.
+13. Artifacts are written to `.parallel-code/artifacts/runs/<run-id>/`.
 14. The user must approve plan and final merge.
 15. The app warns if API keys may bypass preferred subscription auth.
 16. The app blocks or asks before protected operations.
@@ -14414,8 +14414,8 @@ The first version should be deterministic and explicit.
 Deliver:
 
 ```text
-- `.agent-conductor/roadmap.md` detection
-- `.agent-conductor/conductor.yaml` parser
+- `.parallel-code/roadmap.md` detection
+- `.parallel-code/conductor.yaml` parser
 - default config generator
 - validation errors in UI
 ```
@@ -14569,7 +14569,7 @@ trait AgentThreadBridge {
 
 ## 23. Example First Project Files
 
-### 23.1 `.agent-conductor/roadmap.md`
+### 23.1 `.parallel-code/roadmap.md`
 
 ```markdown
 ---
@@ -14592,11 +14592,11 @@ Acceptance Criteria:
 - `/conduct` loads this roadmap
 - role config is loaded from conductor.yaml
 - Codex, Claude, and Google Visual roles are resolved
-- artifacts are written to `.agent-conductor/artifacts/runs/<run-id>/`
+- artifacts are written to `.parallel-code/artifacts/runs/<run-id>/`
 - no final merge happens without human approval
 ```
 
-### 23.2 `.agent-conductor/conductor.yaml`
+### 23.2 `.parallel-code/conductor.yaml`
 
 ```yaml
 schema: agent-conductor/v1
@@ -14705,9 +14705,9 @@ Updated naming:
 
 ```text
 Repo:      local-agent-conductor
-App:       Local Agent Conductor
+App:       Parallel Code with Agent Conductor
 Base:      Parallel Code fork
-Config:    .agent-conductor/conductor.yaml
+Config:    .parallel-code/conductor.yaml
 Command:   /conduct
 ```
 

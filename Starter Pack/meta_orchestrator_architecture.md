@@ -1,6 +1,6 @@
 # Current Architecture Decision: Parallel Code Fork First
 
-**Update date:** 2026-06-01 13:32:40 UTC  
+**Update date:** 2026-06-01 13:32:40 UTC
 **Current status:** This document is now Parallel Code-based.
 
 ```text
@@ -12,12 +12,12 @@ Keep editor integration optional.
 
 ---
 
-# Local Agent Conductor Architecture
+# Parallel Code with Agent Conductor Architecture
 
-**Update date:** 2026-06-01 13:30:34 UTC  
+**Update date:** 2026-06-01 13:30:34 UTC
 **Current status:** This document has been realigned away from a Zed-first architecture.
 
-The MVP is **not** a Zed fork. The MVP is a **Parallel Code fork** amended into Local Agent Conductor.
+The MVP is **not** a future editor-native path. The MVP is a **Parallel Code fork** amended into Parallel Code with Agent Conductor.
 
 Use this architecture as the source of truth:
 
@@ -37,7 +37,7 @@ Zed, ACP, and desktop integration are later options only.
 
 ---
 
-# Local Agent Conductor Architecture
+# Parallel Code with Agent Conductor Architecture
 
 ## Purpose
 
@@ -59,10 +59,10 @@ User approves.
 The orchestrator should preserve each provider’s native subscription, authentication, and usage path:
 
 ```text
-Codex ACP thread      → uses Codex / ChatGPT auth
-Claude ACP thread     → uses Claude Code / Claude Pro auth
-Gemini/AG thread      → uses Google / Gemini / Antigravity auth
-Parallel Code fork              → does not proxy model calls
+Codex task              → uses Codex / ChatGPT auth
+Claude task             → uses Claude Code / Claude Pro auth
+Gemini/Antigravity task → uses Google / Gemini / Antigravity auth
+Parallel Code fork      → does not proxy model calls
 ```
 
 This avoids turning the Parallel Code fork into another pooled-credit platform.
@@ -90,7 +90,7 @@ Diff Review / Test Gate / Merge Proposal
 Human approval
 ```
 
-The Parallel Code fork should behave as a **workflow-aware ACP conductor**.
+The Parallel Code fork should behave as a **workflow-aware local CLI conductor**.
 
 It should:
 
@@ -109,12 +109,12 @@ The fork should not simply add more chat windows. It should add a workflow layer
 
 ---
 
-## 2. Product Concept: Local Agent Conductor
+## 2. Product Concept: Parallel Code with Agent Conductor
 
 A possible product name:
 
 ```text
-Local Agent Conductor
+Parallel Code with Agent Conductor
 ```
 
 The main user-facing feature should be:
@@ -163,28 +163,28 @@ Task: Student dashboard
 
 ---
 
-## 3. Existing Zed Substrate
+## 3. Existing Parallel Code Substrate
 
-Zed already has some of the right primitives:
+Parallel Code already has many of the required MVP primitives:
 
 ```text
-- ACP external agents
-- independent agent threads
-- parallel agent workflows
-- worktree isolation
-- thread sidebar / agent panel
-- desktop diff review
+- Electron/SolidJS desktop UI
+- local CLI process spawning
+- task/session panes
+- git branch and worktree isolation
+- diff review surfaces
+- remote/mobile monitoring
+- coordinator MCP backend
+- Antigravity/Codex/Claude/Gemini-style agent registry
 ```
 
-Zed’s external-agent documentation currently describes support for external agents such as Gemini CLI, Claude Agent, Codex, GitHub Copilot, and configurable agents through ACP. Zed also states that billing and legal terms for external agents remain between the user and the provider rather than Zed.
+Zed remains useful research context because its documentation describes external agents through ACP and parallel agent threads. Those references support the market direction, but they are not the implementation base for this MVP.
 
 Relevant references:
 
 - [Zed external agents documentation](https://zed.dev/docs/ai/external-agents)
 - [Zed parallel agents documentation](https://zed.dev/docs/ai/parallel-agents)
-- [Zed blog: Parallel Agents](https://zed.dev/blog/parallel-agents)
 - [Agent Client Protocol GitHub repository](https://github.com/agentclientprotocol/agent-client-protocol)
-- [Zed source repository](https://github.com/zed-industries/zed)
 
 The missing layer is explicit orchestration:
 
@@ -202,34 +202,35 @@ The missing layer is explicit orchestration:
 
 ---
 
-## 4. New Crate: `agent_orchestrator`
+## 4. New Module Group: `conductor`
 
 Add a new conductor module group:
 
 ```text
-src/main/conductor/
+electron/conductor/
+src/conductor/
+src/ipc/conductor-types.ts
 ```
 
 Suggested module layout:
 
 ```text
-src/main/conductor/
-  src/
-    lib.rs
-    orchestrator.rs
-    router.rs
-    planner.rs
-    workflow.rs
-    task_graph.rs
-    agent_registry.rs
-    thread_bridge.rs
-    context_pack.rs
-    worktree_manager.rs
-    artifact_store.rs
-    permissions.rs
-    evaluators.rs
-    budget.rs
-    telemetry.rs
+electron/conductor/
+  config.ts
+  router.ts
+  workflow.ts
+  dispatcher.ts
+  context-pack.ts
+  artifact-store.ts
+  permissions.ts
+  scheduler.ts
+  health.ts
+
+src/conductor/
+  ConductorDashboard.tsx
+  RoleSettings.tsx
+  RunTimeline.tsx
+  ArtifactViewer.tsx
 ```
 
 This module should not implement Codex, Claude, or Gemini itself. It should call into the fork’s local CLI process runner and worktree/task infrastructure.
@@ -605,9 +606,9 @@ Example layout:
 
 ```text
 main
-  ├── .agent-conductor/worktrees/feat-dashboard-codex
-  ├── .agent-conductor/worktrees/ui-dashboard-gemini
-  └── .agent-conductor/worktrees/review-dashboard-claude
+  ├── .worktrees/feat-dashboard-codex
+  ├── .worktrees/ui-dashboard-gemini
+  └── .worktrees/review-dashboard-claude
 ```
 
 Default rules:
@@ -846,7 +847,7 @@ type ArtifactKind {
 Suggested storage layout:
 
 ```text
-.agent-conductor/
+.parallel-code/
   runs/
     2026-06-01T10-15-dashboard/
       workflow.yaml
@@ -1195,7 +1196,7 @@ Use Claude to plan, Codex to implement, Gemini/Antigravity to verify UI,
 then Claude to review. Do not merge without approval.
 ```
 
-Zed renders:
+The Conductor dashboard renders:
 
 ```text
 Conductor Run: Responsive onboarding flow
@@ -1317,7 +1318,7 @@ The default policy should be:
 Claude = planner / reviewer / risk analyst
 Codex = main implementer / test fixer
 Gemini or Antigravity = UI designer / visual verifier
-Zed = cockpit / diff surface / workflow state machine
+Parallel Code with Agent Conductor = cockpit / diff surface / workflow state machine
 Git = source of truth
 Human = merge authority
 ```
@@ -1335,7 +1336,7 @@ Budget priorities:
 
 ## 26. Licensing Note
 
-Zed’s source repository is primarily GPL-3.0-or-later, with Apache-2.0 components where marked. A distributed fork must respect those licensing obligations.
+Zed licensing is relevant only if a later editor-native path forks or embeds Zed code. The MVP is a Parallel Code fork and must follow Parallel Code’s repository license obligations.
 
 Reference:
 
@@ -1348,7 +1349,7 @@ Reference:
 The Parallel Code fork should become:
 
 ```text
-A workflow-aware ACP conductor.
+A workflow-aware local CLI conductor.
 
 It knows available agents.
 It knows their roles.
@@ -1378,7 +1379,7 @@ The architecture should preserve the most important economic and workflow advant
 Codex through ChatGPT Pro
 Claude through Claude Pro / Claude Code
 Gemini or Antigravity through Google entitlement
-Local Agent Conductor as the neutral cockpit
+Parallel Code with Agent Conductor as the neutral cockpit
 Git as the safety boundary
 Human as the final decision-maker
 ```
@@ -1412,10 +1413,10 @@ Parallel Code Electron/SolidJS frontend
 Then add:
 
 ```text
-src/main/conductor/*
-src/renderer/conductor/*
-src/shared/conductor/*
-.agent-conductor/conductor.yaml
-.agent-conductor/workflows/*.yaml
-.agent-conductor/artifacts/runs/*
+electron/conductor/*
+src/conductor/*
+src/ipc/conductor-types.ts
+.parallel-code/conductor.yaml
+.parallel-code/workflows/*.yaml
+.parallel-code/artifacts/runs/*
 ```

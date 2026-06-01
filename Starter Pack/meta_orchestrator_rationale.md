@@ -1,26 +1,26 @@
 # Current Rationale Decision: Parallel Code First
 
-**Update date:** 2026-06-01 13:32:40 UTC  
+**Update date:** 2026-06-01 13:32:40 UTC
 **Current status:** This document is now Parallel Code-based.
 
 ```text
-The MVP is a Parallel Code fork amended into Local Agent Conductor.
+The MVP is a Parallel Code fork amended into Parallel Code with Agent Conductor.
 The immediate product is a good frontend, task consumer/tracker, conductor, dispatcher, worktree manager, and safe local CLI workflow.
 Editor integration is optional and later.
 ```
 
 ---
 
-# Rationale for a Parallel Code-Based Local Agent Conductor
+# Rationale for a Parallel Code-Based Parallel Code with Agent Conductor
 
-**Update date:** 2026-06-01 13:30:34 UTC  
+**Update date:** 2026-06-01 13:30:34 UTC
 **Current status:** This rationale has been realigned away from a Zed-first plan.
 
 The project is now:
 
 ```text
 Parallel Code fork first
-Local Agent Conductor product
+Parallel Code with Agent Conductor product
 Editor-neutral MVP
 Optional editor bridge later
 ```
@@ -29,7 +29,7 @@ The reason is practical: the immediate product is a good frontend, task consumer
 
 ---
 
-# Rationale for a Parallel Code-Based Local Agent Conductor
+# Rationale for a Parallel Code-Based Parallel Code with Agent Conductor
 
 ## Executive Summary
 
@@ -41,7 +41,7 @@ The desired workflow is not simply “use more AI models.” The desired workflo
 Use Codex where Codex is economically and technically strongest.
 Use Claude where Claude is most useful for planning, review, and reasoning.
 Use Gemini or Antigravity where the UI/browser/visual workflow is strongest.
-Use Local Agent Conductor as the neutral cockpit.
+Use Parallel Code with Agent Conductor as the neutral cockpit.
 Use Git worktrees as the safety and isolation layer.
 Keep the human as the final approval authority.
 ```
@@ -195,17 +195,18 @@ Cursor is less optimal as a neutral multi-provider cockpit for existing first-pa
 
 Parallel Code became the preferred base because it is closer to the desired local desktop conductor app.
 
-The important Zed properties are:
+The important Parallel Code properties are:
 
 ```text
-- external-agent support
-- ACP-based integrations
+- Electron/SolidJS desktop UI
+- local CLI process spawning
 - Codex support
-- Claude Agent / Claude Code support
-- Gemini CLI support
-- fast native editor
-- parallel agent threads
-- lower pressure to use Zed-hosted AI billing
+- Claude Code support
+- Gemini CLI / Antigravity support
+- branch and worktree isolation
+- diff review surfaces
+- coordinator MCP backend
+- no pooled model-credit layer
 ```
 
 The key difference:
@@ -213,7 +214,7 @@ The key difference:
 ```text
 Cursor wants to be the AI IDE.
 Warp wants to be the agentic terminal.
-Zed can plausibly become the neutral agent cockpit.
+Parallel Code can plausibly become the neutral local agent cockpit.
 ```
 
 This matters because the user’s ideal setup is not one vendor’s agent. It is:
@@ -718,29 +719,28 @@ not:
 
 ---
 
-## 16. Why This Should Be a Zed Fork Rather Than a Separate App
+## 16. Why This Should Start From Parallel Code Rather Than a Fresh Separate App
 
-A separate orchestration app is possible, but a Parallel Code fork has advantages:
+A fresh orchestration app is possible, but a Parallel Code fork has advantages:
 
 ```text
-- agents need editor context
-- diffs need to be inspected in the editor
+- agents need task/session context
+- diffs need to be inspected near the terminal output
 - worktrees need project awareness
 - terminals need to sit near code
 - artifacts should be tied to files and branches
 - the user needs one cockpit, not another dashboard
 ```
 
-Zed is already desktop, so orchestration can be close to:
+Parallel Code is already a desktop multi-agent app, so orchestration can be close to:
 
 ```text
-- file tree
-- symbols
-- diagnostics
-- terminal
-- git status
+- task/session panes
+- agent terminals
+- git worktrees
 - diffs
-- agent threads
+- remote/mobile monitoring
+- coordinator MCP state
 ```
 
 A separate app would likely become another layer that still needs to open the editor.
@@ -783,7 +783,7 @@ The proposed Parallel Code fork is based on this thesis:
 
 ```text
 The next valuable coding interface is not one model inside an editor.
-It is a workflow graph of specialized agents, each using its strongest native environment, coordinated inside the editor.
+It is a workflow graph of specialized agents, each using its strongest native environment, coordinated inside the local development app.
 ```
 
 The current bottleneck is not raw model intelligence alone.
@@ -807,7 +807,7 @@ A meta-orchestrator directly targets that bottleneck.
 
 ## 19. Final Rationale
 
-The Local Agent Conductor architecture exists because the user wants the benefits of multiple first-party AI coding agents without the waste of multiple uncoordinated workflows.
+The Parallel Code with Agent Conductor architecture exists because the user wants the benefits of multiple first-party AI coding agents without the waste of multiple uncoordinated workflows.
 
 The reason behind the design is:
 
@@ -816,7 +816,7 @@ The reason behind the design is:
 2. Claude Pro is valuable, but should be used selectively for planning and review.
 3. Gemini/Antigravity is useful for UI and browser/visual workflows, especially with student access.
 4. Warp and Cursor are useful, but can duplicate AI spend or impose their own usage systems.
-5. Zed is a plausible neutral cockpit because it supports external agents and parallel threads.
+5. Parallel Code is a plausible neutral cockpit because it already supports local CLI agents, worktrees, and task panes.
 6. Manual copy-paste between agents is inefficient and fragile.
 7. Git worktrees provide the correct isolation model.
 8. Context packs reduce waste and improve handoffs.
@@ -827,7 +827,7 @@ The reason behind the design is:
 The desired product is therefore:
 
 ```text
-Local Agent Conductor as a neutral cockpit.
+Parallel Code with Agent Conductor as a neutral cockpit.
 Codex as implementer.
 Claude as planner and reviewer.
 Gemini/Antigravity as UI and visual verifier.

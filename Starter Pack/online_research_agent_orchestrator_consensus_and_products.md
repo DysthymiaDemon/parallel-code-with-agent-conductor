@@ -1,7 +1,7 @@
 # Online Research: Is the Zed Meta-Orchestrator Idea Common, and Does a Product Already Exist?
 
-**Date:** 2026-06-01  
-**Question:** Is the reasoning behind a Zed-based meta-orchestrator for Codex, Claude, and Gemini/Antigravity common among agent-using developers? Does a product already exist that serves this need, and what are its cons versus Zed?
+**Date:** 2026-06-01
+**Question:** Is the reasoning behind a Parallel Code-based meta-orchestrator for Codex, Claude, and Gemini/Antigravity common among agent-using developers? Does a product already exist that serves this need, and what are its cons versus Zed?
 
 ---
 
@@ -60,7 +60,7 @@ while preserving first-party subscription usage instead of forcing API billing.
 The part that is more speculative:
 
 ```text
-A Zed fork as the ideal implementation surface.
+A future editor-native path as the ideal implementation surface.
 ```
 
 Zed has unusually good primitives for this because it supports external agents through ACP, parallel threads, Codex, Claude Agent, and Gemini CLI. But Zed currently behaves more like a multi-agent cockpit than a full meta-orchestrator.
@@ -238,10 +238,10 @@ The exact neutral, subscription-preserving, editor-native orchestrator remains u
 
 ## 3.1 Product landscape summary
 
-| Product | How close is it? | Best description | Main weakness versus Zed fork |
+| Product | How close is it? | Best description | Main weakness versus future editor-native path |
 |---|---:|---|---|
 | Zed | High substrate, incomplete orchestrator | Editor-native ACP cockpit | No full meta-orchestrator yet |
-| Parallel Code | Very close operationally | Standalone multi-agent worktree manager | Not editor-native; less deep code/symbol/diff integration than a Zed fork |
+| Parallel Code | Very close operationally | Standalone multi-agent worktree manager | Not editor-native; less deep code/symbol/diff integration than a future editor-native path |
 | Conductor | Close for Mac + Codex/Claude | Mac app for parallel Codex + Claude workspaces | Mac-only; apparently Codex/Claude-focused; not clearly Gemini/Antigravity-centered |
 | Cursor | Strong AI IDE | Integrated AI IDE with agents/worktrees | Uses Cursor usage pools/on-demand/BYOK API, not first-party Codex/Claude CLI entitlements |
 | Warp/Oz | Strong terminal/control-plane option | Agentic terminal / cloud agent platform | Credit-based Warp agent economics; terminal-first, not editor-first |
@@ -400,7 +400,7 @@ That strongly supports your reasoning.
 - standalone dashboard for parallel agent work
 ```
 
-## 5.3 Cons versus a Zed fork
+## 5.3 Cons versus a future editor-native path
 
 ```text
 - standalone Electron app, not editor-native
@@ -421,7 +421,7 @@ Source: [Parallel Code](https://parallelcode.app/)
 ```text
 Parallel Code is the closest proof that the product gap is real.
 
-But it does not eliminate the case for a Zed fork, because it is not editor-native
+But it does not eliminate the case for a future editor-native path, because it is not editor-native
 and does not appear to implement the full meta-orchestrator/handoff architecture.
 ```
 
@@ -464,7 +464,7 @@ Source: [Conductor](https://www.conductor.build/)
 - task/workspace UI
 ```
 
-## 6.2 Cons versus a Zed fork
+## 6.2 Cons versus a future editor-native path
 
 ```text
 - Mac app
@@ -481,7 +481,7 @@ Source: [Conductor](https://www.conductor.build/)
 Conductor is a strong existing competitor for the "parallel Codex + Claude" part.
 
 It does not obviously cover the full desired target:
-Codex + Claude + Gemini/Antigravity in a neutral Zed-native orchestrator with role-based handoffs.
+Codex + Claude + Gemini/Antigravity in a neutral editor-native orchestrator with role-based handoffs.
 ```
 
 ---
@@ -587,7 +587,7 @@ That issue is strong evidence that users care about the exact subscription-prese
 ```text
 - terminal-first rather than editor-first
 - Warp Agent uses credit-based billing
-- not as natural as a Zed fork for code/symbol/diff/editor-native workflows
+- not as natural as a future editor-native path for code/symbol/diff/editor-native workflows
 - users have explicitly requested better local subscription preservation for Claude/Codex agent use
 ```
 
@@ -727,12 +727,12 @@ Source: [The Verge: GitHub adds Claude and Codex AI coding agents](https://www.t
 
 ```text
 GitHub Agent HQ validates the multi-agent direction.
-It does not replace the need for a local Zed-centered cockpit if the user wants first-party CLI/subscription preservation.
+It does not replace the need for a local Parallel Code-centered cockpit if the user wants first-party CLI/subscription preservation.
 ```
 
 ---
 
-## 12. The API-vs-CLI/Subcription Usage Question
+## 12. The API-vs-CLI/Subscription Usage Question
 
 This is a central part of your hypothesis, and it is supported by official docs.
 
@@ -948,7 +948,7 @@ Gemini/Antigravity is a strong default UI/browser/visual workflow surface.
 ## 14.5 Not yet consensus
 
 ```text
-A Zed fork is the ideal implementation.
+A future editor-native path is the ideal implementation.
 ```
 
 Zed is a strong candidate because of ACP, external agents, ChatGPT subscription support, and editor-native architecture. But Parallel Code and Conductor show that standalone orchestration apps are also viable.
@@ -975,7 +975,7 @@ It does not require a new model subscription.
 Main weakness:
 
 ```text
-It is not Zed-native and not a full meta-orchestrator.
+It is not editor-native and not a full meta-orchestrator.
 ```
 
 ## 15.2 Best editor-native substrate
@@ -1036,7 +1036,7 @@ Good if the terminal is the cockpit.
 Main weakness:
 
 ```text
-Credit economics and terminal-first design are less aligned with a Zed-based editor-native cockpit.
+Credit economics and terminal-first design are less aligned with a Parallel Code-based editor-native cockpit.
 ```
 
 ## 15.5 Best UI/browser/visual platform
@@ -1059,21 +1059,21 @@ Google-centric; not the neutral Codex + Claude + Gemini subscription-preserving 
 
 ---
 
-## 16. Implications for the Zed Fork
+## 16. Implications for Parallel Code with Agent Conductor
 
-The online research suggests the Zed fork should not try to prove that multi-agent coding is useful from scratch. That is already happening.
+The online research suggests Parallel Code with Agent Conductor should not try to prove that multi-agent coding is useful from scratch. That is already happening.
 
 Instead, it should target the unsolved gap:
 
 ```text
-Make Zed the native cockpit for multi-provider, subscription-preserving agent orchestration.
+Make a Parallel Code/Electron app the local cockpit for multi-provider, subscription-preserving agent orchestration.
 ```
 
-The fork should implement:
+The first implementation should implement:
 
 ```text
-1. Conductor Thread
-   A new agent thread type that controls workflows rather than coding directly.
+1. Conductor Run
+   A workflow controller that creates and monitors role-scoped tasks.
 
 2. Role Registry
    planner = Claude
@@ -1097,7 +1097,7 @@ The fork should implement:
 6. Permission Gates
    protected files, package installs, migrations, commits, pushes.
 
-7. Artifact Tabs
+7. Artifact Views
    Plan | Diff | Tests | Screenshots | Browser Recording | Review | Risks | Final Summary
 
 8. Human Approval
@@ -1147,7 +1147,7 @@ The most defensible conclusion:
 A product category already exists.
 
 But the exact product you want does not appear to exist yet:
-a Zed-native, ACP-based, multi-provider, subscription-preserving conductor
+a editor-native, ACP-based, multi-provider, subscription-preserving conductor
 that routes Claude, Codex, and Gemini/Antigravity by role
 with structured handoffs, worktrees, artifacts, permissions, and human gates.
 ```

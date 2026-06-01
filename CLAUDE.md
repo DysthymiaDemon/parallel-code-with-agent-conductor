@@ -36,3 +36,28 @@ This repo uses OpenSpec. Capability specs for current behavior live under
 `openspec/changes/<name>/` (e.g. via `/opsx:propose`) rather than editing
 specs directly — the change is archived into `specs/` when it ships. Run
 `openspec validate --all --strict` before committing.
+
+## Agent Conductor (active initiative)
+
+This repo is being extended with the **Role-Aware Conductor**: describe a task
+and the app dispatches the right role→agent workflow (Claude plans/reviews,
+Codex implements/fixes, Gemini/Antigravity verifies UI), with worktree
+isolation, structured artifacts, subscription-aware capacity, and human gates.
+
+- **Why / product intent (durable):** `Starter Pack/` — start with
+  `codebase-alignment-report.md` and `conductor-mvp-roadmap.md`, then the
+  feature spec
+  `role-aware-conductor-feature-with-antfarm-and-gas-town-and-subscription-capacity-constraint.md`
+  and the safety protocol `project-runbook-safe-ai-agent-development.md`.
+- **What / how (authoritative for delivery):** the seven sequenced
+  `openspec/changes/add-conductor-*` proposals. Implement in the roadmap's
+  dependency order, starting with `add-conductor-config`.
+- **Non-negotiables:** spec before code; Consumer Subscription default (3
+  active agents, 6 hard cap); never merge/push/install/migrate or write a
+  protected path without a human gate; never log secret values.
+
+## For all agents (Claude Code, Codex, Gemini)
+
+`CLAUDE.md`, `AGENTS.md`, and `GEMINI.md` are kept identical on purpose. Edit
+all three together so whichever agent is driving follows the same conventions,
+methodology, and conductor plan.
