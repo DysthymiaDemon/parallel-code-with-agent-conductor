@@ -95,6 +95,12 @@ changes, use an ExecPlan (as described in `PLANS.md`). Read `PLANS.md` before
 beginning any multi-change implementation. The conductor MVP ExecPlan is at
 `Starter Pack/Plan.md` — read it before starting any conductor work.
 
+Consistent with the Agent Division of Labour above: **Claude authors and
+maintains** the ExecPlan during planning (Plan of Work, Decision Log, Interfaces
+and Dependencies). **Codex reads it before implementing** and updates the
+Progress, Surprises & Discoveries, and Decision Log sections as work lands, then
+fills Outcomes & Retrospective at completion.
+
 ## For all agents (Claude Code, Codex, Gemini)
 
 `CLAUDE.md`, `AGENTS.md`, and `GEMINI.md` are kept identical on purpose. Edit

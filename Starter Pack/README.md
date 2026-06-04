@@ -21,6 +21,18 @@ Read these first:
 2. `project-runbook-safe-ai-agent-development.md` — safe development runbook.
 3. `meta_orchestrator_architecture.md` — architecture direction for the Parallel Code fork.
 4. `meta_orchestrator_rationale.md` — product and technical rationale.
+5. `Goal.md` — durable MVP objective and scope boundary; the Codex `/goal`
+   entry point.
+6. `Plan.md` — the living ExecPlan aligned to `Goal.md` (progress, decision
+   log, surprises). Format defined in `../PLANS.md`.
+7. `../PLANS.md` — ExecPlan format guide: when and how Codex writes/follows a
+   plan.
+
+The **authoritative "how" for delivery** is the seven sequenced
+`openspec/changes/add-conductor-*` changes (proposal + tasks + spec). The
+Starter Pack docs are the durable "why"; the OpenSpec changes are the
+executable "what/how". Agent roles are split in `../AGENTS.md` → "Agent
+Division of Labour" (Claude plans/reviews, Codex implements/validates).
 
 ## Supporting Research
 
@@ -34,7 +46,7 @@ Research may mention Zed, ACP, editor-native paths, or older product comparisons
 
 ## Handoff Context
 
-`agent_conductor_full_chat_context.md` is a long context bundle. Use it to recover conversation history, but resolve conflicts in this order:
+`context.md` is a long context bundle. Use it to recover conversation history, but resolve conflicts in this order:
 
 1. Current repo state
 2. This `README.md`

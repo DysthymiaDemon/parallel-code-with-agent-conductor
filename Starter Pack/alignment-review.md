@@ -50,3 +50,34 @@ findings. Summary:
   references in §48.
 - Aligned `CLAUDE.md` / `AGENTS.md` and added `GEMINI.md` so Claude Code,
   Codex, and Gemini all follow the same specs and workflow.
+
+## Update — 2026-06-04: Spec-Fix Pass + Methodology Docs
+
+A third pass fixed blocking and notable drift inside the seven OpenSpec changes
+and added the planning/methodology layer:
+
+- **Agent-id drift fixed everywhere:** placeholder ids `claude` → `claude-code`
+  and `google_visual` → `antigravity` (fallback `gemini`), matching
+  `electron/ipc/agents.ts`. Per-agent scheduler caps renamed to
+  `max_parallel_claude_code` / `max_parallel_antigravity`.
+- **Contracts pinned:** `ConductorConfig` + sub-types defined in
+  `add-conductor-config`; `ArtifactRef` standardized (dropped
+  `ConductorArtifact`); IPC channel names reconciled with `snake_case` string
+  values (`tasks.md` authoritative over `Plan.md`).
+- **Circular dependency resolved:** the run directory is created when a dry-run
+  is **approved** (`add-conductor-approval-gates`), using the utility provided
+  by `add-conductor-artifacts`. Run-id format `run_<YYYYMMDD>_<NNN>`.
+- **Workflows completed:** four fixed presets (`simple-codex`,
+  `plan-implement-review`, `ui-build-verify`, `bug-hunt`) with step structures
+  and a generation task; classifier keywords expanded and case-insensitive.
+- **Safety details added:** `unset_for_this_run` auth option; protected-paths
+  missing-file default; `deny` write → run `failed`; gate persistence across
+  restarts; `WorktreeRef` + fixer worktree reuse; branch-naming rules;
+  `.parallel-code/.gitignore` narrowing.
+- **New methodology docs:** `../PLANS.md` (ExecPlan format), rewritten
+  `Goal.md` (Codex `/goal` entry point) and `Plan.md` (living ExecPlan), and an
+  **Agent Division of Labour** section added to `CLAUDE.md` / `AGENTS.md` /
+  `GEMINI.md` (Claude plans/reviews, Codex implements/validates).
+- **Roadmap aligned:** `conductor-mvp-roadmap.md` updated for the four-workflow
+  classifier, the run-dir-on-approval trigger, and the division-of-labour
+  principle.
