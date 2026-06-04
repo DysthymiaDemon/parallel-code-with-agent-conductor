@@ -2,8 +2,9 @@
 
 - [ ] 1.1 Add `electron/conductor/auth-inspector.ts` that, given the resolved
   agents for a run, checks `process.env` for the agent's configured
-  `env_api_keys` (Codex: `CODEX_API_KEY`, `OPENAI_API_KEY`; Claude:
-  `ANTHROPIC_API_KEY`; Google visual: `GEMINI_API_KEY`, `GOOGLE_AI_API_KEY`).
+  `env_api_keys` (`codex`: `CODEX_API_KEY`, `OPENAI_API_KEY`; `claude-code`:
+  `ANTHROPIC_API_KEY`; `antigravity`/`gemini`: `GEMINI_API_KEY`,
+  `GOOGLE_AI_API_KEY`).
 - [ ] 1.2 Inspect only key **presence** (`key in process.env`); never read,
   return, or log the value.
 - [ ] 1.3 Classify each agent as `subscription_preferred`, `api_key_detected`,
@@ -14,7 +15,9 @@
 - [ ] 2.1 Produce a per-agent warning record (agent id, detected key names,
   classification, recommended action) and a per-run aggregate.
 - [ ] 2.2 Represent the user's per-run decision options as data:
-  `use_subscription`, `use_api_key_once`, `cancel`.
+  `use_subscription`, `use_api_key_once`, `unset_for_this_run`, `cancel`.
+  `unset_for_this_run` launches the agent subprocess without that env var in
+  its environment without permanently mutating `process.env`.
 - [ ] 2.3 When `auth_policy.block_api_keys_unless_explicit` is true and a key is
   detected, the default decision is `blocked_pending_explicit` until the user
   chooses `use_api_key_once`.

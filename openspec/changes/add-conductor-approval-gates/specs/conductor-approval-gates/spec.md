@@ -2,6 +2,27 @@
 
 ## ADDED Requirements
 
+### Requirement: Approving a dry-run starts the run
+
+When the user approves a dry-run, the app SHALL assign a run id and create the
+run directory by invoking the run-directory utility provided by
+`add-conductor-artifacts`. This requirement owns the run-start trigger;
+`add-conductor-artifacts` owns the directory mechanics. (This split resolves the
+circular dependency where artifacts could not own "a run starts" because a run
+only starts on approval.)
+
+#### Scenario: Approval creates the run directory
+
+- **WHEN** the user approves a dry-run
+- **THEN** a run directory `.parallel-code/artifacts/runs/<run-id>/` is created
+- **AND** a run id formatted `run_<YYYYMMDD>_<NNN>` is assigned
+
+#### Scenario: Cancel creates no run directory
+
+- **WHEN** the user cancels the dry-run
+- **THEN** no run id is assigned
+- **AND** no run directory is created
+
 ### Requirement: Plan approval before implementation
 
 The app SHALL require explicit human approval of the plan before the
@@ -61,6 +82,8 @@ with no approval option, and SHALL raise an approval gate for a write classified
 - **WHEN** a write targets a path classified `deny` (e.g. `.env`)
 - **THEN** the write is refused
 - **AND** no approval option is offered that would allow it
+- **AND** the run transitions to `failed` with error detail identifying the
+  denied path
 
 #### Scenario: Ask path raises a gate
 
@@ -78,3 +101,22 @@ gated operation not performed.
 - **WHEN** an approval gate is rejected
 - **THEN** the gated operation does not run
 - **AND** the run does not advance past the gate
+
+### Requirement: Pending gates persist across restarts
+
+The app SHALL persist pending gate state in
+`.parallel-code/state/pending-gates.json` and SHALL re-present a pending gate
+after an app restart rather than auto-rejecting or auto-approving it.
+
+#### Scenario: Pending gate survives a restart
+
+- **WHEN** the app restarts while a gate is pending
+- **THEN** the gate is presented again on restart
+- **AND** it is not auto-rejected
+- **AND** the gated operation has not run
+
+#### Scenario: Gate state is persisted
+
+- **WHEN** a gate becomes pending
+- **THEN** its state is written to `.parallel-code/state/pending-gates.json`
+- **AND** a resolved gate is removed from that file

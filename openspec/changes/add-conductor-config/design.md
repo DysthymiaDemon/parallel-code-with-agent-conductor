@@ -52,6 +52,19 @@ the first available fallback, otherwise an explicit "unresolved role" result
 (never a silent substitution). Availability here means "present in the registry
 and not disabled" — auth/installation checks belong to `add-conductor-auth-inspector`.
 
+## IPC Channel Namespace
+
+New conductor channels use the `Conductor*` prefix exclusively. The existing
+`SetCoordinatorModeEnabled` and `MCP_*` channels in `electron/ipc/channels.ts`
+belong to the separate `coordinator-mcp-backend` OpenSpec change and must not
+be modified by any `add-conductor-*` change.
+
+## TypeScript Types Location
+
+All conductor TypeScript types are added to `src/ipc/types.ts` (augmenting the
+existing file). Do not create a new `src/ipc/conductor-types.ts` — that would
+fragment the shared type surface and make IPC types harder to discover.
+
 ## Why no agent launches here
 
 Keeping this change pure (config + resolution, zero process spawning, zero

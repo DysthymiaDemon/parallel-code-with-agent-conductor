@@ -24,10 +24,23 @@ report which are present. Inspection is exposed through the
 - **THEN** that agent is classified `subscription_preferred`
 - **AND** no warning is produced for that agent
 
+#### Scenario: Agent has no env_api_keys configured
+
+- **WHEN** an agent has no `env_api_keys` configured in `authPolicy`
+- **THEN** that agent is classified `subscription_preferred` by default
+- **AND** no warning is produced for that agent
+
+#### Scenario: Auth mechanism cannot be determined
+
+- **WHEN** the agent's auth mechanism cannot be determined (e.g. the agent is
+  not in the `authPolicy` mapping and presence cannot be resolved)
+- **THEN** the agent is classified `unknown`
+- **AND** a warning surfaces that the auth posture could not be determined
+
 #### Scenario: Claude key detected
 
-- **WHEN** the run uses `claude` and `ANTHROPIC_API_KEY` is present
-- **THEN** `claude` is classified `api_key_detected`
+- **WHEN** the run uses `claude-code` and `ANTHROPIC_API_KEY` is present
+- **THEN** `claude-code` is classified `api_key_detected`
 - **AND** the warning's recommended action is to use the Claude subscription
   login
 
@@ -55,7 +68,7 @@ blocked until the user explicitly chooses to use the API key once.
 - **AND** an API key is detected for an agent in the run
 - **THEN** the per-run decision for that agent is `blocked_pending_explicit`
 - **AND** the available options include `use_subscription`, `use_api_key_once`,
-  and `cancel`
+  `unset_for_this_run`, and `cancel`
 
 #### Scenario: Explicit opt-in is recorded
 
@@ -63,6 +76,13 @@ blocked until the user explicitly chooses to use the API key once.
   `blocked_pending_explicit`
 - **THEN** the recorded per-run decision for that agent becomes
   `api_key_explicit`
+
+#### Scenario: Unset for this run launches without the env var
+
+- **WHEN** the user chooses `unset_for_this_run` for an agent
+- **THEN** the agent subprocess is launched without that env var in its
+  environment
+- **AND** the var is not permanently removed from `process.env`
 
 #### Scenario: Policy disabled does not block
 

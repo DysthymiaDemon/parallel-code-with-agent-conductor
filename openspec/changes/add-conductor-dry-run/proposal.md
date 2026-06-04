@@ -17,8 +17,12 @@ one.
 
 - Add the `/conduct <task>` entry point with a `--dry-run` mode (and
   `--workflow=` / role overrides like `--implementer=codex`).
-- Add a deterministic task classifier that maps a task to a workflow: UI-leaning
-  tasks → `ui-build-verify`; backend/feature/bug tasks → `plan-implement-review`.
+- Add a deterministic task classifier that maps a task to one of the four fixed
+  workflows: UI-leaning tasks → `ui-build-verify`; bug/regression tasks →
+  `bug-hunt`; feature/backend tasks → `plan-implement-review`; unmatched
+  single-agent tasks → `simple-codex` (fallback).
+- Generate the four workflow preset YAMLs under `.parallel-code/workflows/` from
+  built-in defaults when absent, with steps bound to real agent ids.
 - Compose the dry-run preview by combining: resolved roles (from
   `conductor-config`), the auth posture (from `conductor-auth-inspector`), and
   the capacity plan (from `conductor-scheduler`).
@@ -43,5 +47,6 @@ one.
 - **Depends on:** `add-conductor-config`, `add-conductor-auth-inspector`,
   `add-conductor-scheduler`.
 - **No agent launches, no worktree creation, no file writes** — preview only.
-- **Workflow templates** referenced (`plan-implement-review`, `ui-build-verify`)
-  are read as data; their execution belongs to later changes.
+- **Workflow templates** — all four presets (`simple-codex`,
+  `plan-implement-review`, `ui-build-verify`, `bug-hunt`) are read as data and
+  generated from defaults when absent; their execution belongs to later changes.

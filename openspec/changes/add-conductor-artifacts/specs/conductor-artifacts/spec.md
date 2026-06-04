@@ -2,22 +2,61 @@
 
 ## ADDED Requirements
 
-### Requirement: Per-run artifact directory
+### Requirement: Per-run artifact directory utility
 
-The app SHALL create a per-run artifact directory at
-`.parallel-code/artifacts/runs/<run-id>/` when a conductor run starts, and SHALL
-write all run artifacts beneath it.
+The app SHALL provide a utility that creates a per-run artifact directory at
+`.parallel-code/artifacts/runs/<run-id>/` and writes all run artifacts beneath
+it. This change **provides** the utility; the run-start trigger that invokes it
+lives in `add-conductor-approval-gates` (a run directory is created when the
+user approves a dry-run). This split avoids a circular dependency: artifacts
+owns the directory mechanics, approval-gates owns the moment a run begins.
 
-#### Scenario: Run directory created
+Run IDs SHALL be formatted as `run_<YYYYMMDD>_<NNN>` — a zero-padded 3-digit
+counter per day (e.g. `run_20260601_001`). The counter is persisted in
+`.parallel-code/state/run-counter.json` and resets per calendar day.
 
-- **WHEN** a conductor run with id `<run-id>` starts
+#### Scenario: Run directory created by the utility
+
+- **WHEN** the run-directory utility is invoked with id `<run-id>`
 - **THEN** the directory `.parallel-code/artifacts/runs/<run-id>/` exists
 - **AND** subsequent artifact writes for that run are placed within it
+
+#### Scenario: Run id format and counter
+
+- **WHEN** a run id is assigned on `2026-06-01` and it is the first run that day
+- **THEN** the run id is `run_20260601_001`
+- **AND** the counter is persisted in `.parallel-code/state/run-counter.json`
+- **AND** the next run that day is `run_20260601_002`
 
 ### Requirement: Canonical artifact names
 
 The app SHALL write each role's output to a canonical filename, exposed to the
 renderer as typed `ArtifactRef`s via `ConductorListArtifacts`.
+
+The typed reference is `ArtifactRef` (the single canonical name — not
+`ConductorArtifact`), defined in `src/ipc/types.ts`:
+
+```
+ArtifactRef {
+  runId: string
+  kind: 'plan' | 'accepted-plan' | 'diff' | 'test-report' | 'code-review' | 'ui-review' | 'final-summary'
+  path: string             // relative to the artifact run dir
+  producedByRole: RoleName
+  createdAt: string        // ISO 8601
+}
+```
+
+Canonical filename ↔ `kind` mapping:
+
+| Filename | `kind` | Produced by |
+|---|---|---|
+| `plan.md` | `plan` | planner |
+| `accepted-plan.md` | `accepted-plan` | (plan-approval gate) |
+| `implementation.diff` | `diff` | implementer / fixer |
+| `test-report.json` | `test-report` | implementer / fixer |
+| `code-review.md` | `code-review` | reviewer |
+| `ui-review.md` | `ui-review` | ui_verifier |
+| `final-summary.md` | `final-summary` | conductor |
 
 #### Scenario: Planner artifact
 

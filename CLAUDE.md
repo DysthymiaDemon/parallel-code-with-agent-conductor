@@ -56,6 +56,13 @@ isolation, structured artifacts, subscription-aware capacity, and human gates.
   active agents, 6 hard cap); never merge/push/install/migrate or write a
   protected path without a human gate; never log secret values.
 
+## ExecPlans
+
+When writing the conductor MVP or any feature spanning multiple OpenSpec
+changes, use an ExecPlan (as described in `PLANS.md`). Read `PLANS.md` before
+beginning any multi-change implementation. The conductor MVP ExecPlan is at
+`Starter Pack/Plan.md` — read it before starting any conductor work.
+
 ## For all agents (Claude Code, Codex, Gemini)
 
 `CLAUDE.md`, `AGENTS.md`, and `GEMINI.md` are kept identical on purpose. Edit

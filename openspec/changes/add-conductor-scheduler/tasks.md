@@ -11,8 +11,8 @@
 
 - [ ] 2.1 Implement `evaluateCapacity(plannedAgents)` returning: `fits` /
   `queued` (which steps wait and why) / `exceeds_hard_cap`.
-- [ ] 2.2 Enforce per-agent caps (`max_parallel_claude` default 1,
-  `max_parallel_codex` default 2, `max_parallel_google_visual` default 1) and
+- [ ] 2.2 Enforce per-agent caps (`max_parallel_claude_code` default 1,
+  `max_parallel_codex` default 2, `max_parallel_antigravity` default 1) and
   the global `max_active_agents`.
 - [ ] 2.3 Under `consumer_subscription`, refuse any plan requesting more than 6
   active agents and flag 20–30 agent fan-out as requiring an explicit mode
@@ -27,8 +27,8 @@
 
 ## 4. IPC surface
 
-- [ ] 4.1 Add `ConductorEvaluateCapacity` to the `IPC` enum and preload
-  allowlist.
+- [ ] 4.1 Add `ConductorCheckCapacity` (`'conductor_check_capacity'`) to the
+  `IPC` enum and preload allowlist.
 - [ ] 4.2 Add payload types to `src/ipc/types.ts`.
 
 ## 5. Verification

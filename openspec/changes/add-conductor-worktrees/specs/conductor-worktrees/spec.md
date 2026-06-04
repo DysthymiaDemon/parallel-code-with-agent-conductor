@@ -7,7 +7,32 @@
 The app SHALL create an isolated git worktree under the configured worktree root
 for writable roles, on a fresh branch named
 `{workflow}-{role}-{slug}-{timestamp}`, and SHALL NOT create a writable worktree
-for read-only roles. Creation is exposed through `ConductorCreateWorktree`.
+for read-only roles. Creation is exposed through `ConductorCreateWorktree`, which
+returns a `WorktreeRef`.
+
+`ConductorCreateWorktree` returns a typed reference:
+
+```
+WorktreeRef {
+  worktreePath: string
+  branchName: string
+  role: RoleName
+  runId: string
+}
+```
+
+The conductor persists each run's `WorktreeRef`s (in run state) so subsequent
+steps can look up a worktree by `role` + `runId`.
+
+Branch-name construction:
+
+- `{workflow}` = the selected workflow id (e.g. `plan-implement-review`).
+- `{role}` = the role id (e.g. `implementer`).
+- `{timestamp}` = `YYYYMMDD` (UTC).
+- `{slug}` = first 20 chars of the task text with non-alphanumeric chars
+  replaced by `-`, lowercased and trimmed to `[a-z0-9-]`.
+- The total branch name is truncated to 100 chars.
+- Example: `conductor-planner-fix-login-butto-20260604`.
 
 #### Scenario: Implementer gets a writable worktree
 
@@ -15,7 +40,9 @@ for read-only roles. Creation is exposed through `ConductorCreateWorktree`.
   a run
 - **THEN** a new worktree is created under `.worktrees/`
 - **AND** it is checked out on a new branch whose name encodes the workflow,
-  role, task slug, and a timestamp
+  role, task slug, and a `YYYYMMDD` timestamp
+- **AND** the returned `WorktreeRef` records the `worktreePath`, `branchName`,
+  `role`, and `runId`
 
 #### Scenario: Reviewer gets no writable worktree
 
@@ -24,10 +51,12 @@ for read-only roles. Creation is exposed through `ConductorCreateWorktree`.
 
 #### Scenario: Fixer reuses the implementer worktree
 
-- **WHEN** the `fixer` role runs for the same work item as a prior
-  `implementer` step
-- **THEN** it operates in the implementer's existing worktree rather than a new
-  one
+- **WHEN** `ConductorCreateWorktree` is called for role `fixer` with the same
+  `runId` as a prior `implementer` step
+- **THEN** the existing implementer worktree path is returned rather than
+  creating a new one
+- **AND** the returned `WorktreeRef` references the implementer's
+  `worktreePath` and `branchName`
 
 ### Requirement: Dirty repo and creation failure are explicit
 
@@ -45,7 +74,14 @@ proceed as if a worktree exists.
 ### Requirement: Protected-path policy classifies writes
 
 The app SHALL classify a target path against the protected-paths policy as
-`deny`, `ask`, or `allow`, exposed through `ConductorCheckProtectedPath`.
+`deny`, `ask`, or `allow`, exposed through `ConductorCheckProtectedPath`. When
+the policy file `.parallel-code/policies/protected-paths.yaml` does not exist,
+the app SHALL use a built-in default policy.
+
+Built-in default (used when the policy file is absent):
+
+- `deny_write`: `.env`, `.env.*`, `secrets/**`, `credentials/**`
+- `ask_before_write`: `package.json`, `package-lock.json`, `migrations/**`
 
 #### Scenario: Secret path is denied
 
@@ -62,6 +98,41 @@ The app SHALL classify a target path against the protected-paths policy as
 
 - **WHEN** a write to an ordinary source file (e.g. `src/foo.ts`) is checked
 - **THEN** the classification is `allow`
+
+#### Scenario: Missing policy file uses built-in default
+
+- **WHEN** `.parallel-code/policies/protected-paths.yaml` does not exist
+- **THEN** the app uses the built-in default policy: `deny_write` for `.env`,
+  `.env.*`, `secrets/**`, `credentials/**`; `ask_before_write` for
+  `package.json`, `package-lock.json`, `migrations/**`
+- **AND** a write to `.env` is still classified `deny`
+
+#### Scenario: Denied write fails the run
+
+- **WHEN** a write targets a `deny`-classified path
+- **THEN** the write is refused
+- **AND** the run transitions to `failed` with error detail identifying the
+  denied path
+
+### Requirement: Worktree cleanup is explicit and gated
+
+The app SHALL remove a conductor worktree only through `ConductorCleanupWorktree`,
+and SHALL NOT remove a worktree that still has uncommitted or unmerged work
+without an explicit caller request.
+
+#### Scenario: Cleanup removes a finished worktree
+
+- **WHEN** `ConductorCleanupWorktree` is called with a `WorktreeRef` for a run
+  whose work is complete
+- **THEN** the worktree directory and its branch registration are removed
+- **AND** the run's persisted `WorktreeRef` for that role is cleared
+
+#### Scenario: Cleanup of unknown ref is a no-op error
+
+- **WHEN** `ConductorCleanupWorktree` is called with a ref that does not match a
+  persisted worktree
+- **THEN** an explicit error result is returned
+- **AND** no unrelated worktree is removed
 
 ### Requirement: No merge or push from a conductor worktree
 
