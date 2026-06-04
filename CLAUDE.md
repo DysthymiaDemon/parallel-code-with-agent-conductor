@@ -56,6 +56,38 @@ isolation, structured artifacts, subscription-aware capacity, and human gates.
   active agents, 6 hard cap); never merge/push/install/migrate or write a
   protected path without a human gate; never log secret values.
 
+## Agent Division of Labour
+
+Claude and Codex have complementary strengths. Use each where it is strongest.
+
+**Claude (Anthropic) is best used for:**
+
+- Holistic reasoning — catching subtle logic errors, security implications,
+  architectural smell
+- Explaining *why* something is wrong, not just flagging it
+- Cross-file consistency checks (does new code contradict an existing pattern?)
+- Reviewing implementation against specs — did Codex satisfy the WHEN/THEN
+  scenarios in the OpenSpec changes?
+- Prose clarity: comments, error messages, naming quality
+- Planning, spec writing, and ambiguity resolution before implementation begins
+
+**Codex (OpenAI) is best used for:**
+
+- Implementing from specs — running the code, verifying it compiles, types
+  check, tests pass
+- Iterative fix loops — review, patch, re-test without human input
+- Staying grounded in the working tree (reads real files, runs real commands)
+- Catching issues that only surface at runtime
+- Running `openspec validate`, `npm run typecheck`, `npm test` and acting on
+  failures
+
+**Recommended workflow for this project:**
+
+1. Claude writes/reviews specs (OpenSpec changes) before any code is written.
+2. Codex implements from those specs using `/goal` mode.
+3. Claude reviews Codex's output against the spec intent (WHEN/THEN scenarios).
+4. Codex applies fixes; repeat until all validation commands pass.
+
 ## ExecPlans
 
 When writing the conductor MVP or any feature spanning multiple OpenSpec

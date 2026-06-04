@@ -28,6 +28,15 @@ communicates with Node.js backend exclusively via Electron IPC. IPC channel
 names live in `electron/ipc/channels.ts` (shared enum). Frontend uses strict
 TypeScript with SolidJS signals/stores and functional components only.
 
+**Agent division of labour:** Claude plans and reviews — it writes/refines the
+OpenSpec changes before any code, then reviews Codex's output against the
+WHEN/THEN scenarios for spec intent, cross-file consistency, and security/logic
+smell. Codex implements — it works from the specs in `/goal` mode, stays
+grounded in the real working tree, and runs `openspec validate`,
+`npm run typecheck`, and `npm test`, acting on failures in a fix loop until all
+validation passes. See `AGENTS.md` → "Agent Division of Labour" for the full
+split.
+
 **Key files:**
 - `electron/ipc/agents.ts` — `AgentDef` registry; real agent ids are
   `claude-code`, `codex`, `gemini`, `antigravity`, `opencode`, `copilot`
