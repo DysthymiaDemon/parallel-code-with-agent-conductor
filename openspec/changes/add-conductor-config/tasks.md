@@ -22,27 +22,49 @@
 ## 3. Default preset generation
 
 - [ ] 3.1 Generate `conductor.yaml` = **Ameen's Default — Subscription Aware**
-  when none exists: roles `planner→claude`, `implementer→codex`,
-  `reviewer→claude`, `ui_verifier→google_visual` (Antigravity preferred, Gemini
-  fallback), `fixer→codex`; capacity `mode: consumer_subscription`,
+  when none exists: roles `planner→claude-code`, `implementer→codex`,
+  `reviewer→claude-code`, `ui_verifier→antigravity` (fallback `gemini`),
+  `fixer→codex`; capacity `mode: consumer_subscription`,
   `target_active_agents: 3`, `max_active_agents: 6`, `default_effort: medium`.
 - [ ] 3.2 Never overwrite an existing committed `conductor.yaml`/`roles.yaml`.
-- [ ] 3.3 Ensure generated runtime dirs (`state/`, `artifacts/`, `agents/`)
-  remain git-ignored while `conductor.yaml`/`roles.yaml`/`workflows/`/
-  `policies/` are trackable (see `design.md`).
+- [ ] 3.3 Create `.parallel-code/.gitignore` containing:
+  ```
+  state/
+  artifacts/
+  worktrees/
+  agents/
+  ```
+  This ignores generated runtime directories while leaving `conductor.yaml`,
+  `roles.yaml`, `workflows/`, and `policies/` trackable by git.
+- [ ] 3.4 Generate a default `.parallel-code/policies/protected-paths.yaml`
+  when it does not exist, containing:
+  ```yaml
+  deny_write:
+    - .env
+    - .env.*
+    - secrets/**
+    - credentials/**
+  ask_before_write:
+    - package.json
+    - package-lock.json
+    - migrations/**
+  ```
 
 ## 4. Role resolver
 
 - [ ] 4.1 Add `electron/conductor/roles.ts` resolving a role to a concrete agent
-  with precedence: command override → `conductor.yaml` → `roles.yaml` →
-  built-in defaults.
+  with precedence: command override → `roles.yaml` (overlay) →
+  `conductor.yaml` → built-in defaults.
 - [ ] 4.2 Fall back primary→first-available-fallback; if none resolve, return an
   explicit unresolved result (no silent substitution).
 
 ## 5. IPC surface
 
-- [ ] 5.1 Add `ConductorLoadConfig` and `ConductorResolveRole` to the `IPC`
-  enum in `electron/ipc/channels.ts`; re-export to the preload allowlist in
+- [ ] 5.1 Add `ConductorLoadConfig` (`'conductor_load_config'`),
+  `ConductorValidateConfig` (`'conductor_validate_config'`),
+  `ConductorSaveConfig` (`'conductor_save_config'`), and `ConductorResolveRole`
+  (`'conductor_resolve_role'`) to the `IPC` enum in
+  `electron/ipc/channels.ts`; re-export to the preload allowlist in
   `electron/preload.cjs`.
 - [ ] 5.2 Add the request/response payload types to `src/ipc/types.ts`.
 

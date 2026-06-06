@@ -23,6 +23,11 @@ intent (Starter Pack) and executable, human-gated delivery (OpenSpec).
   agents normal / 6 hard cap, medium effort default. No agent swarms.
 - **Deterministic and auditable.** Fixed JSON/YAML recipes, structured
   artifacts, no ML router on day one.
+- **Claude plans, Codex implements.** Claude authors/reviews each OpenSpec
+  change and reviews Codex's output against the WHEN/THEN scenarios; Codex
+  implements from the specs in `/goal` mode and runs the validation commands.
+  See `AGENTS.md` → "Agent Division of Labour" and the ExecPlan in `Plan.md`
+  (format defined in `PLANS.md`).
 
 ## 2. Dependency Order
 
@@ -39,9 +44,14 @@ add-conductor-config        (foundation: nothing else works without it)
 Rationale: config is the spine (role resolver + preset). Auth inspector and
 scheduler are independent of each other but both feed the dry-run preview.
 Dry-run is the first user-visible behavior and must exist before any real
-agent launches. Worktrees precede artifacts (artifacts are written into the
-run dir created alongside the worktree). Approval gates are last because they
-wrap the write/commit/merge operations introduced by worktrees + artifacts.
+agent launches. Worktrees precede artifacts (writable roles need a worktree
+before any artifact is written). `add-conductor-artifacts` provides the
+run-directory utility, but the run only *starts* — and the run directory is
+created — when the user approves a dry-run, which is owned by
+`add-conductor-approval-gates`. This split avoids a circular dependency:
+artifacts owns the directory mechanics, approval-gates owns the run-start
+trigger. Approval gates are last because they also wrap the
+write/commit/merge operations introduced by worktrees + artifacts.
 
 ## 3. Phases
 
@@ -63,10 +73,12 @@ capacity caps (3/6) are enforced as pure policy with no agents running.
 |---|---|---|
 | `add-conductor-dry-run` | 6, 7, 11 / Ticket 4 | `conductor-dry-run` |
 
-Exit criteria: `/conduct <task> --dry-run` classifies the task, selects a
-workflow (`plan-implement-review` vs `ui-build-verify`), and shows the agents,
-worktrees, permissions, expected artifacts, capacity plan, and auth warnings —
-then waits for explicit approve/cancel. No agent is launched.
+Exit criteria: `/conduct <task> --dry-run` classifies the task and selects one
+of the four fixed workflows (`simple-codex`, `plan-implement-review`,
+`ui-build-verify`, `bug-hunt`) using case-insensitive keyword signals, and
+shows the agents, worktrees, permissions, expected artifacts, capacity plan,
+and auth warnings — then waits for explicit approve/cancel. No agent is
+launched.
 
 ### Phase 2 — Isolated execution + handoff
 
@@ -76,9 +88,11 @@ then waits for explicit approve/cancel. No agent is launched.
 | `add-conductor-artifacts` | 10 / Ticket 6 | `conductor-artifacts` |
 
 Exit criteria: writable roles run in `.worktrees/`; protected paths are
-deny/ask-enforced; each run gets `.parallel-code/artifacts/runs/<run-id>/` and
-the plan→implementation→review→final artifacts move between steps as files,
-not transcripts.
+deny/ask-enforced; the run-directory utility for
+`.parallel-code/artifacts/runs/<run-id>/` exists and the
+plan→implementation→review→final artifacts move between steps as files, not
+transcripts. (The directory is *created* when a dry-run is approved in Phase 3;
+this phase delivers the mechanics, canonical filenames, and handoff contract.)
 
 ### Phase 3 — Human gates (closes the loop)
 
@@ -86,11 +100,14 @@ not transcripts.
 |---|---|---|
 | `add-conductor-approval-gates` | 15 / Ticket 6 | `conductor-approval-gates` |
 
-Exit criteria: plan approval before implementation; fix approval before merge;
-no commit/push/merge/package-install/migration/protected-path write without an
-explicit human gate. The run exposes basic states: `ready-for-review`,
-`ready-for-merge`, `blocked`, `failed`, `needs-human`, and `retry-once`.
-The §52 "first real workflow" runs end to end.
+Exit criteria: approving a dry-run assigns a `run_<YYYYMMDD>_<NNN>` run-id and
+creates the run directory (via the artifacts utility); plan approval before
+implementation; fix approval before merge; no
+commit/push/merge/package-install/migration/protected-path write without an
+explicit human gate; a `deny`-classified write is refused and transitions the
+run to `failed`; pending gates persist across restarts. The run exposes basic
+states: `ready-for-review`, `ready-for-merge`, `blocked`, `failed`,
+`needs-human`, and `retry-once`. The §52 "first real workflow" runs end to end.
 
 ## 4. Acceptance Traceability
 
@@ -105,7 +122,7 @@ the relevant `spec.md`.
 | `/conduct` creates a run + resolves workflow (§20.3–4) | dry-run |
 | Worktrees per policy (§20.5) | worktrees |
 | Planner→Implementer→Reviewer→Fixer artifacts (§20.7–11) | artifacts |
-| Artifacts under `runs/<run-id>/` (§20.12) | artifacts |
+| Artifacts under `runs/<run-id>/` (§20.12) | artifacts (utility) + approval-gates (run-start trigger) |
 | Per-run role/agent/task/artifact traceability | artifacts |
 | Approve plan + final merge (§20.13) | approval-gates |
 | Ready-for-review / ready-for-merge states | approval-gates |

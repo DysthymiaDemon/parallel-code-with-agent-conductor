@@ -21,11 +21,11 @@ agents are launched and nothing is written to the working tree by this change.
 - Parse and **validate** that config; on invalid config, surface a precise,
   actionable error instead of failing silently.
 - Generate a default `conductor.yaml` (the **Ameen's Default** preset) when none
-  exists, binding `planner→claude`, `implementer→codex`, `reviewer→claude`,
-  `ui_verifier→google_visual (Antigravity preferred, Gemini fallback)`,
+  exists, binding `planner→claude-code`, `implementer→codex`,
+  `reviewer→claude-code`, `ui_verifier→antigravity` (fallback `gemini`),
   `fixer→codex`, with Consumer Subscription capacity defaults.
 - Implement a **role resolver** with precedence: explicit command override →
-  `conductor.yaml` → `roles.yaml` → built-in defaults.
+  `roles.yaml` (overlay) → `conductor.yaml` → built-in defaults.
 - Keep durable committed config separate from generated runtime state inside
   `.parallel-code/` (see `design.md`).
 

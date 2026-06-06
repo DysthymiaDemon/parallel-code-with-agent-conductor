@@ -22,9 +22,9 @@ launch agents, does not read secret *values*, and does not change auth itself.
   agent's auth posture as `subscription_preferred`, `api_key_detected`, or
   `unknown`.
 - Surface a structured per-run auth decision the UI can render with options
-  (use subscription login / use API key once / cancel) — the *decision plumbing*
-  only; enforcement of "block unless explicit" is asserted here, while the
-  actual launch happens in a later change.
+  (use subscription login / use API key once / unset for this run / cancel) —
+  the *decision plumbing* only; enforcement of "block unless explicit" is
+  asserted here, while the actual launch happens in a later change.
 - Detect only the **presence** of the named env vars; never log or return secret
   values.
 

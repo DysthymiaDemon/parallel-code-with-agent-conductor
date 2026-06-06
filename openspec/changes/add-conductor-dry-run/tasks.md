@@ -1,11 +1,31 @@
+## 0. Workflow preset files
+
+- [ ] 0.1 Generate four fixed workflow preset YAMLs in
+  `.parallel-code/workflows/` if absent: `simple-codex.yaml`,
+  `plan-implement-review.yaml`, `ui-build-verify.yaml`, `bug-hunt.yaml`.
+  Include their step definitions with the correct agent ids per the spec's
+  workflow-preset tables (`planner→claude-code`, `implementer→codex`,
+  `reviewer→claude-code`, `ui_verifier→antigravity` fallback `gemini`,
+  `fixer→codex`). Never use placeholder ids (`claude`, `google_visual`).
+- [ ] 0.2 Validate every step's `agent` against the `AgentDef` registry on load.
+
 ## 1. Task classifier
 
-- [ ] 1.1 Add `electron/conductor/classify.ts` with deterministic rules mapping
-  a task string to a workflow: UI signals (ui, screen, page, responsive,
-  component, layout, css) → `ui-build-verify`; otherwise → `plan-implement-review`.
+- [ ] 1.1 Add `electron/conductor/classify.ts` with deterministic,
+  case-insensitive keyword rules mapping a task string to a workflow:
+  - UI signals (`button`, `modal`, `form`, `dialog`, `sidebar`, `style`,
+    `animation`, `color`, `icon`, `theme`, `font`, `visual`, `render`, `screen`,
+    `layout`, `component`, `css`, `ui`, `page`, `responsive`) →
+    `ui-build-verify`.
+  - Bug signals (`fix`, `bug`, `regression`, `broken`, `error`, `crash`) →
+    `bug-hunt`.
+  - Substantive feature/backend tasks with no UI or bug signals →
+    `plan-implement-review`.
+  - Default fallback for a single-agent codex-only task matching no signal set →
+    `simple-codex`.
 - [ ] 1.2 Honor an explicit `--workflow=` override ahead of classification.
-- [ ] 1.3 Return the chosen workflow plus the signals that drove the choice (for
-  display/audit).
+- [ ] 1.3 Return the chosen workflow plus the matched signal keywords that drove
+  the choice (for display/audit in the dry-run preview).
 
 ## 2. Dry-run composition
 
@@ -33,9 +53,11 @@
 
 ## 5. Verification
 
-- [ ] 5.1 Unit tests: a backend task selects `plan-implement-review`; a UI task
-  selects `ui-build-verify`; `--workflow=` overrides classification;
-  `--implementer=` override changes the resolved agent; the preview includes a
-  capacity plan and auth warnings; a cancel produces zero side effects.
+- [ ] 5.1 Unit tests: a backend feature task selects `plan-implement-review`; a
+  UI task selects `ui-build-verify`; a bug task (`fix`/`regression`) selects
+  `bug-hunt`; an unmatched task falls back to `simple-codex`; matching is
+  case-insensitive; `--workflow=` overrides classification; `--implementer=`
+  override changes the resolved agent; the preview includes a capacity plan and
+  auth warnings; a cancel produces zero side effects.
 - [ ] 5.2 `npm run typecheck` clean.
 - [ ] 5.3 `openspec validate --all --strict` passes.

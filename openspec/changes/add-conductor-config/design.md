@@ -42,15 +42,32 @@ defaults (silent fallback would mask a typo that changes which agent runs).
 
 ```text
 1. explicit command override   (e.g. /conduct ... --implementer=codex)
-2. .parallel-code/conductor.yaml roles block
-3. .parallel-code/roles.yaml
+2. .parallel-code/roles.yaml   (overlay — replaces, does not merge)
+3. .parallel-code/conductor.yaml roles block
 4. built-in defaults (Ameen's Default)
 ```
+
+`roles.yaml` has higher precedence than `conductor.yaml` because it is an
+overlay: a binding it defines replaces the entire corresponding binding from
+`conductor.yaml` rather than merging with it.
 
 Resolution returns the primary agent if available in the registry, otherwise
 the first available fallback, otherwise an explicit "unresolved role" result
 (never a silent substitution). Availability here means "present in the registry
 and not disabled" — auth/installation checks belong to `add-conductor-auth-inspector`.
+
+## IPC Channel Namespace
+
+New conductor channels use the `Conductor*` prefix exclusively. The existing
+`SetCoordinatorModeEnabled` and `MCP_*` channels in `electron/ipc/channels.ts`
+belong to the separate `coordinator-mcp-backend` OpenSpec change and must not
+be modified by any `add-conductor-*` change.
+
+## TypeScript Types Location
+
+All conductor TypeScript types are added to `src/ipc/types.ts` (augmenting the
+existing file). Do not create a new `src/ipc/conductor-types.ts` — that would
+fragment the shared type surface and make IPC types harder to discover.
 
 ## Why no agent launches here
 

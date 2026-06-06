@@ -37,9 +37,10 @@ paths.
 
 - **Code (new):** `electron/conductor/worktrees.ts`,
   `electron/conductor/protected-paths.ts`. Reuses existing git plumbing in
-  `electron/ipc/git.ts`. New IPC channels `ConductorCreateWorktree` and
-  `ConductorCheckProtectedPath` on the `IPC` enum + preload allowlist; payload
-  types in `src/ipc/types.ts`.
+  `electron/ipc/git.ts`. New IPC channels `ConductorCreateWorktree`,
+  `ConductorCleanupWorktree`, and `ConductorCheckProtectedPath` on the `IPC`
+  enum + preload allowlist; `WorktreeRef` and payload types in
+  `src/ipc/types.ts`.
 - **Depends on:** `add-conductor-config` (worktree + protected-path policy).
 - **Filesystem:** creates branches and directories under `.worktrees/`.
 - **Approval coupling:** the `ask_before_write` gate and the no-merge/no-push

@@ -18,7 +18,7 @@ the config does not specify another.
 
 The app SHALL evaluate a planned set of agents/steps and report whether it fits
 within the active caps, which steps would queue, or whether it exceeds the hard
-cap. Evaluation is exposed through `ConductorEvaluateCapacity`.
+cap. Evaluation is exposed through `ConductorCheckCapacity`.
 
 #### Scenario: Plan fits
 
@@ -34,9 +34,9 @@ cap. Evaluation is exposed through `ConductorEvaluateCapacity`.
 
 #### Scenario: Per-agent cap queues excess
 
-- **WHEN** a plan requests 3 concurrent `claude` agents
-- **AND** `max_parallel_claude` is 1
-- **THEN** the evaluation queues the 2nd and 3rd `claude` steps
+- **WHEN** a plan requests 3 concurrent `claude-code` agents
+- **AND** `max_parallel_claude_code` is 1
+- **THEN** the evaluation queues the 2nd and 3rd `claude-code` steps
 - **AND** the result records the reason as the per-agent Claude cap
 
 ### Requirement: Refuse agent-swarm fan-out under consumer subscription
