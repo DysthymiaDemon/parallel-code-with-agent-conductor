@@ -120,3 +120,34 @@ after an app restart rather than auto-rejecting or auto-approving it.
 - **WHEN** a gate becomes pending
 - **THEN** its state is written to `.parallel-code/state/pending-gates.json`
 - **AND** a resolved gate is removed from that file
+
+### Requirement: Runs expose basic lifecycle states
+
+The app SHALL track each run's lifecycle as a `RunState` and SHALL transition
+the state in response to gate outcomes, failures, and step completions.
+
+```
+RunState = 'ready-for-review' | 'ready-for-merge' | 'blocked' | 'failed'
+         | 'needs-human' | 'retry-once'
+```
+
+#### Scenario: Denied path transitions to failed
+
+- **WHEN** a write targets a `deny`-classified protected path
+- **THEN** the run's state transitions to `failed`
+
+#### Scenario: Pending gate transitions to needs-human
+
+- **WHEN** a gate is raised for any gated operation
+- **THEN** the run's state transitions to `needs-human` until the gate is
+  resolved
+
+#### Scenario: Review complete transitions to ready-for-review
+
+- **WHEN** a reviewer step completes and produces `code-review.md`
+- **THEN** the run's state transitions to `ready-for-review`
+
+#### Scenario: Final approval transitions to ready-for-merge
+
+- **WHEN** the user approves the final-approval gate
+- **THEN** the run's state transitions to `ready-for-merge`

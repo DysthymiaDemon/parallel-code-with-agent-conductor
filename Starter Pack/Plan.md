@@ -153,6 +153,14 @@ npm run dev
 type RoleName = 'planner' | 'implementer' | 'reviewer' | 'ui_verifier' | 'fixer'
 type AgentId = string  // must exist in electron/ipc/agents.ts AgentDef registry
 
+type RunState =
+  | 'ready-for-review'
+  | 'ready-for-merge'
+  | 'blocked'
+  | 'failed'
+  | 'needs-human'
+  | 'retry-once'
+
 interface RoleBinding {
   roleId: RoleName
   primary: AgentId
@@ -169,16 +177,32 @@ interface CapacityConfig {
 
 interface AuthPolicy {
   warnOnApiKeys: boolean
+  preferSubscriptionAuth: boolean          // default true
+  blockApiKeysUnlessExplicit: boolean      // default true
   envApiKeys: string[]
 }
 
 interface ApprovalConfig {
-  requirePlanApproval: boolean
-  requireMergeApproval: boolean
+  requirePlanApproval: boolean             // default true
+  requireMergeApproval: boolean            // default true
+  requireFixApproval: boolean              // default true
+  requirePackageInstallApproval: boolean   // default true
+  requireMigrationApproval: boolean        // default true
+  requirePushApproval: boolean             // default true
+  blockOnDenyPath: boolean                 // default true
+  persistGatesAcrossRestarts: boolean      // default true
+  beforeFirstWrite: boolean               // default false
+  beforeCommit: boolean                    // default true
+  beforeMerge: boolean                     // default true
+  beforePush: boolean                      // default true
+  beforePackageInstall: boolean            // default true
+  beforeDatabaseMigration: boolean         // default true
+  beforeDelete: boolean                    // default true
+  beforeTouchingProtectedPaths: boolean    // default true
 }
 
 interface WorktreeConfig {
-  baseDir: string       // default '.parallel-code/worktrees'
+  baseDir: string       // default '.worktrees' (matches existing project convention)
   branchPrefix: string  // default 'conductor'
 }
 

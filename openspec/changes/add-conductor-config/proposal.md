@@ -25,7 +25,7 @@ agents are launched and nothing is written to the working tree by this change.
   `reviewer→claude-code`, `ui_verifier→antigravity` (fallback `gemini`),
   `fixer→codex`, with Consumer Subscription capacity defaults.
 - Implement a **role resolver** with precedence: explicit command override →
-  `conductor.yaml` → `roles.yaml` → built-in defaults.
+  `roles.yaml` (overlay) → `conductor.yaml` → built-in defaults.
 - Keep durable committed config separate from generated runtime state inside
   `.parallel-code/` (see `design.md`).
 

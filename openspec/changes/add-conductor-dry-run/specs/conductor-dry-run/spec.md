@@ -156,7 +156,7 @@ structure for each preset is:
 |---|---|---|---|---|---|
 | 1 | implementer | codex | — | implementation.diff, test-report.json, final-summary.md | — |
 | 2 | reviewer | claude-code | implementation.diff, test-report.json | code-review.md | — |
-| 3 | fixer | codex | code-review.md, implementation.diff | implementation.diff, test-report.json | — |
+| 3 | fixer | codex | code-review.md, implementation.diff | implementation.diff, test-report.json, final-summary.md | — |
 | 4 | (gate) | — | code-review.md, final-summary.md | — | final-approval |
 
 #### Scenario: Missing preset generated from default

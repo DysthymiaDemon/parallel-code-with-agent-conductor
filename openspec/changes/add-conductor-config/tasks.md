@@ -53,8 +53,8 @@
 ## 4. Role resolver
 
 - [ ] 4.1 Add `electron/conductor/roles.ts` resolving a role to a concrete agent
-  with precedence: command override → `conductor.yaml` → `roles.yaml` →
-  built-in defaults.
+  with precedence: command override → `roles.yaml` (overlay) →
+  `conductor.yaml` → built-in defaults.
 - [ ] 4.2 Fall back primary→first-available-fallback; if none resolve, return an
   explicit unresolved result (no silent substitution).
 

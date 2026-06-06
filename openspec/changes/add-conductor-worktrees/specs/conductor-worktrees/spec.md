@@ -32,7 +32,7 @@ Branch-name construction:
 - `{slug}` = first 20 chars of the task text with non-alphanumeric chars
   replaced by `-`, lowercased and trimmed to `[a-z0-9-]`.
 - The total branch name is truncated to 100 chars.
-- Example: `conductor-planner-fix-login-butto-20260604`.
+- Example: `bug-hunt-implementer-fix-login-butto-20260604`.
 
 #### Scenario: Implementer gets a writable worktree
 

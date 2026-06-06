@@ -42,10 +42,14 @@ defaults (silent fallback would mask a typo that changes which agent runs).
 
 ```text
 1. explicit command override   (e.g. /conduct ... --implementer=codex)
-2. .parallel-code/conductor.yaml roles block
-3. .parallel-code/roles.yaml
+2. .parallel-code/roles.yaml   (overlay — replaces, does not merge)
+3. .parallel-code/conductor.yaml roles block
 4. built-in defaults (Ameen's Default)
 ```
+
+`roles.yaml` has higher precedence than `conductor.yaml` because it is an
+overlay: a binding it defines replaces the entire corresponding binding from
+`conductor.yaml` rather than merging with it.
 
 Resolution returns the primary agent if available in the registry, otherwise
 the first available fallback, otherwise an explicit "unresolved role" result
