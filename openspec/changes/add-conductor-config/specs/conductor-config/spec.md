@@ -78,8 +78,10 @@ fall back to defaults when the file exists but is invalid.
 ### Requirement: Deterministic role resolution with precedence
 
 The app SHALL resolve a workflow role to a concrete registered agent using the
-precedence: explicit command override, then `conductor.yaml`, then `roles.yaml`,
-then built-in defaults. Resolution SHALL be exposed through the
+precedence: explicit command override → `roles.yaml` (overlay) →
+`conductor.yaml` (base) → built-in defaults. `roles.yaml` acts as an overlay: a
+binding it defines replaces the entire corresponding binding from `conductor.yaml`
+rather than merging with it. Resolution SHALL be exposed through the
 `ConductorResolveRole` IPC channel and SHALL never silently substitute an agent
 the configuration did not specify.
 
@@ -90,9 +92,10 @@ the configuration did not specify.
 - **AND** `conductor.yaml` binds `implementer→claude-code`
 - **THEN** the resolver returns `codex`
 
-#### Scenario: Config used when no override
+#### Scenario: Config used when no override and no roles.yaml
 
 - **WHEN** `ConductorResolveRole` is sent for `planner` with no override
+- **AND** no `roles.yaml` is present
 - **AND** `conductor.yaml` binds `planner→claude-code`
 - **THEN** the resolver returns `claude-code`
 
@@ -109,10 +112,12 @@ the configuration did not specify.
 - **THEN** the resolver returns an explicit unresolved result for that role
 - **AND** does not substitute an unrelated agent
 
-### Requirement: roles.yaml overlay replaces entire role bindings
+### Requirement: roles.yaml overlay takes priority over conductor.yaml
 
 When `.parallel-code/roles.yaml` is present, its entries replace, not merge
-into, the corresponding role bindings from `conductor.yaml`.
+into, the corresponding role bindings from `conductor.yaml`. This is why
+`roles.yaml` has higher precedence than `conductor.yaml` in the resolution
+chain: command override → roles.yaml → conductor.yaml → built-in defaults.
 
 #### Scenario: roles.yaml entry replaces conductor.yaml entry
 
@@ -159,16 +164,32 @@ interface CapacityConfig {
 
 interface AuthPolicy {
   warnOnApiKeys: boolean
+  preferSubscriptionAuth: boolean          // default true
+  blockApiKeysUnlessExplicit: boolean      // default true
   envApiKeys: string[]
 }
 
 interface ApprovalConfig {
-  requirePlanApproval: boolean
-  requireMergeApproval: boolean
+  requirePlanApproval: boolean             // default true
+  requireMergeApproval: boolean            // default true
+  requireFixApproval: boolean              // default true
+  requirePackageInstallApproval: boolean   // default true
+  requireMigrationApproval: boolean        // default true
+  requirePushApproval: boolean             // default true
+  blockOnDenyPath: boolean                 // default true
+  persistGatesAcrossRestarts: boolean      // default true
+  beforeFirstWrite: boolean                // default false
+  beforeCommit: boolean                    // default true
+  beforeMerge: boolean                     // default true
+  beforePush: boolean                      // default true
+  beforePackageInstall: boolean            // default true
+  beforeDatabaseMigration: boolean         // default true
+  beforeDelete: boolean                    // default true
+  beforeTouchingProtectedPaths: boolean    // default true
 }
 
 interface WorktreeConfig {
-  baseDir: string       // default '.parallel-code/worktrees'
+  baseDir: string       // default '.worktrees' (matches existing project convention)
   branchPrefix: string  // default 'conductor'
 }
 

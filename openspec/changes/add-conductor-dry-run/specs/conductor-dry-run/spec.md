@@ -127,7 +127,7 @@ structure for each preset is:
 
 | Step | role | agent | inputs | outputs | gate |
 |---|---|---|---|---|---|
-| 1 | implementer | codex | — | implementation.diff, test-report.json | — |
+| 1 | implementer | codex | — | implementation.diff, test-report.json, final-summary.md | — |
 
 **`plan-implement-review.yaml`** — plan → gate → implement → review → gate:
 
@@ -136,7 +136,7 @@ structure for each preset is:
 | 1 | planner | claude-code | — | plan.md | — |
 | 2 | (gate) | — | plan.md | accepted-plan.md | plan-approval |
 | 3 | implementer | codex | accepted-plan.md | implementation.diff, test-report.json | — |
-| 4 | reviewer | claude-code | accepted-plan.md, implementation.diff, test-report.json | code-review.md | — |
+| 4 | reviewer | claude-code | accepted-plan.md, implementation.diff, test-report.json | code-review.md, final-summary.md | — |
 | 5 | (gate) | — | code-review.md, final-summary.md | — | final-approval |
 
 **`ui-build-verify.yaml`** — plan → implement → UI verify → review:
@@ -147,14 +147,14 @@ structure for each preset is:
 | 2 | (gate) | — | plan.md | accepted-plan.md | plan-approval |
 | 3 | implementer | codex | accepted-plan.md | implementation.diff, test-report.json | — |
 | 4 | ui_verifier | antigravity (fallback gemini) | implementation.diff | ui-review.md | — |
-| 5 | reviewer | claude-code | implementation.diff, ui-review.md | code-review.md | — |
+| 5 | reviewer | claude-code | implementation.diff, ui-review.md | code-review.md, final-summary.md | — |
 | 6 | (gate) | — | code-review.md, final-summary.md | — | final-approval |
 
 **`bug-hunt.yaml`** — implement fix → review → fix loop:
 
 | Step | role | agent | inputs | outputs | gate |
 |---|---|---|---|---|---|
-| 1 | implementer | codex | — | implementation.diff, test-report.json | — |
+| 1 | implementer | codex | — | implementation.diff, test-report.json, final-summary.md | — |
 | 2 | reviewer | claude-code | implementation.diff, test-report.json | code-review.md | — |
 | 3 | fixer | codex | code-review.md, implementation.diff | implementation.diff, test-report.json | — |
 | 4 | (gate) | — | code-review.md, final-summary.md | — | final-approval |
