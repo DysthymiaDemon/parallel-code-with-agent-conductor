@@ -1,6 +1,8 @@
 # Gemini vs Claude vs Codex: Strengths, Role Assignment, and Ideal Multi-Agent Architecture
 
 **Date:** 2026-06-01
+**Status:** Dated supporting research only. Agent capabilities, pricing, and
+auth behavior may have changed; verify current primary sources before use.
 **Goal:** Compare Gemini/Antigravity, Claude/Claude Code, and OpenAI Codex for an agentic coding workflow, then define an ideal architecture and handoff model for a Parallel Code-based multi-agent orchestrator.
 
 ---

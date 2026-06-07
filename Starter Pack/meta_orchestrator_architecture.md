@@ -1,7 +1,9 @@
 # Current Architecture Decision: Parallel Code Fork First
 
 **Update date:** 2026-06-01 13:32:40 UTC
-**Current status:** This document is now Parallel Code-based.
+**Status:** Retained architecture reference; not authoritative for MVP
+interfaces, safety guarantees, or implementation order. Use `README.md`,
+`Goal.md`, `Plan.md`, and OpenSpec for current delivery decisions.
 
 ```text
 Parallel Code fork first.
@@ -19,7 +21,8 @@ Keep editor integration optional.
 
 The MVP is **not** a future editor-native path. The MVP is a **Parallel Code fork** amended into Parallel Code with Agent Conductor.
 
-Use this architecture as the source of truth:
+Use this as a reference model only; current delivery authority is defined in
+`README.md`, `Goal.md`, `Plan.md`, and OpenSpec:
 
 ```text
 Parallel Code fork
@@ -1113,7 +1116,7 @@ file_leases(
 
 ---
 
-## 21. MVP Implementation Plan
+## 21. Historical Architecture Phase Sketch
 
 ### Phase 1: Manual Cross-Thread Routing
 

@@ -27,3 +27,18 @@ jobs:
 
       - name: Format check
         run: npm run format:check
+
+      - name: Unit and integration tests
+        run: npm test
+
+      - name: Architecture boundaries
+        run: npm run lint:arch
+
+      - name: Dead code
+        run: npm run lint:dead
+
+      - name: Conductor governance
+        run: npm run check:governance
+
+      - name: OpenSpec strict validation
+        run: npm run check:spec

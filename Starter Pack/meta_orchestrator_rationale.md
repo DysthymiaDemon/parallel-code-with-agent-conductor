@@ -1,7 +1,8 @@
 # Current Rationale Decision: Parallel Code First
 
 **Update date:** 2026-06-01 13:32:40 UTC
-**Current status:** This document is now Parallel Code-based.
+**Status:** Retained product rationale; not implementation authority. Use
+`README.md`, `Goal.md`, `Plan.md`, and OpenSpec for current delivery decisions.
 
 ```text
 The MVP is a Parallel Code fork amended into Parallel Code with Agent Conductor.

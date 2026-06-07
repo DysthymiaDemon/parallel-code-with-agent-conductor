@@ -26,6 +26,14 @@ before beginning any multi-change implementation work.
 4. **Log every non-obvious decision in the Decision Log** with date and
    rationale. Future sessions must not re-derive it.
 5. **Do not fill Outcomes & Retrospective** until the entire plan is complete.
+6. **Promote durable architecture decisions to `docs/adr/`.** The ExecPlan may
+   summarize them, but decisions that constrain future implementations need a
+   stable ADR and must not live only in a mutable plan.
+7. **Require a Codex repository-validation gate.** A conceptual plan is not
+   executable until Codex has inspected the actual repository and updated the
+   plan with real affected files, existing patterns, tests, edge cases,
+   dependency/migration risks, recovery behavior, and safer implementation
+   order.
 
 ## Required Sections
 
@@ -61,6 +69,9 @@ Every ExecPlan contains these sections in this order. All are non-negotiable.
 - **`tasks.md` wins over `Plan.md`** when the two disagree on IPC channel names,
   type names, or file paths. The spec files are authoritative; Plan.md is
   orientation.
+- Research tools, plugins, MCP servers, and parallel agents provide evidence,
+  not authority. Record useful sources and verify safety-critical claims against
+  primary documentation, pinned versions, and repository behavior.
 
 ## ExecPlan Skeleton
 

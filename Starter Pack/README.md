@@ -1,60 +1,93 @@
-This index defines the current Starter Pack source order for Parallel Code with Agent Conductor.
-
 # Starter Pack
 
-## Current Decision
+This directory contains product intent, the living MVP plan, safety policy, and
+supporting research for the Role-Aware Conductor. It is deliberately smaller
+than the original discovery bundle: completed alignment reports and the raw
+chat-context bundle were removed after their durable decisions were folded into
+this index and `Plan.md`.
 
-Build **Parallel Code with Agent Conductor** as a Parallel Code/Electron-first product:
+## Authority Order
 
-- Base: Parallel Code fork
-- Stack: Electron, SolidJS, TypeScript, Node.js
-- Agent model: real local CLIs for Codex, Claude Code, Gemini/Antigravity, and future compatible agents
-- Isolation: git branches and `.worktrees/`
-- Canonical project config: `.parallel-code/`
-- Editor integration: optional future bridge, not MVP base
+Resolve conflicts in this order:
 
-## Authoritative Docs
+1. Current repository behavior and constraints.
+2. `Goal.md` for the durable MVP outcome, scope, and stop condition.
+3. `openspec/changes/add-conductor-*/` for executable requirements and tasks.
+4. `Plan.md` for implementation order, discoveries, decisions, and progress.
+5. `project-runbook-safe-ai-agent-development.md` for development safety policy.
+6. The feature specification for broader product intent.
+7. Architecture, rationale, and research documents for background only.
 
-Read these first:
+OpenSpec capability specs win over `Plan.md` on behavior and interfaces.
+Neither may silently expand the scope fixed by `Goal.md`.
 
-1. `role-aware-conductor-feature-with-antfarm-and-gas-town-and-subscription-capacity-constraint.md` — primary feature spec.
-2. `project-runbook-safe-ai-agent-development.md` — safe development runbook.
-3. `meta_orchestrator_architecture.md` — architecture direction for the Parallel Code fork.
-4. `meta_orchestrator_rationale.md` — product and technical rationale.
-5. `Goal.md` — durable MVP objective and scope boundary; the Codex `/goal`
-   entry point.
-6. `Plan.md` — the living ExecPlan aligned to `Goal.md` (progress, decision
-   log, surprises). Format defined in `../PLANS.md`.
-7. `../PLANS.md` — ExecPlan format guide: when and how Codex writes/follows a
-   plan.
+## Read First
 
-The **authoritative "how" for delivery** is the seven sequenced
-`openspec/changes/add-conductor-*` changes (proposal + tasks + spec). The
-Starter Pack docs are the durable "why"; the OpenSpec changes are the
-executable "what/how". Agent roles are split in `../AGENTS.md` → "Agent
-Division of Labour" (Claude plans/reviews, Codex implements/validates).
+1. `Goal.md`
+2. `Plan.md`
+3. The relevant `openspec/changes/add-conductor-*/` change
+4. `project-runbook-safe-ai-agent-development.md` for safety-sensitive work
 
-## Supporting Research
+The ten current conductor changes, in dependency order, are:
 
-Use these as context, not as implementation authority:
+1. `add-conductor-config`
+2. `add-conductor-agent-adapters`
+3. `add-conductor-auth-inspector`
+4. `add-conductor-scheduler`
+5. `add-conductor-run-store`
+6. `add-conductor-dry-run`
+7. `add-conductor-worktrees`
+8. `add-conductor-artifacts`
+9. `add-conductor-execution-adapter`
+10. `add-conductor-approval-gates`
 
-- `online_research_agent_orchestrator_consensus_and_products.md`
-- `Deep Research/gemini_claude_codex_strengths_architecture_handoff.md`
-- `Deep Research/Frontier model comparison of Claude, Codex, Gemini and DeepSeek_deep-research-report.md`
+The machine-readable dependency graph and invariant registry live at
+`openspec/conductor-governance.json`; `npm run check:governance` checks this
+index, `Goal.md`, `Plan.md`, change directories, and identical agent guidance.
 
-Research may mention Zed, ACP, editor-native paths, or older product comparisons. Treat those as market evidence or future options unless the authoritative docs say otherwise.
+## Durable Decisions
 
-## Handoff Context
+- Build on the existing Parallel Code Electron/SolidJS/Node application.
+- Reuse the existing task, worktree, PTY, diff, and MCP coordinator plumbing,
+  but add a conductor-specific restricted execution boundary.
+- Keep manual Parallel Code task flows unchanged.
+- Use Claude for conceptual architecture, UI direction, and readable initial
+  planning; require Codex to pressure-test non-trivial plans against the actual
+  repository before implementation.
+- Use deterministic fixed workflows before any adaptive router or marketplace.
+- Consumer-conservative scheduling defaults to 3 active agents and a hard cap
+  of 6; it is a local safety policy, not measured provider quota.
+- Provider-specific adapters prefer structured control interfaces and expose
+  PTY fallback limitations.
+- One transactional run store owns lifecycle, approvals, event history, and
+  external-effect intents.
+- Approval freezes an immutable versioned run manifest.
+- Dry-run has zero side effects.
+- Never claim a worktree is a filesystem sandbox.
+- Never merge, push, install, migrate, or perform a conductor-initiated
+  protected operation without its required human gate.
+- Never log or persist secret values.
+- Keep editor-native integration, swarms, enterprise billing, and long-term
+  agent memory outside the MVP.
 
-`context.md` is a long context bundle. Use it to recover conversation history, but resolve conflicts in this order:
+## Retained Reference Documents
 
-1. Current repo state
-2. This `README.md`
-3. Primary feature spec
-4. Runbook
-5. Architecture/rationale docs
-6. Research snapshots
+- `role-aware-conductor-feature-with-antfarm-and-gas-town-and-subscription-capacity-constraint.md`
+  preserves the broad product specification. It is not the delivery plan.
+- `meta_orchestrator_architecture.md` and `meta_orchestrator_rationale.md`
+  preserve architectural options and rationale. They are not MVP instructions.
+- `online_research_agent_orchestrator_consensus_and_products.md` and
+  `Deep Research/` are dated research snapshots. Verify time-sensitive claims
+  before using them.
 
-## Known Caveat
+## Removed As Superseded
 
-`.parallel-code/` is currently ignored by the repo and used by Parallel Code runtime features such as MCP/Docker coordination. If it becomes canonical project configuration, implementation must separate durable config from generated runtime state under that directory.
+- `context.md` and `agent_conductor_full_chat_context.md`: raw conversation
+  bundles that duplicated the retained documents.
+- `alignment-review.md` and `codebase-alignment-report.md`: completed review
+  snapshots whose current decisions now live here and in `Plan.md`.
+- `conductor-mvp-roadmap.md`: duplicated the delivery sequence now maintained in
+  `Plan.md` and OpenSpec.
+
+Tracked removed snapshots remain recoverable from Git history. The untracked
+raw context bundle was intentionally discarded.

@@ -1,7 +1,7 @@
 ## 0. Workflow preset files
 
-- [ ] 0.1 Generate four fixed workflow preset YAMLs in
-  `.parallel-code/workflows/` if absent: `simple-codex.yaml`,
+- [ ] 0.1 Provide four fixed workflow presets in memory when absent, and persist
+  them only on explicit initialize: `simple-codex.yaml`,
   `plan-implement-review.yaml`, `ui-build-verify.yaml`, `bug-hunt.yaml`.
   Include their step definitions with the correct agent ids per the spec's
   workflow-preset tables (`planner→claude-code`, `implementer→codex`,
@@ -23,7 +23,7 @@
     `plan-implement-review`.
   - Default fallback for a single-agent codex-only task matching no signal set →
     `simple-codex`.
-- [ ] 1.2 Honor an explicit `--workflow=` override ahead of classification.
+- [ ] 1.2 Honor an explicit workflow override field ahead of classification.
 - [ ] 1.3 Return the chosen workflow plus the matched signal keywords that drove
   the choice (for display/audit in the dry-run preview).
 
@@ -35,12 +35,13 @@
 - [ ] 2.2 Assemble a preview: selected workflow, role→agent assignments, planned
   worktrees (paths only, not created), required permissions, expected artifacts,
   capacity plan, and auth warnings.
-- [ ] 2.3 Apply command-line role overrides (e.g. `--implementer=codex`) before
-  resolution.
+- [ ] 2.3 Apply request role overrides before resolution.
+- [ ] 2.4 Include selected adapter capabilities/auth posture and a versioned
+  manifest draft with effective-config/policy digests.
 
 ## 3. Entry point & approval
 
-- [ ] 3.1 Wire `/conduct <task> --dry-run` to produce the preview without side
+- [ ] 3.1 Wire the conduct dialog/request to produce the preview without side
   effects.
 - [ ] 3.2 Require an explicit approve/cancel result; cancel performs no writes
   and launches nothing.
@@ -56,8 +57,8 @@
 - [ ] 5.1 Unit tests: a backend feature task selects `plan-implement-review`; a
   UI task selects `ui-build-verify`; a bug task (`fix`/`regression`) selects
   `bug-hunt`; an unmatched task falls back to `simple-codex`; matching is
-  case-insensitive; `--workflow=` overrides classification; `--implementer=`
-  override changes the resolved agent; the preview includes a capacity plan and
-  auth warnings; a cancel produces zero side effects.
+  case-insensitive; workflow/role request overrides apply; the preview includes
+  adapter capability, capacity, auth, gate, and manifest-digest details; a
+  cancel produces zero side effects.
 - [ ] 5.2 `npm run typecheck` clean.
 - [ ] 5.3 `openspec validate --all --strict` passes.

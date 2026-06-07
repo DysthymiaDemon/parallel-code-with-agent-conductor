@@ -2,7 +2,9 @@
 
 **Project:** Role-Aware Conductor / Parallel Code-style Electron fork
 **Purpose:** Define how the project will be run so Codex, Claude, Gemini/Antigravity, and the human lead avoid known failure modes in AI coding tools.
-**Status:** Draft operating protocol
+**Status:** Supporting safety policy. OpenSpec requirements and repository
+enforcement define shipped behavior; this runbook guides how humans and agents
+develop it.
 **Date:** 2026-06-01
 
 ---
@@ -69,8 +71,8 @@ The project will not be run as:
 It will be run as:
 
 ```text
-Claude plans and reviews.
-Codex implements and fixes.
+Claude drafts broad architecture, UI direction, and readable conceptual plans.
+Codex pressure-tests plans against the repository, then implements and fixes.
 Gemini/Antigravity verifies UI and browser behavior.
 The human lead approves architecture, security-sensitive operations, and merge decisions.
 ```
@@ -100,10 +102,12 @@ Human Lead:
   product decisions, architecture approval, security approval, merge authority
 
 Claude:
-  planner, architect, reviewer, security reviewer, risk analyst
+  conceptual planner, architect, UI/interaction adviser, reviewer,
+  security reviewer, risk analyst
 
 Codex:
-  implementer, fixer, test runner, refactor executor
+  repository investigator, plan pressure-tester, implementer, fixer,
+  test runner, refactor executor
 
 Gemini / Antigravity:
   UI designer, UI verifier, browser verifier, screenshot reviewer
@@ -205,17 +209,21 @@ Every non-trivial task follows this flow:
 
 ```text
 1. Human writes or approves task.
-2. Claude produces implementation plan.
-3. Human approves or edits plan.
-4. Codex implements in a dedicated branch/worktree.
-5. Codex runs required checks.
-6. Gemini/Antigravity verifies UI if the task affects UI.
-7. Claude reviews the diff.
-8. Human selects accepted review items.
-9. Codex fixes accepted review items only.
-10. Checks run again.
-11. Human approves final diff.
-12. Human merges.
+2. Claude produces a conceptual architecture and readable initial plan.
+3. Codex inspects the repository and pressure-tests that plan against actual
+   files, existing patterns, tests, edge cases, dependencies, migration risks,
+   and recovery behavior.
+4. Claude resolves architectural ambiguity and updates the spec/plan.
+5. Human approves or edits the repository-validated plan.
+6. Codex implements in a dedicated branch/worktree.
+7. Codex runs required checks.
+8. Gemini/Antigravity verifies UI if the task affects UI.
+9. Claude reviews the diff.
+10. Human selects accepted review items.
+11. Codex fixes accepted review items only.
+12. Checks run again.
+13. Human approves final diff.
+14. Human merges.
 ```
 
 For very small tasks, the simplified flow is allowed:
@@ -1074,7 +1082,11 @@ For auth/billing tasks:
 
 ---
 
-## 27. Project Phases
+## 27. Historical Project Phase Sketch
+
+This phase sketch predates the eight OpenSpec changes. Use `Plan.md` and
+`openspec/changes/add-conductor-*/` for current sequencing; retain the checks
+below only as safety-test ideas.
 
 ### Phase 1: Config and Role Profiles
 
@@ -1267,7 +1279,11 @@ If any answer is unclear, do not merge.
 
 ---
 
-## 29. Required Repository Instructions
+## 29. Historical Repository-Instruction Template
+
+The repository already has synchronized `AGENTS.md`, `CLAUDE.md`, and
+`GEMINI.md` files. Those root files are authoritative; do not copy this older
+template over them.
 
 Add an `AGENTS.md` file at the repo root.
 

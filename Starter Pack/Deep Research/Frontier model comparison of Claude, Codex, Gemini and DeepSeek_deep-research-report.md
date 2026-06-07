@@ -1,5 +1,8 @@
 # Frontier model comparison of Claude, Codex, Gemini and DeepSeek
 
+**Status:** Dated supporting research only. Benchmark results and model
+availability are time-sensitive and do not define MVP role bindings.
+
 ## TLDR
 
 If you weight **hard-to-game, contamination-resistant, real-work benchmarks** more heavily than headline-friendly legacy numbers, the frontier does **not** collapse into one clean winner. The current picture is: **Claude Opus 4.8** has the strongest claim to the overall lead in independent composite intelligence and agentic knowledge-work performance; **GPT-5.5** remains exceptionally strong for execution-heavy coding, computer use, and operational workflows; **Gemini 3.1 Deep Think / Gemini 3.1 Pro** is the strongest choice for academic-scientific reasoning, multimodal reasoning, and long-context synthesis; and **DeepSeek V4 Pro** is the strongest **open-weight / value** option, especially for coding, but still trails the top closed models overall. citeturn15view0turn13view1turn18view0turn34search1

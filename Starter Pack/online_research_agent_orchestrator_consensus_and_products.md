@@ -2,6 +2,9 @@
 
 **Date:** 2026-06-01
 **Question:** Is the reasoning behind a Parallel Code-based meta-orchestrator for Codex, Claude, and Gemini/Antigravity common among agent-using developers? Does a product already exist that serves this need, and what are its cons versus Zed?
+**Status:** Dated supporting research only. Verify current product, pricing,
+auth, and capability claims before using them; this file is not implementation
+authority.
 
 ---
 

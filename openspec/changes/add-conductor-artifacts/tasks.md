@@ -1,40 +1,25 @@
 ## 1. Artifact store
 
-- [ ] 1.1 Add `electron/conductor/artifacts.ts` providing a utility that creates
-  `.parallel-code/artifacts/runs/<run-id>/`. The run-start trigger lives in
-  `add-conductor-approval-gates` (invoked on dry-run approval); this change
-  provides the directory mechanics only. Assign run ids as
-  `run_<YYYYMMDD>_<NNN>` (zero-padded 3-digit per-day counter persisted in
-  `.parallel-code/state/run-counter.json`).
-- [ ] 1.2 Define canonical artifact names/paths: `plan.md`, `accepted-plan.md`,
-  `implementation.diff`, `test-report.json`, `code-review.md`,
-  `final-summary.md`, and optional `ui-review.md` + `screenshots/`.
-- [ ] 1.3 Define an `ArtifactRef` type (`runId`, `kind`, `path`,
-  `producedByRole`, `createdAt`) in `src/ipc/types.ts` — the single canonical
-  name; do not introduce `ConductorArtifact`.
+- [ ] 1.1 Add per-run artifact directory helpers using a run ID allocated by
+  `add-conductor-run-store`; do not maintain a separate counter file.
+- [ ] 1.2 Define canonical names: `plan.md`, `accepted-plan.md`,
+  `implementation.diff`, `test-report.json`, `code-review.md`, optional
+  `ui-review.md`/`screenshots/`, and conductor-owned `final-summary.md`.
+- [ ] 1.3 Define `ArtifactRef` with run, kind, relative path, schema version,
+  media type, digest, size, producer step/attempt, producer identity,
+  declared-input provenance, and creation time.
 
-## 2. Handoff contract
+## 2. Handoff and validation
 
-- [ ] 2.1 Provide read/write helpers so a step writes its declared output
-  artifacts and reads only the declared input artifacts of prior steps.
-- [ ] 2.2 Validate that every required input artifact for a step exists before
-  the step is allowed to start; a missing required artifact blocks the step.
-- [ ] 2.3 Do not pass raw chat transcripts as handoff payloads.
+- [ ] 2.1 Permit a step to read only declared prior artifacts and write only
+  declared outputs.
+- [ ] 2.2 Verify path containment, digest, schema, size limits, and required
+  inputs before use.
+- [ ] 2.3 Reject transcript handoffs and conflicting writes to canonical names.
 
-## 3. IPC surface
+## 3. IPC and verification
 
-- [ ] 3.1 Add `ConductorWriteArtifact` (`'conductor_write_artifact'`) and
-  `ConductorListArtifacts` (`'conductor_list_artifacts'`) to the `IPC` enum and
-  preload allowlist.
-- [ ] 3.2 Add payload types to `src/ipc/types.ts`.
-- [ ] 3.3 Add a `src/conductor/artifacts.ts` renderer helper for an artifact
-  list/viewer.
-
-## 4. Verification
-
-- [ ] 4.1 Unit tests: starting a run creates the run dir; writing an artifact
-  produces the canonical filename; listing returns the written refs; a step with
-  a missing required input artifact is blocked; optional artifacts may be absent
-  without blocking.
-- [ ] 4.2 `npm run typecheck` clean.
-- [ ] 4.3 `openspec validate --all --strict` passes.
+- [ ] 3.1 Add write/list artifact IPC channels and secret-free shared payloads.
+- [ ] 3.2 Test traversal rejection, digest mismatch, missing required inputs,
+  retry provenance, canonical final-summary ownership, and optional artifacts.
+- [ ] 3.3 Run `npm run typecheck` and `npm run check:spec`.

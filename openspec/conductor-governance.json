@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "initiative": "conductor-mvp",
+  "authority": {
+    "index": "Starter Pack/README.md",
+    "goal": "Starter Pack/Goal.md",
+    "plan": "Starter Pack/Plan.md",
+    "runbook": "Starter Pack/project-runbook-safe-ai-agent-development.md",
+    "adrIndex": "docs/adr/README.md"
+  },
+  "changes": [
+    {
+      "id": "add-conductor-config",
+      "phase": "0a",
+      "dependsOn": []
+    },
+    {
+      "id": "add-conductor-agent-adapters",
+      "phase": "0b",
+      "dependsOn": ["add-conductor-config"]
+    },
+    {
+      "id": "add-conductor-auth-inspector",
+      "phase": "0c",
+      "dependsOn": ["add-conductor-config", "add-conductor-agent-adapters"]
+    },
+    {
+      "id": "add-conductor-scheduler",
+      "phase": "0d",
+      "dependsOn": ["add-conductor-config", "add-conductor-agent-adapters"]
+    },
+    {
+      "id": "add-conductor-run-store",
+      "phase": "0e",
+      "dependsOn": ["add-conductor-config"]
+    },
+    {
+      "id": "add-conductor-dry-run",
+      "phase": "1",
+      "dependsOn": [
+        "add-conductor-config",
+        "add-conductor-agent-adapters",
+        "add-conductor-auth-inspector",
+        "add-conductor-scheduler"
+      ]
+    },
+    {
+      "id": "add-conductor-worktrees",
+      "phase": "2a",
+      "dependsOn": ["add-conductor-config", "add-conductor-run-store"]
+    },
+    {
+      "id": "add-conductor-artifacts",
+      "phase": "2b",
+      "dependsOn": ["add-conductor-config", "add-conductor-run-store"]
+    },
+    {
+      "id": "add-conductor-execution-adapter",
+      "phase": "2c",
+      "dependsOn": [
+        "add-conductor-agent-adapters",
+        "add-conductor-scheduler",
+        "add-conductor-run-store",
+        "add-conductor-dry-run",
+        "add-conductor-worktrees",
+        "add-conductor-artifacts"
+      ]
+    },
+    {
+      "id": "add-conductor-approval-gates",
+      "phase": "3",
+      "dependsOn": [
+        "add-conductor-run-store",
+        "add-conductor-artifacts",
+        "add-conductor-execution-adapter"
+      ]
+    }
+  ],
+  "invariants": [
+    {
+      "id": "COND-SAFE-001",
+      "statement": "Dry-run has zero side effects."
+    },
+    {
+      "id": "COND-SAFE-002",
+      "statement": "Restricted conductor operations cannot bypass required human gates."
+    },
+    {
+      "id": "COND-SAFE-003",
+      "statement": "Secret values never enter results, artifacts, events, or logs."
+    },
+    {
+      "id": "COND-DUR-001",
+      "statement": "Every external effect has a persisted immutable intent before execution."
+    },
+    {
+      "id": "COND-DUR-002",
+      "statement": "Ambiguous external effects require reconciliation and are never blindly retried."
+    },
+    {
+      "id": "COND-AUTH-001",
+      "statement": "The conductor never silently changes a provider billing route."
+    }
+  ]
+}

@@ -12,8 +12,8 @@
   implementer worktree path rather than creating a new one.
 - [ ] 1.3 Do not create a writable worktree for read-only roles
   (`planner`, `reviewer`).
-- [ ] 1.4 Persist each run's `WorktreeRef`s in run state so subsequent steps can
-  look up a worktree by `role` + `runId`.
+- [ ] 1.4 Persist each run's `WorktreeRef`s through `add-conductor-run-store`
+  so subsequent steps can look up a worktree by `role` + `runId`.
 
 ## 2. Failure & dirty-state handling
 
@@ -34,6 +34,8 @@
   `deny`-classified write transitions the run to `failed` with the denied path.
 - [ ] 3.3 Expose `ConductorCheckProtectedPath` so a write can be checked before
   it happens.
+- [ ] 3.4 Canonicalize paths, resolve symlinks, and reject policy evaluation
+  that escapes the approved repository/worktree roots.
 
 ## 4. Editor bridge
 
@@ -55,6 +57,8 @@
   the implementer worktree; read-only role yields none; `.env` → `deny`;
   `package.json` → `ask`; `src/foo.ts` → `allow`; a missing policy file uses the
   built-in default (`.env` still `deny`); a `deny` write transitions the run to
-  `failed`; dirty/failed creation returns an explicit error.
+  `failed`; dirty/failed creation returns an explicit error; symlink/path
+  traversal is rejected; shared Git metadata cannot be mutated except through
+  the privileged-operation broker.
 - [ ] 6.2 `npm run typecheck` clean.
 - [ ] 6.3 `openspec validate --all --strict` passes.

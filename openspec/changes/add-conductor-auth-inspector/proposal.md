@@ -1,49 +1,34 @@
 ## Why
 
-The conductor's core promise is to preserve first-party CLI/subscription auth
-(ChatGPT, Claude Pro/Max, Google account) and avoid silently spending
-pay-as-you-go API credits. The risk is concrete: if `OPENAI_API_KEY`,
-`CODEX_API_KEY`, `ANTHROPIC_API_KEY`, `GEMINI_API_KEY`, or `GOOGLE_AI_API_KEY`
-are present in the environment, a launched agent may bill against an API account
-instead of the user's subscription — without the user realizing it. The user
-should be warned **before** an agent thread starts, and given an explicit
-choice. No such inspection exists today.
-
-This change adds a read-only auth inspection step that detects these env vars
-per agent and produces a structured warning with explicit options. It does not
-launch agents, does not read secret *values*, and does not change auth itself.
+The conductor must not silently change a provider billing route. Environment
+variables can indicate API billing, but their absence does not prove that a CLI
+is using a consumer subscription. Provider helpers, cloud credentials, and
+enterprise login routes also make auth posture uncertain. The conductor needs a
+secret-safe, provider-aware inspection result before launch.
 
 ## What Changes
 
-- Add an auth inspector that, for each agent the conductor intends to use,
-  reports whether subscription-bypassing API-key env vars are present.
-- Per `auth_policy` in `conductor.yaml` (`warn_on_api_keys`,
-  `prefer_subscription_auth`, `block_api_keys_unless_explicit`), classify each
-  agent's auth posture as `subscription_preferred`, `api_key_detected`, or
-  `unknown`.
-- Surface a structured per-run auth decision the UI can render with options
-  (use subscription login / use API key once / unset for this run / cancel) —
-  the *decision plumbing* only; enforcement of "block unless explicit" is
-  asserted here, while the actual launch happens in a later change.
-- Detect only the **presence** of the named env vars; never log or return secret
-  values.
+- Inspect configured API-key variable names and adapter-reported auth metadata
+  without reading secret values.
+- Classify each provider as `api_key_detected`, `confirmed_subscription`,
+  `cloud_or_enterprise`, `unknown`, or `unauthenticated`.
+- Treat missing key variables as `unknown`, never as proof of subscription auth.
+- Record an explicit per-run billing-route decision when posture is uncertain
+  or an API key is detected.
+- Provide the execution adapter a strict child-environment decision; enforcement
+  occurs at the launch boundary.
 
 ## Capabilities
 
 ### New Capabilities
 
-- `conductor-auth-inspector`: Pre-launch inspection of agent authentication
-  posture — detecting subscription-bypassing API-key environment variables per
-  agent and producing a structured, secret-safe warning and per-run decision.
+- `conductor-auth-inspector`: Secret-safe provider auth and billing-route
+  inspection before an agent launch.
 
 ## Impact
 
-- **Code (new):** `electron/conductor/auth-inspector.ts`. New IPC channel
-  `ConductorInspectAuth` on the `IPC` enum (`electron/ipc/channels.ts`) +
-  preload allowlist; payload types in `src/ipc/types.ts`.
-- **Depends on:** `add-conductor-config` (reads `auth_policy` and the resolved
-  agents).
-- **Security:** only env-var *names* are inspected; values are never read into
-  the result or logs. Aligns with the runbook's "no hidden API billing" and
-  "no secrets in logs" rules.
-- **No agent launches** in this change.
+- **Code (new):** `electron/conductor/auth-inspector.ts`; shared payloads in
+  `src/ipc/types.ts`; `ConductorInspectAuth` IPC channel.
+- **Depends on:** `add-conductor-config`, `add-conductor-agent-adapters`.
+- **Security:** secret values never enter results, artifacts, events, or logs.
+- **No launch or auth mutation** occurs in this change.

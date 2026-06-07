@@ -1,58 +1,29 @@
 ## 1. Gate mechanism
 
-- [ ] 1.1 Add `electron/conductor/approvals.ts` exposing a gate that pauses the
-  run, emits an approval request, and resolves only on an explicit decision.
-- [ ] 1.2 Read which operations are gated from the `approval` policy block of
-  `ConductorConfig`.
-- [ ] 1.3 Represent a decision as `approved` / `rejected`; a rejected or
-  unresolved gate leaves the gated operation undone.
-- [ ] 1.4 On dry-run approval, assign a run id (`run_<YYYYMMDD>_<NNN>`) and
-  create the run directory by invoking the `add-conductor-artifacts`
-  run-directory utility. Cancel assigns no id and creates no directory.
-- [ ] 1.5 Persist pending gate state in
-  `.parallel-code/state/pending-gates.json`; on app restart, re-present a
-  pending gate rather than auto-rejecting it; remove a gate from the file once
-  resolved.
+- [ ] 1.1 Add `electron/conductor/approvals.ts` for explicit approve/reject
+  decisions bound to immutable run-store effect intents.
+- [ ] 1.2 On dry-run approval, freeze the approved manifest, allocate the run
+  transactionally, and create its artifact directory; cancel creates neither.
+- [ ] 1.3 Persist pending/resolved gates through `add-conductor-run-store`;
+  do not create a separate pending-gates file.
+- [ ] 1.4 Revalidate intent, approval, and expected state at the privileged
+  operation broker before execution.
 
-## 2. Mandatory workflow gates
+## 2. Mandatory and risky gates
 
-- [ ] 2.1 Enforce a plan-approval gate between the planner and implementer steps
-  (references `plan.md`; on approve, writes `accepted-plan.md`).
-- [ ] 2.2 Enforce a final-approval gate before any commit/merge (references
-  `final-summary.md` / final diff).
+- [ ] 2.1 Require plan approval before implementation and final approval before
+  commit/merge.
+- [ ] 2.2 Gate commit, push, merge, install, migration, delete, and `ask` paths
+  per policy; refuse `deny` paths outright.
 
-## 3. Risky-operation gates
+## 3. Lifecycle and IPC
 
-- [ ] 3.1 Gate commit, push, merge, package install, database migration, and
-  delete per policy; none proceed without `approved`.
-- [ ] 3.2 For protected paths: an `ask` classification raises a gate; a `deny`
-  classification is refused outright with no gate option (MVP) and transitions
-  the run to `failed` with the denied path in the error detail.
+- [ ] 3.1 Update the run store's orthogonal execution/readiness/outcome fields
+  for pending, rejected, approved, failed, and recovery-required gates.
+- [ ] 3.2 Add request/resolve IPC channels, secret-free payloads, and approval UI.
 
-## 4. Run state tracking
+## 4. Verification
 
-- [ ] 4.1 Define a `RunState` type in `src/ipc/types.ts`:
-  `'ready-for-review' | 'ready-for-merge' | 'blocked' | 'failed' | 'needs-human' | 'retry-once'`.
-- [ ] 4.2 Track and transition the run state in response to gate outcomes,
-  failures, and step completions per the spec scenarios.
-
-## 5. IPC surface
-
-- [ ] 5.1 Add `ConductorRequestApproval` (`'conductor_request_approval'`) and
-  `ConductorResolveApproval` (`'conductor_resolve_approval'`) to the `IPC` enum
-  and preload allowlist.
-- [ ] 5.2 Add payload types to `src/ipc/types.ts`.
-- [ ] 5.3 Add an approval prompt surface in `src/conductor/`.
-
-## 6. Verification
-
-- [ ] 6.1 Unit tests: approving a dry-run creates the run dir and assigns a
-  `run_<YYYYMMDD>_<NNN>` id while cancel creates neither; implementer cannot
-  start before plan approval; merge cannot proceed before final approval; a
-  rejected gate leaves the operation undone; `deny` protected path is refused
-  with no approve path and transitions the run to `failed`; `ask` path raises a
-  gate that proceeds only on approve; a pending gate persisted to
-  `pending-gates.json` is re-presented after restart; run state transitions
-  match the spec scenarios.
-- [ ] 6.2 `npm run typecheck` clean.
-- [ ] 6.3 `openspec validate --all --strict` passes.
+- [ ] 4.1 Test immutable manifest binding, restart, stale expected state,
+  duplicate resolution, denied paths, and mandatory gates.
+- [ ] 4.2 Run `npm run typecheck` and `npm run check:spec`.

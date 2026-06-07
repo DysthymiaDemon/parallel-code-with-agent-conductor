@@ -5,7 +5,15 @@
 **Product context:** Parallel Code with Agent Conductor
 **Project context:** Parallel Code/Electron app first; optional editor bridge later
 **Feature type:** Local desktop multi-agent CLI orchestration with editor bridge
-**Status:** Draft feature specification
+**Status:** Broad product-intent reference. `Goal.md` fixes the MVP scope;
+OpenSpec changes define executable requirements; `Plan.md` defines delivery
+order and records discoveries.
+
+> **Superseded implementation guidance:** This document preserves broad product
+> intent and historical exploration. Commands, phases, tickets, state models,
+> auth assumptions, and configuration examples below are not implementation
+> authority. Use `Starter Pack/README.md`, `Goal.md`, `Plan.md`,
+> `openspec/conductor-governance.json`, and the ten active OpenSpec changes.
 **Date:** 2026-06-01
 
 ---
@@ -1367,7 +1375,7 @@ The feature is complete when:
 
 ---
 
-## 21. Implementation Phases
+## 21. Historical Implementation Phases (Superseded)
 
 ### Phase 1: Config and Role Resolver
 
@@ -3730,7 +3738,7 @@ The name keeps the Parallel Code base visible,
 while making the new conductor layer explicit.
 ```
 
-## 52. First Build Tickets
+## 52. Historical First Build Tickets (Superseded)
 
 Use these as the first implementation tickets.
 
