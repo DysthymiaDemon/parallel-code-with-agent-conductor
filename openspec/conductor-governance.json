@@ -101,5 +101,36 @@
       "id": "COND-AUTH-001",
       "statement": "The conductor never silently changes a provider billing route."
     }
+  ],
+  "documentationChecks": [
+    {
+      "path": "AGENTS.md",
+      "includes": [
+        "## Skills, Plugins, MCP, and Online Research",
+        "Discover and connect MCP servers/tools progressively"
+      ]
+    },
+    {
+      "path": "PLANS.md",
+      "includes": [
+        "Require a Codex repository-validation gate",
+        "## Evidence and Tooling"
+      ]
+    },
+    {
+      "path": "Starter Pack/Plan.md",
+      "includes": [
+        "### Task-to-Capability Matrix",
+        "### MCP and External Tool Policy",
+        "### Context7 Candidate Policy"
+      ]
+    },
+    {
+      "path": "Starter Pack/project-runbook-safe-ai-agent-development.md",
+      "includes": [
+        "## 7. Evidence and Tooling Policy",
+        "Every non-trivial task must produce a compact evidence packet"
+      ]
+    }
   ]
 }

@@ -34,6 +34,9 @@ before beginning any multi-change implementation work.
    plan with real affected files, existing patterns, tests, edge cases,
    dependency/migration risks, recovery behavior, and safer implementation
    order.
+8. **Record an evidence and tooling plan.** Name the repository evidence,
+   primary documentation, checks, and task-relevant skills/plugins/MCP servers
+   that will be used. Explain why each external or write-capable tool is needed.
 
 ## Required Sections
 
@@ -48,6 +51,7 @@ Every ExecPlan contains these sections in this order. All are non-negotiable.
 | **Validation and Acceptance** | Before starting | Verifiable behavior, not just "the tests pass" |
 | **Idempotence and Recovery** | Before starting | How to re-run safely if a step fails |
 | **Interfaces and Dependencies** | Before starting | TypeScript types; IPC channel names + values |
+| **Evidence and Tooling** | Before starting | Repo evidence, primary sources, relevant skills/plugins/MCP, permissions |
 | **Progress** | Updated continuously | Checkbox per task with date |
 | **Surprises & Discoveries** | Updated continuously | Unexpected findings, one line + date |
 | **Decision Log** | Updated continuously | Key decision, rationale, date |
@@ -72,6 +76,9 @@ Every ExecPlan contains these sections in this order. All are non-negotiable.
 - Research tools, plugins, MCP servers, and parallel agents provide evidence,
   not authority. Record useful sources and verify safety-critical claims against
   primary documentation, pinned versions, and repository behavior.
+- Prefer progressive tool discovery and the smallest relevant skill set. Do not
+  put detailed task-specific guidance into repository-wide instructions when a
+  scoped skill or path-specific instruction would keep unrelated tasks cleaner.
 
 ## ExecPlan Skeleton
 
@@ -121,6 +128,11 @@ npx vitest run
 ## Interfaces and Dependencies
 
 <TypeScript types and IPC channel enum values.>
+
+## Evidence and Tooling
+
+<Repository evidence, primary sources, relevant skills/plugins/MCP, permissions,
+and why each external tool is needed.>
 
 ---
 

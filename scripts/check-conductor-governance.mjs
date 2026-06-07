@@ -86,6 +86,15 @@ for (const path of ['Starter Pack/README.md', 'Starter Pack/Goal.md', 'Starter P
   }
 }
 
+for (const check of manifest.documentationChecks ?? []) {
+  const content = await readFile(resolve(root, check.path), 'utf8');
+  for (const requiredText of check.includes) {
+    if (!content.includes(requiredText)) {
+      errors.push(`${check.path}: missing required guidance "${requiredText}"`);
+    }
+  }
+}
+
 if (errors.length > 0) {
   console.error('Conductor governance validation failed:');
   for (const error of errors) console.error(`- ${error}`);
