@@ -838,7 +838,6 @@ The human as final merge authority.
 
 That is the reason for building the meta-orchestrator.
 
-
 ---
 
 # Updated Rationale Summary

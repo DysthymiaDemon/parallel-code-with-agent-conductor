@@ -1,7 +1,7 @@
 ## Why
 
 This is the first user-visible conductor behavior and the riskiest thing to get
-wrong: deciding *which* workflow and agents a described task triggers. Doing
+wrong: deciding _which_ workflow and agents a described task triggers. Doing
 that wrong while also launching agents would waste subscription capacity and
 possibly touch the working tree. The mitigation is a **dry run** — the app
 classifies the task, selects a workflow, resolves roles to agents, and shows the

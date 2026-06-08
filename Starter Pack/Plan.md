@@ -27,19 +27,19 @@ authorization boundary; run store is the sole durable workflow authority.
 
 ## Plan of Work
 
-| Phase | OpenSpec change | Outcome |
-|---|---|---|
-| Preflight | governance/tooling | Aligned authority docs, valid graph, baseline checks |
-| 0a | `add-conductor-config` | Validated config and role resolution |
-| 0b | `add-conductor-agent-adapters` | Structured provider adapters and explicit PTY fallback |
-| 0c | `add-conductor-auth-inspector` | Secret-safe, uncertainty-aware auth posture |
-| 0d | `add-conductor-scheduler` | Consumer-conservative pure admission policy |
-| 0e | `add-conductor-run-store` | Transactional state, events, intents, immutable manifests |
-| 1 | `add-conductor-dry-run` | Zero-side-effect preview and manifest draft |
-| 2a | `add-conductor-worktrees` | Git integration isolation and protected-path policy |
-| 2b | `add-conductor-artifacts` | Verified artifacts-only handoff |
-| 2c | `add-conductor-execution-adapter` | Sandboxed adapter execution and privileged broker |
-| 3 | `add-conductor-approval-gates` | Bound human decisions and final authorization |
+| Phase     | OpenSpec change                   | Outcome                                                   |
+| --------- | --------------------------------- | --------------------------------------------------------- |
+| Preflight | governance/tooling                | Aligned authority docs, valid graph, baseline checks      |
+| 0a        | `add-conductor-config`            | Validated config and role resolution                      |
+| 0b        | `add-conductor-agent-adapters`    | Structured provider adapters and explicit PTY fallback    |
+| 0c        | `add-conductor-auth-inspector`    | Secret-safe, uncertainty-aware auth posture               |
+| 0d        | `add-conductor-scheduler`         | Consumer-conservative pure admission policy               |
+| 0e        | `add-conductor-run-store`         | Transactional state, events, intents, immutable manifests |
+| 1         | `add-conductor-dry-run`           | Zero-side-effect preview and manifest draft               |
+| 2a        | `add-conductor-worktrees`         | Git integration isolation and protected-path policy       |
+| 2b        | `add-conductor-artifacts`         | Verified artifacts-only handoff                           |
+| 2c        | `add-conductor-execution-adapter` | Sandboxed adapter execution and privileged broker         |
+| 3         | `add-conductor-approval-gates`    | Bound human decisions and final authorization             |
 
 ## Concrete Steps
 
@@ -108,19 +108,19 @@ launch/reconciliation; approval gates authorize immutable effect intents.
 
 Use only the rows relevant to the current task.
 
-| Task | Preferred capability | Required evidence / guardrail |
-|---|---|---|
-| Architecture or unfamiliar backend flow | Codex repository exploration; `security-threat-model` for trust boundaries | Real call paths, affected files, trust boundaries, failure/recovery cases |
-| Security-sensitive implementation/review | `security-best-practices`; Claude security review | Findings tied to files/scenarios; human approval for accepted changes |
-| SolidJS UI implementation | Existing SolidJS patterns; `build-web-apps:frontend-app-builder` only for a larger requested UI build | Do not apply React-specific guidance; typecheck and rendered-flow checks |
-| Rendered UI verification | `browser:control-in-app-browser`, `build-web-apps:frontend-testing-debugging`, or `playwright` | Screenshots/observations for dry-run, approval, error, and cancellation flows |
-| GitHub CI failure | `github:gh-fix-ci` | Inspect logs first; patch only repository-owned failures; rerun checks |
-| Review-comment resolution | `github:gh-address-comments` | Address actionable comments only and report rejected/ambiguous feedback |
-| Publish branch/PR | `github:yeet` | Confirm scope, validate, intentionally stage, commit, push, and describe PR |
-| OpenAI product/API contract | `openai-docs` / OpenAI Developers skills | Official OpenAI docs only; pin relevant API/version assumptions |
-| Current third-party library API | Official docs first; Context7 candidate for version-pinned retrieval | Query by exact library/version; verify against lockfile and repository usage |
-| Parallel research | Up to five bounded read-only agents for independent questions | Separate topics, primary sources, no writes, parent synthesis and verification |
-| Deployment, Figma, Sentry, analytics, or data tooling | Corresponding skill/plugin only when explicitly required | Do not connect or invoke speculatively; review permissions and output scope |
+| Task                                                  | Preferred capability                                                                                  | Required evidence / guardrail                                                  |
+| ----------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| Architecture or unfamiliar backend flow               | Codex repository exploration; `security-threat-model` for trust boundaries                            | Real call paths, affected files, trust boundaries, failure/recovery cases      |
+| Security-sensitive implementation/review              | `security-best-practices`; Claude security review                                                     | Findings tied to files/scenarios; human approval for accepted changes          |
+| SolidJS UI implementation                             | Existing SolidJS patterns; `build-web-apps:frontend-app-builder` only for a larger requested UI build | Do not apply React-specific guidance; typecheck and rendered-flow checks       |
+| Rendered UI verification                              | `browser:control-in-app-browser`, `build-web-apps:frontend-testing-debugging`, or `playwright`        | Screenshots/observations for dry-run, approval, error, and cancellation flows  |
+| GitHub CI failure                                     | `github:gh-fix-ci`                                                                                    | Inspect logs first; patch only repository-owned failures; rerun checks         |
+| Review-comment resolution                             | `github:gh-address-comments`                                                                          | Address actionable comments only and report rejected/ambiguous feedback        |
+| Publish branch/PR                                     | `github:yeet`                                                                                         | Confirm scope, validate, intentionally stage, commit, push, and describe PR    |
+| OpenAI product/API contract                           | `openai-docs` / OpenAI Developers skills                                                              | Official OpenAI docs only; pin relevant API/version assumptions                |
+| Current third-party library API                       | Official docs first; Context7 candidate for version-pinned retrieval                                  | Query by exact library/version; verify against lockfile and repository usage   |
+| Parallel research                                     | Up to five bounded read-only agents for independent questions                                         | Separate topics, primary sources, no writes, parent synthesis and verification |
+| Deployment, Figma, Sentry, analytics, or data tooling | Corresponding skill/plugin only when explicitly required                                              | Do not connect or invoke speculatively; review permissions and output scope    |
 
 ### MCP and External Tool Policy
 
@@ -161,17 +161,17 @@ planning phase.
 
 ### Capability Adoption Decisions
 
-| Capability | Decision for this project |
-|---|---|
-| Context7 | Candidate for a scoped read-only trial; not installed or required |
-| Security threat-model / best-practices skills | Required at the conductor trust-boundary and pre-merge security-review gates |
-| Browser/frontend-testing/Playwright skills | Required once dry-run and approval UI surfaces exist |
-| GitHub CI/review/publish skills | Use for their named repository workflows |
-| Semgrep and gitleaks scripts | Valuable local/CI checks, but installation remains human-gated |
-| Sentry | Defer until production telemetry is configured and the user requests issue inspection |
-| Deployment plugins | Defer; deployment is outside the conductor MVP |
-| Figma/product-design plugins | Use only when a real design source or explicit design task exists |
-| Additional MCP servers | Do not add by default; require a concrete capability gap, permissions review, and removal plan |
+| Capability                                    | Decision for this project                                                                      |
+| --------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| Context7                                      | Candidate for a scoped read-only trial; not installed or required                              |
+| Security threat-model / best-practices skills | Required at the conductor trust-boundary and pre-merge security-review gates                   |
+| Browser/frontend-testing/Playwright skills    | Required once dry-run and approval UI surfaces exist                                           |
+| GitHub CI/review/publish skills               | Use for their named repository workflows                                                       |
+| Semgrep and gitleaks scripts                  | Valuable local/CI checks, but installation remains human-gated                                 |
+| Sentry                                        | Defer until production telemetry is configured and the user requests issue inspection          |
+| Deployment plugins                            | Defer; deployment is outside the conductor MVP                                                 |
+| Figma/product-design plugins                  | Use only when a real design source or explicit design task exists                              |
+| Additional MCP servers                        | Do not add by default; require a concrete capability gap, permissions review, and removal plan |
 
 Primary references for this policy:
 
@@ -221,14 +221,14 @@ Primary references for this policy:
 
 ## Decision Log
 
-| Date | Decision | Rationale |
-|---|---|---|
-| 2026-06-07 | Keep an internal deterministic conductor | Existing app plumbing and product scope do not justify adopting an external workflow framework |
-| 2026-06-07 | Add provider-specific `AgentAdapter` contracts | Structured interfaces are safer and more durable than terminal parsing |
-| 2026-06-07 | Use one transactional run store | Lifecycle, gates, queue, and effects require atomic recovery |
-| 2026-06-07 | Freeze approved manifests | Mutable config must not silently change an active run |
-| 2026-06-07 | Enforce privilege at final backend entrypoints | Prompts, UI gates, and adapter flags are bypassable |
-| 2026-06-07 | Call scheduling `consumer_conservative` | Provider subscription quota is not reliably measurable |
+| Date       | Decision                                                            | Rationale                                                                                                                                            |
+| ---------- | ------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-06-07 | Keep an internal deterministic conductor                            | Existing app plumbing and product scope do not justify adopting an external workflow framework                                                       |
+| 2026-06-07 | Add provider-specific `AgentAdapter` contracts                      | Structured interfaces are safer and more durable than terminal parsing                                                                               |
+| 2026-06-07 | Use one transactional run store                                     | Lifecycle, gates, queue, and effects require atomic recovery                                                                                         |
+| 2026-06-07 | Freeze approved manifests                                           | Mutable config must not silently change an active run                                                                                                |
+| 2026-06-07 | Enforce privilege at final backend entrypoints                      | Prompts, UI gates, and adapter flags are bypassable                                                                                                  |
+| 2026-06-07 | Call scheduling `consumer_conservative`                             | Provider subscription quota is not reliably measurable                                                                                               |
 | 2026-06-08 | Require Claude concept plan followed by Codex repository validation | Separates broad design strength from grounded implementation evidence and catches file, test, dependency, migration, and edge-case drift before code |
 
 ## Outcomes & Retrospective

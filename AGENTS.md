@@ -64,7 +64,7 @@ Claude and Codex have complementary strengths. Use each where it is strongest.
 - Frontend/UI intuition, interaction design, and skill/plugin-heavy workflows
 - Holistic reasoning — catching subtle logic errors, security implications,
   architectural smell
-- Explaining *why* something is wrong, not just flagging it
+- Explaining _why_ something is wrong, not just flagging it
 - Cross-file consistency checks (does new code contradict an existing pattern?)
 - Reviewing implementation against specs — did Codex satisfy the WHEN/THEN
   scenarios in the OpenSpec changes?

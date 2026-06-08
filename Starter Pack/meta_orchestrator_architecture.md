@@ -399,7 +399,7 @@ steps:
   - id: fix
     role: fixer
     depends_on: [code_review]
-    condition: "review.blocking_issues > 0"
+    condition: 'review.blocking_issues > 0'
     prompt: |
       Fix only the accepted blocking issues.
       Re-run checks.
@@ -409,7 +409,7 @@ steps:
 
   - id: human_gate
     type: approval
-    prompt: "Approve final diff for merge?"
+    prompt: 'Approve final diff for merge?'
 ```
 
 Built-in workflows:
@@ -1386,7 +1386,6 @@ Parallel Code with Agent Conductor as the neutral cockpit
 Git as the safety boundary
 Human as the final decision-maker
 ```
-
 
 ---
 

@@ -533,18 +533,18 @@ Return screenshots and a summary of files changed.
 
 ## 5. Comparative Matrix
 
-| Dimension | Codex | Claude | Gemini / Antigravity |
-|---|---|---|---|
-| Best default role | Implementation | Planning / review | UI / browser / visual |
-| Strongest surface | Codex CLI/app/IDE | Claude Code / Agent Teams | Antigravity Manager / Browser |
-| Best for heavy coding | Yes | Sometimes | Less ideal as default |
-| Best for architecture reasoning | Good | Strongest default | Good but not primary |
-| Best for code review | Good | Strongest default | Useful for UI review |
-| Best for UI/browser verification | Limited unless paired with tools | Good reasoning, weaker visual surface | Strongest default |
-| Best for parallel agents | Codex subagents | Claude Agent Teams | Antigravity Manager |
-| Main economic advantage | ChatGPT Pro/Codex entitlement | Claude Pro/Max if subscribed | Student entitlement / Google access |
-| Main risk | API vs subscription auth, scope drift | token overhead, silent reinterpretation, API key override | product transition, security, weaker terminal benchmark |
-| Ideal Zed role | Writable implementation thread | Read-only planner/reviewer thread | UI/visual verifier thread |
+| Dimension                        | Codex                                 | Claude                                                    | Gemini / Antigravity                                    |
+| -------------------------------- | ------------------------------------- | --------------------------------------------------------- | ------------------------------------------------------- |
+| Best default role                | Implementation                        | Planning / review                                         | UI / browser / visual                                   |
+| Strongest surface                | Codex CLI/app/IDE                     | Claude Code / Agent Teams                                 | Antigravity Manager / Browser                           |
+| Best for heavy coding            | Yes                                   | Sometimes                                                 | Less ideal as default                                   |
+| Best for architecture reasoning  | Good                                  | Strongest default                                         | Good but not primary                                    |
+| Best for code review             | Good                                  | Strongest default                                         | Useful for UI review                                    |
+| Best for UI/browser verification | Limited unless paired with tools      | Good reasoning, weaker visual surface                     | Strongest default                                       |
+| Best for parallel agents         | Codex subagents                       | Claude Agent Teams                                        | Antigravity Manager                                     |
+| Main economic advantage          | ChatGPT Pro/Codex entitlement         | Claude Pro/Max if subscribed                              | Student entitlement / Google access                     |
+| Main risk                        | API vs subscription auth, scope drift | token overhead, silent reinterpretation, API key override | product transition, security, weaker terminal benchmark |
+| Ideal Zed role                   | Writable implementation thread        | Read-only planner/reviewer thread                         | UI/visual verifier thread                               |
 
 ---
 

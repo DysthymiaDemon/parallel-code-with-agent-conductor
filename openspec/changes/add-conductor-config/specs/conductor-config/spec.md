@@ -178,67 +178,67 @@ file). **Do not create a separate `src/ipc/conductor-types.ts`.** Keeping all
 IPC types in one file ensures they remain discoverable.
 
 ```typescript
-type RoleName = 'planner' | 'implementer' | 'reviewer' | 'ui_verifier' | 'fixer'
-type AgentId = string  // must exist in electron/ipc/agents.ts AgentDef registry
+type RoleName = 'planner' | 'implementer' | 'reviewer' | 'ui_verifier' | 'fixer';
+type AgentId = string; // must exist in electron/ipc/agents.ts AgentDef registry
 
 interface RoleBinding {
-  roleId: RoleName
-  primary: AgentId
-  fallback?: AgentId
-  mode?: 'plan' | 'implement' | 'review' | 'verify' | 'fix'
-  purpose?: string
+  roleId: RoleName;
+  primary: AgentId;
+  fallback?: AgentId;
+  mode?: 'plan' | 'implement' | 'review' | 'verify' | 'fix';
+  purpose?: string;
 }
 
 interface CapacityConfig {
   // Field names mirror the YAML keys 1:1 to avoid the target/hard-cap ambiguity.
-  mode: 'consumer_conservative'        // YAML: mode (only selectable MVP value)
-  targetActiveAgents: number           // YAML: target_active_agents, default 3 (soft target)
-  maxActiveAgents: number              // YAML: max_active_agents,    default 6 (hard cap)
-  defaultEffort: 'low' | 'medium' | 'high'  // YAML: default_effort, default 'medium'
+  mode: 'consumer_conservative'; // YAML: mode (only selectable MVP value)
+  targetActiveAgents: number; // YAML: target_active_agents, default 3 (soft target)
+  maxActiveAgents: number; // YAML: max_active_agents,    default 6 (hard cap)
+  defaultEffort: 'low' | 'medium' | 'high'; // YAML: default_effort, default 'medium'
 }
 
 interface AuthPolicy {
-  warnOnApiKeys: boolean
-  preferSubscriptionAuth: boolean          // default true
-  blockApiKeysUnlessExplicit: boolean      // default true
-  envApiKeys: string[]
+  warnOnApiKeys: boolean;
+  preferSubscriptionAuth: boolean; // default true
+  blockApiKeysUnlessExplicit: boolean; // default true
+  envApiKeys: string[];
 }
 
 interface ApprovalConfig {
-  requirePlanApproval: boolean             // default true
-  requireMergeApproval: boolean            // default true
-  requireFixApproval: boolean              // default true
-  requirePackageInstallApproval: boolean   // default true
-  requireMigrationApproval: boolean        // default true
-  requirePushApproval: boolean             // default true
-  blockOnDenyPath: boolean                 // default true
-  persistGatesAcrossRestarts: boolean      // default true
-  beforeFirstWrite: boolean                // default false
-  beforeCommit: boolean                    // default true
-  beforeMerge: boolean                     // default true
-  beforePush: boolean                      // default true
-  beforePackageInstall: boolean            // default true
-  beforeDatabaseMigration: boolean         // default true
-  beforeDelete: boolean                    // default true
-  beforeTouchingProtectedPaths: boolean    // default true
+  requirePlanApproval: boolean; // default true
+  requireMergeApproval: boolean; // default true
+  requireFixApproval: boolean; // default true
+  requirePackageInstallApproval: boolean; // default true
+  requireMigrationApproval: boolean; // default true
+  requirePushApproval: boolean; // default true
+  blockOnDenyPath: boolean; // default true
+  persistGatesAcrossRestarts: boolean; // default true
+  beforeFirstWrite: boolean; // default false
+  beforeCommit: boolean; // default true
+  beforeMerge: boolean; // default true
+  beforePush: boolean; // default true
+  beforePackageInstall: boolean; // default true
+  beforeDatabaseMigration: boolean; // default true
+  beforeDelete: boolean; // default true
+  beforeTouchingProtectedPaths: boolean; // default true
 }
 
 interface WorktreeConfig {
-  baseDir: string       // default '.worktrees' (matches existing project convention)
-  branchPrefix: string  // default 'conductor'
+  baseDir: string; // default '.worktrees' (matches existing project convention)
+  branchPrefix: string; // default 'conductor'
 }
 
 interface ConductorConfig {
-  schemaVersion: '1'
-  project: { name: string }
+  schemaVersion: '1';
+  project: { name: string };
   agents: {
-    roles: RoleBinding[]
-    capacity: CapacityConfig
-    authPolicy: AuthPolicy
-  }
-  workflows: { presets: string[] }
-  worktrees: WorktreeConfig
-  approval: ApprovalConfig
+    roles: RoleBinding[];
+    capacity: CapacityConfig;
+    authPolicy: AuthPolicy;
+  };
+  workflows: { presets: string[] };
+  worktrees: WorktreeConfig;
+  approval: ApprovalConfig;
 }
 ```
 
@@ -249,9 +249,9 @@ New channels use the `Conductor*` prefix exclusively. The existing
 `electron/ipc/channels.ts` belong to the separate `coordinator-mcp-backend`
 OpenSpec change and must not be modified.
 
-| Enum member | String value |
-|---|---|
-| `ConductorLoadConfig` | `'conductor_load_config'` |
+| Enum member               | String value                  |
+| ------------------------- | ----------------------------- |
+| `ConductorLoadConfig`     | `'conductor_load_config'`     |
 | `ConductorValidateConfig` | `'conductor_validate_config'` |
-| `ConductorSaveConfig` | `'conductor_save_config'` |
-| `ConductorResolveRole` | `'conductor_resolve_role'` |
+| `ConductorSaveConfig`     | `'conductor_save_config'`     |
+| `ConductorResolveRole`    | `'conductor_resolve_role'`    |

@@ -241,16 +241,16 @@ The exact neutral, subscription-preserving, editor-native orchestrator remains u
 
 ## 3.1 Product landscape summary
 
-| Product | How close is it? | Best description | Main weakness versus future editor-native path |
-|---|---:|---|---|
-| Zed | High substrate, incomplete orchestrator | Editor-native ACP cockpit | No full meta-orchestrator yet |
-| Parallel Code | Very close operationally | Standalone multi-agent worktree manager | Not editor-native; less deep code/symbol/diff integration than a future editor-native path |
-| Conductor | Close for Mac + Codex/Claude | Mac app for parallel Codex + Claude workspaces | Mac-only; apparently Codex/Claude-focused; not clearly Gemini/Antigravity-centered |
-| Cursor | Strong AI IDE | Integrated AI IDE with agents/worktrees | Uses Cursor usage pools/on-demand/BYOK API, not first-party Codex/Claude CLI entitlements |
-| Warp/Oz | Strong terminal/control-plane option | Agentic terminal / cloud agent platform | Credit-based Warp agent economics; terminal-first, not editor-first |
-| Google Antigravity | Strong manager/browser surface | Google agent-first IDE with artifacts | Google-centric; not obviously preserving Codex/Claude subscriptions |
-| Claude Agent Teams | Strong internal orchestration | Multi-Claude coordination | Claude-only unless external tools exposed through MCP |
-| GitHub Agent HQ | Strong platform direction | Select agents inside GitHub/Copilot | Copilot subscription/premium request model; not Zed/local-first |
+| Product            |                        How close is it? | Best description                               | Main weakness versus future editor-native path                                             |
+| ------------------ | --------------------------------------: | ---------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| Zed                | High substrate, incomplete orchestrator | Editor-native ACP cockpit                      | No full meta-orchestrator yet                                                              |
+| Parallel Code      |                Very close operationally | Standalone multi-agent worktree manager        | Not editor-native; less deep code/symbol/diff integration than a future editor-native path |
+| Conductor          |            Close for Mac + Codex/Claude | Mac app for parallel Codex + Claude workspaces | Mac-only; apparently Codex/Claude-focused; not clearly Gemini/Antigravity-centered         |
+| Cursor             |                           Strong AI IDE | Integrated AI IDE with agents/worktrees        | Uses Cursor usage pools/on-demand/BYOK API, not first-party Codex/Claude CLI entitlements  |
+| Warp/Oz            |    Strong terminal/control-plane option | Agentic terminal / cloud agent platform        | Credit-based Warp agent economics; terminal-first, not editor-first                        |
+| Google Antigravity |          Strong manager/browser surface | Google agent-first IDE with artifacts          | Google-centric; not obviously preserving Codex/Claude subscriptions                        |
+| Claude Agent Teams |           Strong internal orchestration | Multi-Claude coordination                      | Claude-only unless external tools exposed through MCP                                      |
+| GitHub Agent HQ    |               Strong platform direction | Select agents inside GitHub/Copilot            | Copilot subscription/premium request model; not Zed/local-first                            |
 
 ---
 

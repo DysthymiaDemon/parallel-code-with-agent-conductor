@@ -42,20 +42,20 @@ before beginning any multi-change implementation work.
 
 Every ExecPlan contains these sections in this order. All are non-negotiable.
 
-| Section | When to write | What goes in it |
-|---|---|---|
-| **Purpose / Big Picture** | Before starting | One paragraph: the outcome and why it matters |
-| **Context and Orientation** | Before starting | Key files (full paths), stack, terms defined |
-| **Plan of Work** | Before starting | Ordered phases; what each delivers |
-| **Concrete Steps** | Before starting | Exact commands: validate, typecheck, test |
-| **Validation and Acceptance** | Before starting | Verifiable behavior, not just "the tests pass" |
-| **Idempotence and Recovery** | Before starting | How to re-run safely if a step fails |
-| **Interfaces and Dependencies** | Before starting | TypeScript types; IPC channel names + values |
-| **Evidence and Tooling** | Before starting | Repo evidence, primary sources, relevant skills/plugins/MCP, permissions |
-| **Progress** | Updated continuously | Checkbox per task with date |
-| **Surprises & Discoveries** | Updated continuously | Unexpected findings, one line + date |
-| **Decision Log** | Updated continuously | Key decision, rationale, date |
-| **Outcomes & Retrospective** | At completion only | What shipped, what was skipped, lessons |
+| Section                         | When to write        | What goes in it                                                          |
+| ------------------------------- | -------------------- | ------------------------------------------------------------------------ |
+| **Purpose / Big Picture**       | Before starting      | One paragraph: the outcome and why it matters                            |
+| **Context and Orientation**     | Before starting      | Key files (full paths), stack, terms defined                             |
+| **Plan of Work**                | Before starting      | Ordered phases; what each delivers                                       |
+| **Concrete Steps**              | Before starting      | Exact commands: validate, typecheck, test                                |
+| **Validation and Acceptance**   | Before starting      | Verifiable behavior, not just "the tests pass"                           |
+| **Idempotence and Recovery**    | Before starting      | How to re-run safely if a step fails                                     |
+| **Interfaces and Dependencies** | Before starting      | TypeScript types; IPC channel names + values                             |
+| **Evidence and Tooling**        | Before starting      | Repo evidence, primary sources, relevant skills/plugins/MCP, permissions |
+| **Progress**                    | Updated continuously | Checkbox per task with date                                              |
+| **Surprises & Discoveries**     | Updated continuously | Unexpected findings, one line + date                                     |
+| **Decision Log**                | Updated continuously | Key decision, rationale, date                                            |
+| **Outcomes & Retrospective**    | At completion only   | What shipped, what was skipped, lessons                                  |
 
 ## Rules
 
@@ -68,8 +68,8 @@ Every ExecPlan contains these sections in this order. All are non-negotiable.
   the plan first; it may not read every comment.
 - **The plan does not replace the specs.** OpenSpec changes in
   `openspec/changes/add-conductor-*/` remain the authoritative per-capability
-  requirements. The plan records *why* and *in what order*; the specs record
-  *what* behavior is required.
+  requirements. The plan records _why_ and _in what order_; the specs record
+  _what_ behavior is required.
 - **`tasks.md` wins over `Plan.md`** when the two disagree on IPC channel names,
   type names, or file paths. The spec files are authoritative; Plan.md is
   orientation.
@@ -86,7 +86,7 @@ When starting a new plan for work outside the Conductor MVP, copy this skeleton:
 
 ---
 
-```markdown
+````markdown
 # ExecPlan: <Title>
 
 ## Purpose / Big Picture
@@ -98,16 +98,18 @@ When starting a new plan for work outside the Conductor MVP, copy this skeleton:
 **Architecture:** <2–3 sentences.>
 
 **Key files:**
+
 - `<path>` — <role>
 
 **Terms:**
+
 - `<term>` — <definition>
 
 ## Plan of Work
 
 | Phase | Spec Change | What it delivers |
-|---|---|---|
-| 0 | ... | ... |
+| ----- | ----------- | ---------------- |
+| 0     | ...         | ...              |
 
 ## Concrete Steps
 
@@ -116,6 +118,7 @@ npx openspec validate --all --strict
 npm run typecheck
 npx vitest run
 ```
+````
 
 ## Validation and Acceptance
 
@@ -147,9 +150,12 @@ _(Fill during implementation.)_
 ## Decision Log
 
 | Date | Decision | Rationale |
-|---|---|---|
+| ---- | -------- | --------- |
 
 ## Outcomes & Retrospective
 
 _(Fill at completion.)_
+
+```
+
 ```

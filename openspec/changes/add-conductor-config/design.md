@@ -29,7 +29,7 @@ ignored.
 
 ## Validation model
 
-Validation is schema-shaped and returns the *first actionable* problem with a
+Validation is schema-shaped and returns the _first actionable_ problem with a
 path (e.g. `roles.implementer.primary: unknown agent 'codx'`). Unknown agent
 ids are validated against the live `AgentDef` registry, not a hardcoded list,
 so adding an agent to the registry automatically makes it bindable. A missing

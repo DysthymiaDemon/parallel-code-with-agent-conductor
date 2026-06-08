@@ -112,10 +112,7 @@
     },
     {
       "path": "PLANS.md",
-      "includes": [
-        "Require a Codex repository-validation gate",
-        "## Evidence and Tooling"
-      ]
+      "includes": ["Require a Codex repository-validation gate", "## Evidence and Tooling"]
     },
     {
       "path": "Starter Pack/Plan.md",

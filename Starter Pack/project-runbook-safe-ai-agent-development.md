@@ -177,7 +177,7 @@ Add a settings page that lets users choose a conductor preset and assign agents 
 
 ## Likely Files
 
-- src/renderer/settings/*
+- src/renderer/settings/\*
 - src/ipc/types.ts
 - src/main/config-store.ts
 
