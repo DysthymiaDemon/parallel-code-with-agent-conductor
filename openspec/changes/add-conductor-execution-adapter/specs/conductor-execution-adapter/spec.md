@@ -27,11 +27,12 @@ fail closed. Structured interfaces SHALL be preferred over PTY fallback.
 
 ### Requirement: Privileged effects are brokered at final entrypoints
 
-Conductor file writes, Git mutations, installs, migrations, deletes, pushes,
-and remote mutations SHALL execute only through a privileged-operation broker.
-The broker SHALL require a persisted immutable effect intent, valid run/sender
-authorization, expected-state match, policy result, and required approval.
-Prompts and adapter flags SHALL NOT be treated as the enforcement boundary.
+The app SHALL execute conductor file writes, Git mutations, installs,
+migrations, deletes, pushes, and remote mutations only through a
+privileged-operation broker. The broker SHALL require a persisted immutable
+effect intent, valid run/sender authorization, expected-state match, policy
+result, and required approval. Prompts and adapter flags SHALL NOT be treated as
+the enforcement boundary.
 
 #### Scenario: Autonomous landing is attempted
 

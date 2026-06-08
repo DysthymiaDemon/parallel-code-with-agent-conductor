@@ -36,9 +36,9 @@ absence of a key variable as proof of subscription auth.
 
 ### Requirement: Billing route never changes silently
 
-For `api_key_detected`, `cloud_or_enterprise`, or `unknown` posture, the app
-SHALL apply `auth_policy` and record an explicit per-run decision before launch.
-The available decisions SHALL be `use_provider_default`, `use_api_key_once`,
+The app SHALL apply `auth_policy` and record an explicit per-run decision before
+launch for `api_key_detected`, `cloud_or_enterprise`, or `unknown` posture. The
+available decisions SHALL be `use_provider_default`, `use_api_key_once`,
 `exclude_detected_keys`, and `cancel`.
 
 #### Scenario: Block-unless-explicit holds launch
