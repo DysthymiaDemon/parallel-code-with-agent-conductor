@@ -13,12 +13,16 @@
 - [ ] 2.2 Persist immutable external-effect intent before execution.
 - [ ] 2.3 Reconcile ambiguous effects after restart and never blindly retry a
       non-reconcilable effect.
+- [ ] 2.4 Persist attempt evaluator feedback, failure class, changed retry
+      rationale, attempt budget, and stop/escalation reason.
 
 ## 3. Approved manifest
 
 - [ ] 3.1 Persist a versioned immutable approved run manifest and its digest.
 - [ ] 3.2 Require execution to consume the approved manifest rather than
       re-resolving mutable config or policy.
+- [ ] 3.3 Include evaluator, attempt budget, and stop/escalation conditions for
+      retry-capable steps in the approved manifest.
 
 ## 4. Verification
 

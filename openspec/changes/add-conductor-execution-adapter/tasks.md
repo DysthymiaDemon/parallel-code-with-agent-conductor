@@ -30,6 +30,10 @@
       artifacts, and ambiguous effects after restart.
 - [ ] 4.3 Test cancellation, provider backpressure, duplicate resolution, and
       manual-flow regression.
+- [ ] 4.4 Enforce evidence-grounded bounded step retries: record evaluator
+      feedback and failure class, require a changed strategy/input/precondition,
+      and stop or escalate when the budget is exhausted or evidence is
+      ambiguous.
 
 ## 5. Verification
 

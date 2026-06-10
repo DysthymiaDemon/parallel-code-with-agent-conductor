@@ -54,6 +54,10 @@ index, `Goal.md`, `Plan.md`, change directories, and identical agent guidance.
 - Use Claude for conceptual architecture, UI direction, and readable initial
   planning; require Codex to pressure-test non-trivial plans against the actual
   repository before implementation.
+- Use risk-calibrated execution-feedback loops: plan enough to choose the
+  smallest safe, reversible, evaluable probe; observe deterministic feedback;
+  reflect against that evidence; retry with a changed strategy within a bounded
+  budget. High-risk and protected effects remain plan-first and human-gated.
 - Use deterministic fixed workflows before any adaptive router or marketplace.
 - Consumer-conservative scheduling defaults to 3 active agents and a hard cap
   of 6; it is a local safety policy, not measured provider quota.
@@ -81,7 +85,8 @@ index, `Goal.md`, `Plan.md`, change directories, and identical agent guidance.
   preserve architectural options and rationale. They are not MVP instructions.
 - `online_research_agent_orchestrator_consensus_and_products.md` and
   `Deep Research/` are dated research snapshots. Verify time-sensitive claims
-  before using them.
+  before using them. Any historical "plan first" wording means plan enough to
+  act safely; it does not override the current execution-feedback rule.
 
 ## Removed As Superseded
 

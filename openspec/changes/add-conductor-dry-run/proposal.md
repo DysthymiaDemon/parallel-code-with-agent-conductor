@@ -26,6 +26,8 @@ one.
 - Compose the dry-run preview by combining: resolved roles (from
   `conductor-config`), the auth posture (from `conductor-auth-inspector`), and
   the capacity plan (from `conductor-scheduler`).
+- For retry-capable steps, preview and freeze the evaluator, bounded attempt
+  budget, and stop or escalation condition.
 - Require an explicit approve/cancel decision before anything proceeds; on
   cancel, no side effects occur.
 

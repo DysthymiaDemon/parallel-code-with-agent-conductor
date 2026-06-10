@@ -53,12 +53,26 @@ as separate fields rather than one overloaded flat state union.
 - **THEN** its execution state is `waiting-human`
 - **AND** its outcome and readiness remain independently representable
 
+### Requirement: Attempt feedback and retry rationale are durable
+
+The app SHALL persist each conductor step attempt, its declared evaluator,
+observed external feedback, failure classification, retry decision, changed
+strategy or preconditions, attempt budget, and stop or escalation reason.
+
+#### Scenario: Failed step is retried
+
+- **WHEN** a failed reversible step is admitted for another attempt
+- **THEN** the prior attempt evidence and changed retry rationale are durable
+- **AND** replay reconstructs the same retry decision
+
 ### Requirement: Approved run manifest is immutable
 
 Approving a dry-run SHALL persist an immutable versioned run manifest containing
 the selected workflow, resolved roles/adapters, effective config and policy
 digests, planned steps, permissions, gates, artifact contracts, and manifest
-digest. Execution SHALL use that approved manifest.
+digest. For retry-capable steps it SHALL also contain the evaluator, attempt
+budget, and stop or escalation condition. Execution SHALL use that approved
+manifest.
 
 #### Scenario: Config changes after approval
 

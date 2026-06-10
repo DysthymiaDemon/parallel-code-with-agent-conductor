@@ -104,6 +104,21 @@ Claude's conceptual plan is never sufficient authorization to implement by
 itself. Codex's repository-validation pass is a required planning gate for
 non-trivial work.
 
+## Execution-Feedback Rule
+
+After enough planning to choose a safe action, prefer the smallest reversible,
+cheap, and deterministically evaluable probe over more speculative
+deliberation. Use the result to update the plan, then retry only with changed
+inputs, strategy, or preconditions and within a bounded attempt budget.
+Reflection without external evidence is a hypothesis, not authorization.
+
+This is a risk-calibrated `reason -> act -> observe -> reflect -> retry` loop,
+not permission to act first on everything. Protected, irreversible, expensive,
+credential-bearing, safety-critical, or externally visible effects remain
+plan-first and require simulation or dry-run, the applicable human gate, and
+final broker authorization. Ambiguous effects are reconciled, never blindly
+retried.
+
 ## Skills, Plugins, MCP, and Online Research
 
 - Prefer repository evidence and deterministic local checks over agent opinion.

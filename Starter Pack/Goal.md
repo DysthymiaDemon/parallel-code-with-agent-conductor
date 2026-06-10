@@ -43,6 +43,9 @@ Stop only when all are demonstrable:
    changes billing route, and never exposes secret values.
 10. Existing manual task flows remain unchanged and all validation passes or
     blockers are recorded.
+11. Safe, reversible steps use evidence-grounded bounded retries; each retry
+    changes strategy, inputs, or preconditions, while ambiguous or protected
+    effects stop for reconciliation or human authorization.
 
 ## MVP Scope
 
@@ -86,6 +89,8 @@ The detailed dependency graph and invariant IDs are authoritative in
 - Dry-run has zero side effects.
 - Approved manifests and effect intents are immutable.
 - Provider state cannot supersede conductor durable state.
+- Reflection and retry are grounded in recorded external feedback, bounded, and
+  never used to bypass a gate or repeat an ambiguous effect.
 - Manual Parallel Code behavior remains unchanged.
 
 ## Validation

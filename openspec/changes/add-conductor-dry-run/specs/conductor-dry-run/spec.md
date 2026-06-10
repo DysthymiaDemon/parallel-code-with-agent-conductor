@@ -78,7 +78,9 @@ file. The preview is produced through the `ConductorDryRun` IPC channel.
 - **THEN** the result includes the selected workflow, the role→agent
   assignments, the planned worktree paths, the required permissions, the
   expected artifacts, adapter capabilities, the capacity plan, auth posture,
-  required gates, effective config/policy digests, and a manifest draft digest
+  required gates, retry-capable step evaluators, attempt budgets, stop or
+  escalation conditions, effective config/policy digests, and a manifest draft
+  digest
 
 #### Scenario: No side effects during dry run
 
@@ -124,8 +126,9 @@ generated preset only on an explicit initialize action — never as a side effec
 of building, approving, or starting a run (consistent with the config change's
 "persisting is explicit" requirement). Each preset is an ordered list of steps;
 each step binds a `role` to its `agent` (a real agent id), declares its input and
-output artifacts, and marks whether it is a human gate. The minimal step
-structure for each preset is:
+output artifacts, marks whether it is a human gate, and for retry-capable steps
+declares an evaluator, bounded attempt budget, and stop or escalation
+condition. The minimal step structure for each preset is:
 
 **`simple-codex.yaml`** — single-agent implement:
 

@@ -3,6 +3,10 @@
 **Update date:** 2026-06-01 13:32:40 UTC
 **Status:** Retained product rationale; not implementation authority. Use
 `README.md`, `Goal.md`, `Plan.md`, and OpenSpec for current delivery decisions.
+Historical planning-first language does not override the current
+risk-calibrated execution-feedback rule: use safe evaluable probes early,
+ground reflection in observed evidence, bound retries, and preserve all gates
+for protected or irreversible effects.
 
 ```text
 The MVP is a Parallel Code fork amended into Parallel Code with Agent Conductor.

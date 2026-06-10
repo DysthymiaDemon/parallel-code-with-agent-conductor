@@ -73,6 +73,28 @@ maintain a separate durable state file.
 - **THEN** the adapter reconciles external state against durable intents/events
 - **AND** provider or PTY state alone cannot advance the workflow
 
+### Requirement: Step retries are bounded and evidence-grounded
+
+For reversible step attempts, the execution adapter SHALL record external
+feedback and failure classification before retry. A retry SHALL remain within
+the approved attempt budget and SHALL change inputs, strategy, or
+preconditions. Reflection without observed evidence SHALL NOT authorize a
+retry. Protected or ambiguous effects SHALL use their gate and reconciliation
+requirements instead of this retry path.
+
+#### Scenario: Deterministic check fails
+
+- **WHEN** a reversible step fails a declared deterministic check
+- **AND** a changed retry strategy and attempt budget remain
+- **THEN** the adapter records the failure evidence and changed strategy
+- **AND** it may launch the next attempt
+
+#### Scenario: Retry would repeat the same attempt
+
+- **WHEN** a step has no new evidence, changed strategy, inputs, or preconditions
+- **THEN** the adapter does not retry
+- **AND** the step stops or escalates according to the approved manifest
+
 ### Requirement: Manual task behavior is unchanged
 
 The privileged broker and conductor restrictions SHALL be scoped so existing

@@ -98,6 +98,10 @@
       "statement": "Ambiguous external effects require reconciliation and are never blindly retried."
     },
     {
+      "id": "COND-LOOP-001",
+      "statement": "Retries are bounded, evidence-grounded, and change strategy, inputs, or preconditions."
+    },
+    {
       "id": "COND-AUTH-001",
       "statement": "The conductor never silently changes a provider billing route."
     }
@@ -106,27 +110,34 @@
     {
       "path": "AGENTS.md",
       "includes": [
+        "## Execution-Feedback Rule",
         "## Skills, Plugins, MCP, and Online Research",
         "Discover and connect MCP servers/tools progressively"
       ]
     },
     {
       "path": "PLANS.md",
-      "includes": ["Require a Codex repository-validation gate", "## Evidence and Tooling"]
+      "includes": [
+        "Require a Codex repository-validation gate",
+        "## Evidence and Tooling",
+        "## Feedback and Retry Strategy"
+      ]
     },
     {
       "path": "Starter Pack/Plan.md",
       "includes": [
         "### Task-to-Capability Matrix",
         "### MCP and External Tool Policy",
-        "### Context7 Candidate Policy"
+        "### Context7 Candidate Policy",
+        "### Execution-Feedback Policy"
       ]
     },
     {
       "path": "Starter Pack/project-runbook-safe-ai-agent-development.md",
       "includes": [
         "## 7. Evidence and Tooling Policy",
-        "Every non-trivial task must produce a compact evidence packet"
+        "Every non-trivial task must produce a compact evidence packet",
+        "plan enough to choose a safe probe"
       ]
     }
   ]

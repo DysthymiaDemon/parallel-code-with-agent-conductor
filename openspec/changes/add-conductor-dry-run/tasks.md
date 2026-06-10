@@ -38,6 +38,9 @@
 - [ ] 2.3 Apply request role overrides before resolution.
 - [ ] 2.4 Include selected adapter capabilities/auth posture and a versioned
       manifest draft with effective-config/policy digests.
+- [ ] 2.5 For retry-capable steps, include the declared evaluator, bounded
+      attempt budget, and stop/escalation condition in the preview and manifest
+      draft.
 
 ## 3. Entry point & approval
 
@@ -58,7 +61,8 @@
       UI task selects `ui-build-verify`; a bug task (`fix`/`regression`) selects
       `bug-hunt`; an unmatched task falls back to `simple-codex`; matching is
       case-insensitive; workflow/role request overrides apply; the preview includes
-      adapter capability, capacity, auth, gate, and manifest-digest details; a
-      cancel produces zero side effects.
+      adapter capability, capacity, auth, gate, evaluator, attempt-budget,
+      stop/escalation, and manifest-digest details; a cancel produces zero side
+      effects.
 - [ ] 5.2 `npm run typecheck` clean.
 - [ ] 5.3 `openspec validate --all --strict` passes.

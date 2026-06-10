@@ -16,6 +16,8 @@ provider-adapter launches and mediates privileged effects.
   fail-closed read-only roles.
 - Reconcile provider sessions, PTYs, worktrees, and effects against the
   transactional run store after restart.
+- Permit bounded retries for reversible steps only when external feedback is
+  recorded and the next attempt changes strategy, inputs, or preconditions.
 - Keep the existing manual task flow unchanged.
 
 ## Capabilities

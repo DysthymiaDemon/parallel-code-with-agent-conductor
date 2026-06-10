@@ -8,3 +8,4 @@ except for status/supersession updates.
 - `0001-internal-conductor-is-workflow-authority.md`
 - `0002-transactional-run-store.md`
 - `0003-provider-specific-agent-adapters.md`
+- `0004-risk-calibrated-execution-feedback.md`

@@ -104,6 +104,25 @@ launch/reconciliation; approval gates authorize immutable effect intents.
 - Parallel research agents may investigate independent read-only questions, but
   Codex must synthesize and verify their findings before changing the plan.
 
+### Execution-Feedback Policy
+
+Use a risk-calibrated `reason -> act -> observe -> reflect -> retry` loop:
+
+1. Plan enough to classify risk, permissions, reversibility, and evaluator.
+2. Prefer the smallest safe, reversible, cheap, deterministically evaluable
+   probe that can reject an assumption.
+3. Record the action, external feedback, failure class, and changed plan.
+4. Retry only when inputs, strategy, or preconditions change and the bounded
+   attempt budget remains.
+5. Stop or escalate when feedback is ambiguous, no reliable evaluator exists,
+   attempts make no progress, or the next action crosses a protected boundary.
+
+Reflection without external evidence is a hypothesis, not authorization.
+Protected, irreversible, expensive, credential-bearing, safety-critical, and
+externally visible effects are never probes; they remain plan-first and require
+simulation or dry-run, the applicable human gate, and final broker
+authorization. See `docs/adr/0004-risk-calibrated-execution-feedback.md`.
+
 ### Task-to-Capability Matrix
 
 Use only the rows relevant to the current task.
@@ -186,6 +205,16 @@ Primary references for this policy:
   `https://docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent/create-skills`
 - Context7 data privacy:
   `https://context7.com/docs/security/data-privacy`
+- Reflexion: `https://arxiv.org/abs/2303.11366`
+- ReAct: `https://arxiv.org/abs/2210.03629`
+- Reflect, Retry, Reward: `https://arxiv.org/abs/2505.24726`
+- Limits of intrinsic self-correction: `https://arxiv.org/abs/2310.01798` and
+  `https://arxiv.org/abs/2406.01297`
+- Counterevidence for intrinsic self-correction under suitable methods:
+  `https://arxiv.org/abs/2406.15673`
+- Anthropic agent guidance on environmental ground truth, feedback loops, and
+  stopping conditions:
+  `https://www.anthropic.com/engineering/building-effective-agents`
 
 ## Progress
 
@@ -218,6 +247,8 @@ Primary references for this policy:
   outcome, and retry policy.
 - 2026-06-07: Official OpenSpec releases show `v1.4.1` as current; CI pins that
   exact CLI version instead of following `latest`.
+- 2026-06-10: Research supports feedback-grounded correction for tool-using
+  agents, but does not support replacing all upfront reasoning with action.
 
 ## Decision Log
 
@@ -230,6 +261,7 @@ Primary references for this policy:
 | 2026-06-07 | Enforce privilege at final backend entrypoints                      | Prompts, UI gates, and adapter flags are bypassable                                                                                                  |
 | 2026-06-07 | Call scheduling `consumer_conservative`                             | Provider subscription quota is not reliably measurable                                                                                               |
 | 2026-06-08 | Require Claude concept plan followed by Codex repository validation | Separates broad design strength from grounded implementation evidence and catches file, test, dependency, migration, and edge-case drift before code |
+| 2026-06-10 | Use risk-calibrated execution-feedback loops                        | Safe probes and deterministic feedback ground correction; bounded retries and existing gates contain action risk                                     |
 
 ## Outcomes & Retrospective
 

@@ -15,6 +15,8 @@ reconciled rather than blindly retried.
 - Separate deterministic workflow decisions from external effects.
 - Persist an immutable effect intent before execution and reconcile ambiguous
   outcomes before any retry.
+- Persist step-attempt evaluator feedback, failure classification, changed
+  retry rationale, bounded attempt budgets, and stop/escalation reasons.
 - Keep large artifact contents as files while storing their metadata and hashes
   transactionally.
 

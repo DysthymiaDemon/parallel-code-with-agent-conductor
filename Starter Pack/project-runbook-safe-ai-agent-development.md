@@ -49,6 +49,8 @@ This runbook also accounts for other current research and security signals:
 - dependency gaps can make generated projects non-reproducible
 - AI IDEs and agentic development tools introduce new prompt-injection and RCE-style attack surfaces
 - repo-level configuration files such as AGENTS.md are becoming standard, but must be treated as executable workflow influence, not harmless documentation
+- tool-using agents often benefit from feedback-grounded correction, while
+  intrinsic self-correction without reliable external feedback is inconsistent
 ```
 
 Sources:
@@ -57,6 +59,13 @@ Sources:
 - https://arxiv.org/abs/2512.22387
 - https://arxiv.org/abs/2602.14690
 - https://www.tomshardware.com/tech-industry/cyber-security/researchers-uncover-critical-ai-ide-flaws-exposing-developers-to-data-theft-and-rce
+- https://arxiv.org/abs/2303.11366
+- https://arxiv.org/abs/2210.03629
+- https://arxiv.org/abs/2505.24726
+- https://arxiv.org/abs/2310.01798
+- https://arxiv.org/abs/2406.01297
+- https://arxiv.org/abs/2406.15673
+- https://www.anthropic.com/engineering/building-effective-agents
 
 ---
 
@@ -90,6 +99,21 @@ The project must optimize for:
 - no hidden API billing
 - no destructive unattended commands
 ```
+
+Use this operating loop:
+
+```text
+plan enough to choose a safe probe
+-> act through the smallest reversible and evaluable step
+-> observe deterministic external feedback
+-> reflect against evidence
+-> retry with a changed strategy within a bounded budget
+-> stop or escalate when feedback is ambiguous or risk increases
+```
+
+This does not authorize action-first behavior for protected, irreversible,
+expensive, credential-bearing, safety-critical, or externally visible effects.
+Those remain plan-first, simulation/dry-run-first, human-gated, and brokered.
 
 ---
 
@@ -158,6 +182,8 @@ A work unit must include:
 - repository-validation evidence
 - selected skills/plugins/MCP/tools and why each is needed
 - external sources and versions relied on
+- earliest safe probe and deterministic evaluator
+- retry budget, required changed strategy, and stop/escalation condition
 ```
 
 Example:
@@ -229,6 +255,12 @@ Every non-trivial task follows this flow:
 14. Human merges.
 ```
 
+Within implementation and verification steps, do not wait for speculative
+reasoning to become "perfect" when a safe probe can supply evidence. Execute
+the smallest reversible/evaluable step, record its outcome, update the plan,
+and retry only with a changed strategy and remaining attempt budget. Never use
+a protected or irreversible effect as a probe.
+
 For very small tasks, the simplified flow is allowed:
 
 ```text
@@ -270,6 +302,8 @@ Every non-trivial task must produce a compact evidence packet:
 - skills/plugins/MCP/tools invoked and why
 - permissions granted and any data disclosed to external services
 - remaining risk and required human decisions
+- attempt outcomes, failure classification, changed retry rationale, and stop
+  or escalation decision
 ```
 
 Tool-selection rules:

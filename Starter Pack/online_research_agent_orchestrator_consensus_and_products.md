@@ -5,6 +5,10 @@
 **Status:** Dated supporting research only. Verify current product, pricing,
 auth, and capability claims before using them; this file is not implementation
 authority.
+**Current operating correction (2026-06-10):** References to "plan first"
+mean plan enough to act safely. Current authority prefers safe, reversible,
+evaluable probes and evidence-grounded bounded retries; high-risk effects
+remain plan-first and human-gated.
 
 ---
 

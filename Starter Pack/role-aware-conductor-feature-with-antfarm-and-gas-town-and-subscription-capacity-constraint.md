@@ -15,6 +15,13 @@ order and records discoveries.
 > authority. Use `Starter Pack/README.md`, `Goal.md`, `Plan.md`,
 > `openspec/conductor-governance.json`, and the ten active OpenSpec changes.
 > **Date:** 2026-06-01
+>
+> **Current operating correction (2026-06-10):** Historical "plan first"
+> guidance below means plan enough to choose a safe action. Current authority
+> uses a risk-calibrated `reason -> act -> observe -> reflect -> retry` loop for
+> reversible, evaluable probes, with bounded retries. Protected, irreversible,
+> or ambiguous effects remain plan-first, human-gated, and never blindly
+> retried.
 
 ---
 

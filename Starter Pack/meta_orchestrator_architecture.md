@@ -4,6 +4,10 @@
 **Status:** Retained architecture reference; not authoritative for MVP
 interfaces, safety guarantees, or implementation order. Use `README.md`,
 `Goal.md`, `Plan.md`, and OpenSpec for current delivery decisions.
+Historical "plan first" wording means plan enough to choose a safe probe, not
+extended speculative deliberation. Current authority uses bounded,
+evidence-grounded execution-feedback loops while keeping protected and
+irreversible effects plan-first and human-gated.
 
 ```text
 Parallel Code fork first.

@@ -37,6 +37,10 @@ before beginning any multi-change implementation work.
 8. **Record an evidence and tooling plan.** Name the repository evidence,
    primary documentation, checks, and task-relevant skills/plugins/MCP servers
    that will be used. Explain why each external or write-capable tool is needed.
+9. **Define the execution-feedback loop.** Name the earliest safe probe, its
+   deterministic evaluator, attempt budget, changed retry strategy, and stop or
+   escalation condition. Never use a protected or irreversible effect as a
+   probe.
 
 ## Required Sections
 
@@ -52,6 +56,7 @@ Every ExecPlan contains these sections in this order. All are non-negotiable.
 | **Idempotence and Recovery**    | Before starting      | How to re-run safely if a step fails                                     |
 | **Interfaces and Dependencies** | Before starting      | TypeScript types; IPC channel names + values                             |
 | **Evidence and Tooling**        | Before starting      | Repo evidence, primary sources, relevant skills/plugins/MCP, permissions |
+| **Feedback and Retry Strategy** | Before starting      | Safe probe, evaluator, attempt budget, changed retry, stop condition     |
 | **Progress**                    | Updated continuously | Checkbox per task with date                                              |
 | **Surprises & Discoveries**     | Updated continuously | Unexpected findings, one line + date                                     |
 | **Decision Log**                | Updated continuously | Key decision, rationale, date                                            |
@@ -79,6 +84,12 @@ Every ExecPlan contains these sections in this order. All are non-negotiable.
 - Prefer progressive tool discovery and the smallest relevant skill set. Do not
   put detailed task-specific guidance into repository-wide instructions when a
   scoped skill or path-specific instruction would keep unrelated tasks cleaner.
+- Prefer early evidence from safe, reversible, cheap, deterministically
+  evaluable actions over extended speculative reflection. High-risk actions
+  remain plan-first, dry-run or simulation first, and human-gated.
+- A retry must respond to observed evidence by changing inputs, strategy, or
+  preconditions. Bound retries and stop or escalate when feedback is ambiguous,
+  no evaluator exists, or attempts make no progress.
 
 ## ExecPlan Skeleton
 
@@ -136,6 +147,11 @@ npx vitest run
 
 <Repository evidence, primary sources, relevant skills/plugins/MCP, permissions,
 and why each external tool is needed.>
+
+## Feedback and Retry Strategy
+
+<Earliest safe probe, deterministic evaluator, attempt budget, what must change
+before retry, and stop or escalation condition.>
 
 ---
 
