@@ -1,7 +1,7 @@
 ## Why
 
 Parallel Code lets a user pick an agent per task by hand. The Role-Aware
-Conductor's differentiator is letting the user *describe a task* and have the
+Conductor's differentiator is letting the user _describe a task_ and have the
 app dispatch the right role→agent workflow. Every other conductor capability
 (dry-run, worktrees, artifacts, scheduler, approval gates) depends on one
 foundation: a project-local, validated configuration that binds roles
@@ -24,7 +24,7 @@ agents are launched and nothing is written to the working tree by this change.
   exists, binding `planner→claude-code`, `implementer→codex`,
   `reviewer→claude-code`, `ui_verifier→antigravity` (fallback `gemini`),
   `fixer→codex`, with Consumer Subscription capacity defaults.
-- Implement a **role resolver** with precedence: explicit command override →
+- Implement a **role resolver** with precedence: explicit conduct-request override →
   `roles.yaml` (overlay) → `conductor.yaml` → built-in defaults.
 - Keep durable committed config separate from generated runtime state inside
   `.parallel-code/` (see `design.md`).

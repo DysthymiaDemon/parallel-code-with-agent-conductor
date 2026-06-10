@@ -7,12 +7,20 @@ coverage
 # Local auto-update test server payload (build artifacts, not source).
 update-test/
 # Runtime data dir written by the app (MCP coordinator state, etc.)
-.parallel-code/
+.parallel-code/*
+!.parallel-code/conductor.yaml
+!.parallel-code/roles.yaml
+!.parallel-code/workflows/
+!.parallel-code/workflows/**
+!.parallel-code/policies/
+!.parallel-code/policies/**
 .worktrees
 .idea
 .claude
 .DS_Store
-docs/
+docs/*
+!docs/adr/
+!docs/adr/**
 
 # Sandbox bind-mount artifacts from user home (not project files).
 # Root-anchored so legitimate nested files with these names are still tracked.

@@ -112,6 +112,17 @@ export default [
     },
   },
 
+  // The governance checker uses standard Node globals.
+  {
+    files: ['scripts/check-conductor-governance.mjs'],
+    languageOptions: {
+      globals: {
+        console: 'readonly',
+        process: 'readonly',
+      },
+    },
+  },
+
   // Disable rules that conflict with Prettier (must be last)
   eslintConfigPrettier,
 ];

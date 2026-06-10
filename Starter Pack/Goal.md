@@ -1,203 +1,105 @@
-# Codex /goal Entry Point — Conductor MVP
+# Codex /goal Entry Point: Conductor MVP
 
 ## /goal Command
 
-```
+```text
 /goal Implement the MVP Guided Role-Aware Conductor for Parallel Code.
-      Read Starter Pack/Plan.md before starting. Implement in the 7-phase
-      dependency order defined there. Run openspec validate --all --strict
-      before writing any implementation code. Stop only when the Stop
-      Condition below is fully satisfied.
+Read Starter Pack/README.md, Goal.md, Plan.md, and
+openspec/conductor-governance.json first. Implement the ten OpenSpec changes in
+dependency order. Validate governance and OpenSpec before implementation.
 ```
-
-This file is the durable Codex objective for the MVP Guided Role-Aware
-Conductor. It is the source of truth for the Codex `/goal` run. When this file
-and any research doc disagree, this file wins; when this file and the
-`openspec/changes/add-conductor-*` proposals disagree on *how*, the OpenSpec
-changes win (they are the executable delivery unit), but they must not expand
-scope beyond this file.
-
----
 
 ## Objective
 
-Turn the existing Parallel Code app from manual, per-task agent launching into a
-safe **guided workflow conductor**. The user describes one task; the app picks
-the right role→agent workflow, shows the full plan before anything runs, and
-only launches agents after explicit approval — reusing existing Parallel Code
-task, worktree, diff, and MCP plumbing. Add role presets, fixed workflow
-presets, a conduct dry-run, worktree-backed launch, structured artifact capture,
-auth/billing warnings, and human gates on risky actions.
-
----
-
-## Preflight (do before any implementation code)
-
-These three fixes must be done first. They unblock all later phases.
-
-1. **Fix agent-id drift.** The `add-conductor-config` proposal/tasks/spec bind
-   roles to `claude` and `google_visual`, which are not in
-   `electron/ipc/agents.ts`. Replace with real ids: `planner→claude-code`,
-   `implementer→codex`, `reviewer→claude-code`, `ui_verifier→antigravity`
-   (fallback `gemini`), `fixer→codex`.
-2. **Resolve the `.parallel-code/` ignore.** `.gitignore` currently ignores all
-   of `.parallel-code/` and `.worktrees/`. Narrow it: create
-   `.parallel-code/.gitignore` containing `state/\nartifacts/\nworktrees/\nagents/`
-   so committed config (`conductor.yaml`, `roles.yaml`, `workflows/`,
-   `policies/`) is trackable while runtime state stays ignored.
-3. **Confirm the YAML dependency.** `yaml` appears only as a transitive entry in
-   `package-lock.json`. Add it as a direct `dependencies` entry (human-gated
-   install) before importing it; do not rely on the transitive copy.
-
----
+Turn the existing Parallel Code Electron app into a safe guided conductor. A
+user describes one task; the app deterministically previews a role-to-agent
+workflow without side effects, freezes the approved run manifest, and executes
+it through provider-specific adapters, enforceable role sandboxes, a
+transactional run store, structured artifacts, consumer-conservative admission,
+and human-authorized privileged operations.
 
 ## Stop Condition
 
-Stop only when **all** of the following are true and demonstrable:
+Stop only when all are demonstrable:
 
-1. A user enters one task and the app deterministically selects a workflow
-   preset and role→agent bindings **without launching anything**.
-2. A dry-run screen shows, before any side effect: selected workflow, role→agent
-   assignments, planned worktrees, capacity plan (active vs. queued),
-   auth/billing warnings, expected artifact list, and the approval gates that
-   will apply.
-3. No agent, worktree, branch, or artifact is created until the user approves
-   the dry-run.
-4. On approval, agents launch through the **existing** Parallel Code
-   task/worktree plumbing (`createTask` → `createWorktree`); writable work lands
-   in `.worktrees/`.
-5. Each run produces `.parallel-code/artifacts/runs/<run-id>/` containing the
-   role artifacts that its workflow defines (subset of the six MVP artifact
-   files below).
-6. The run records per-step traceability: `run step → role → agent → task id
-   → artifact`.
-7. Auth/billing warnings appear when any of the listed API-key env vars are
-   present — **without ever logging or persisting the secret value**.
-8. Merge, push, package install, migration, and destructive filesystem actions
-   are blocked behind an explicit human gate; the run surfaces the basic states
-   below.
-9. The existing manual Parallel Code task flow is unchanged and still works.
-10. Validation has been run (see Validation section) or every blocker is
-    documented in `final-summary.md`.
+1. A conduct request deterministically selects a fixed workflow and resolves
+   registered agents/adapters without launching or writing.
+2. Dry-run shows workflow, role/agent/adapter assignments, capability limits,
+   auth posture, capacity plan, worktree plan, artifact contracts, permissions,
+   gates, and manifest digest.
+3. Approval transactionally creates the run and freezes an immutable manifest;
+   cancel creates no run, worktree, process, or artifact.
+4. Provider adapters prefer structured interfaces; PTY fallback is explicit
+   and fails closed when a required capability is absent.
+5. Writable/read-only roles use enforceable macOS/Linux sandbox profiles and
+   minimal child environments. A worktree is never claimed as a sandbox.
+6. One transactional store owns runs, steps, queue, gates, artifact metadata,
+   append-only events, and immutable effect intents.
+7. Roles exchange only declared, verified artifacts; the conductor synthesizes
+   the canonical `final-summary.md`.
+8. Privileged conductor effects are authorized at final backend entrypoints;
+   ambiguous effects are reconciled and never blindly retried.
+9. Auth posture never assumes subscription from absent keys, never silently
+   changes billing route, and never exposes secret values.
+10. Existing manual task flows remain unchanged and all validation passes or
+    blockers are recorded.
+11. Safe, reversible steps use evidence-grounded bounded retries; each retry
+    changes strategy, inputs, or preconditions, while ambiguous or protected
+    effects stop for reconciliation or human authorization.
 
-**Command-verifiable criteria:** `npx openspec validate --all --strict` passes,
-`npm run typecheck` passes, `npx vitest run` green (or blockers recorded), all
-four workflow preset YAMLs exist under `.parallel-code/workflows/`, the conduct
-dialog renders a dry-run preview for a sample task, and human gates block merge
-and push.
+## MVP Scope
 
----
+- Four fixed workflows: `simple-codex`, `plan-implement-review`,
+  `ui-build-verify`, `bug-hunt`.
+- Default bindings: planner/reviewer `claude-code`; implementer/fixer `codex`;
+  UI verifier `antigravity` with `gemini` fallback.
+- Consumer-conservative admission: target 3 active agents, hard cap 6.
+- Auth key-name inspection includes `OPENAI_API_KEY`, explicit
+  `CODEX_API_KEY`, `ANTHROPIC_API_KEY`, `GEMINI_API_KEY`, and `GOOGLE_API_KEY`.
+- Canonical artifacts: `plan.md`, `accepted-plan.md`,
+  `implementation.diff`, `test-report.json`, `code-review.md`, optional
+  `ui-review.md`/screenshots, and conductor-owned `final-summary.md`.
+- Human authorization for commit, merge, push, install, migration, delete, and
+  protected-path operations.
 
-## In Scope
+Out of scope: adaptive workflow marketplaces, swarms, enterprise billing
+optimization, cloud collaboration, editor forks, and long-term agent memory.
 
-- **Role preset:** `Ameen's Default — Subscription Aware`.
-- **Fixed workflow presets only:** `simple-codex`, `plan-implement-review`,
-  `ui-build-verify`, `bug-hunt`. Fixed recipe schema; **no** editor or
-  marketplace.
-- **Conduct dry-run** screen (deterministic selection, zero side effects).
-- **Consumer scheduling:** 3 active agents normal, 6 hard cap, queue the excess,
-  show a capacity plan.
-- **Artifact files (the full MVP set; a given workflow uses the subset it
-  needs):** `plan.md`, `implementation.diff`, `test-report.json`, `ui-review.md`,
-  `code-review.md`, `final-summary.md`.
-- **Per-run traceability:** run step → role → agent → task id → artifact.
-- **Auth warnings** for: `OPENAI_API_KEY`, `CODEX_API_KEY`, `ANTHROPIC_API_KEY`,
-  `GEMINI_API_KEY`, `GOOGLE_AI_API_KEY`.
-- **Human gates** for: merge, push, package install, migration, destructive
-  filesystem actions, and writes to protected paths.
-- **Basic run states:** `ready-for-review`, `ready-for-merge`, `blocked`,
-  `failed`, `needs-human`, `retry-once`.
+## Delivery Map
 
-## Out Of Scope
+1. `add-conductor-config`
+2. `add-conductor-agent-adapters`
+3. `add-conductor-auth-inspector`
+4. `add-conductor-scheduler`
+5. `add-conductor-run-store`
+6. `add-conductor-dry-run`
+7. `add-conductor-worktrees`
+8. `add-conductor-artifacts`
+9. `add-conductor-execution-adapter`
+10. `add-conductor-approval-gates`
 
-- Zed fork; full ACP rewrite.
-- Autonomous merge queue — MVP only tracks human-approved review/merge
-  readiness.
-- 20+ agent / swarm scheduler — MVP supports only 3-normal / 6-hard-cap
-  consumer scheduling.
-- Complex retry/escalation engine — MVP supports only the basic states above
-  (`retry-once`, not N-retry).
-- Persistent long-term agent identity/memory — MVP records only per-run
-  traceability.
-- General workflow DSL editor or recipe marketplace — MVP ships fixed presets
-  only.
-- Enterprise/API budget mode — MVP supports consumer subscription mode plus
-  API-env warnings only.
-- VS Code/editor-native integration, cloud sync, team collaboration, hosted
-  billing.
+The detailed dependency graph and invariant IDs are authoritative in
+`openspec/conductor-governance.json`.
 
----
+## Non-Negotiables
 
-## Role → Agent Bindings
-
-Roles bind to agent **ids that already exist** in `electron/ipc/agents.ts`.
-Do not invent ids. The default preset is:
-
-| Role | Primary agent id | Fallback agent id |
-|---|---|---|
-| `planner` | `claude-code` | — |
-| `implementer` | `codex` | — |
-| `reviewer` | `claude-code` | — |
-| `ui_verifier` | `antigravity` | `gemini` |
-| `fixer` | `codex` | — |
-
-Capacity defaults: `mode: consumer_subscription`, `target_active_agents: 3`,
-`max_active_agents: 6`, `default_effort: medium`.
-
----
-
-## Delivery Map (authoritative "how")
-
-Implement in dependency order; each row is one OpenSpec change under
-`openspec/changes/`:
-
-1. `add-conductor-config` — config root, validation, `Ameen's Default` preset,
-   role resolver. (Foundation; unblocks all.)
-2. `add-conductor-auth-inspector` — API-key detection + subscription warnings
-   (no secret values).
-3. `add-conductor-scheduler` — 3/6 consumer concurrency caps + capacity plan
-   (pure policy, no launches).
-4. `add-conductor-dry-run` — task classifier, workflow selection, dry-run
-   preview (first user-visible surface; still no writes).
-5. `add-conductor-worktrees` — worktree launch via existing plumbing +
-   protected-path policy.
-6. `add-conductor-artifacts` — `.parallel-code/artifacts/runs/<run-id>/` + role
-   artifact handoff + traceability.
-7. `add-conductor-approval-gates` — human gates + the basic run states; closes
-   the loop.
-
----
-
-## Constraints & Non-Negotiables
-
-- **Stack:** existing Electron / SolidJS (functional components, signals/stores)
-  / strict TypeScript (`strict: true`, no `any`) / Node. Published for
-  **macOS and Linux only** — no Windows-specific assumptions.
-- **Reuse first:** prefer existing task, agent (`AgentDef`), worktree, diff, and
-  MCP plumbing over new abstractions. New conductor logic lives under
-  `electron/conductor/`; shared types in `src/ipc/types.ts`; IPC channels in
-  `electron/ipc/channels.ts` with preload allowlist entries in
-  `electron/preload.cjs`.
-- **Spec before code:** each capability ships as its `openspec/changes/
-  add-conductor-*` change; `openspec validate --all --strict` must pass before
-  implementation and before archive.
-- **`.parallel-code/` split:** durable committed config (`conductor.yaml`,
-  `roles.yaml`, `workflows/`, `policies/`) must be separate from generated
-  runtime state (`state/`, `artifacts/`, `agents/`).
-- **Safety:** never merge, push, install, migrate, or write a protected path
-  without a human gate. Never log or persist secret values. Dry-run has no side
-  effects.
-- **Preserve** the existing manual Parallel Code task flow end to end.
-
----
+- Spec before code; no install or migration without a human gate.
+- Strict TypeScript, existing Electron IPC conventions, macOS/Linux only.
+- Secret values never enter logs, events, results, artifacts, or persistence.
+- Dry-run has zero side effects.
+- Approved manifests and effect intents are immutable.
+- Provider state cannot supersede conductor durable state.
+- Reflection and retry are grounded in recorded external feedback, bounded, and
+  never used to bypass a gate or repeat an ambiguous effect.
+- Manual Parallel Code behavior remains unchanged.
 
 ## Validation
 
-Run and record results (or document blockers) before declaring done:
-
-- `npx openspec validate --all --strict`
-- `npm run typecheck`
-- `npx vitest run` (unit + integration for new conductor logic)
-- Manual smoke: one task → dry-run → approve → existing task/worktree launch →
-  artifacts written → `ready-for-review` / `ready-for-merge` gate; and confirm
-  the manual task flow still works.
+```bash
+npm run check:governance
+npm run check:spec
+npm run typecheck
+npm test
+npm run lint:arch
+npm run lint:dead
+```

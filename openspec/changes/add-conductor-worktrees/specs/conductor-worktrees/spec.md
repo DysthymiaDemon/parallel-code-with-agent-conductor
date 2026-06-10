@@ -21,8 +21,9 @@ WorktreeRef {
 }
 ```
 
-The conductor persists each run's `WorktreeRef`s (in run state) so subsequent
-steps can look up a worktree by `role` + `runId`.
+The conductor persists each run's `WorktreeRef`s through
+`add-conductor-run-store` so subsequent steps can look up a worktree by `role`
+and `runId`.
 
 Branch-name construction:
 
@@ -76,7 +77,10 @@ proceed as if a worktree exists.
 The app SHALL classify a target path against the protected-paths policy as
 `deny`, `ask`, or `allow`, exposed through `ConductorCheckProtectedPath`. When
 the policy file `.parallel-code/policies/protected-paths.yaml` does not exist,
-the app SHALL use a built-in default policy.
+the app SHALL use a built-in default policy. Classification SHALL use a
+canonical path after symlink resolution and SHALL reject paths outside approved
+repository/worktree roots. Final mutation enforcement belongs to the
+privileged-operation broker.
 
 Built-in default (used when the policy file is absent):
 
@@ -113,6 +117,25 @@ Built-in default (used when the policy file is absent):
 - **THEN** the write is refused
 - **AND** the run transitions to `failed` with error detail identifying the
   denied path
+
+#### Scenario: Symlink escape is rejected
+
+- **WHEN** a target path traverses a symlink to a path outside the approved root
+- **THEN** classification refuses the target
+- **AND** no outside path is modified
+
+### Requirement: Worktrees are not filesystem or Git-metadata sandboxes
+
+The app SHALL describe worktrees as Git-integration isolation only. Conductor
+roles SHALL NOT mutate shared Git metadata or paths outside the worktree except
+through an authorized privileged-operation-broker effect.
+
+#### Scenario: Direct shared Git metadata mutation is requested
+
+- **WHEN** a conductor step requests a ref/config/index mutation through shared
+  Git metadata
+- **THEN** the mutation requires an authorized broker effect
+- **AND** the worktree alone is not considered sufficient containment
 
 ### Requirement: Worktree cleanup is explicit and gated
 

@@ -2,6 +2,13 @@
 
 **Date:** 2026-06-01
 **Question:** Is the reasoning behind a Parallel Code-based meta-orchestrator for Codex, Claude, and Gemini/Antigravity common among agent-using developers? Does a product already exist that serves this need, and what are its cons versus Zed?
+**Status:** Dated supporting research only. Verify current product, pricing,
+auth, and capability claims before using them; this file is not implementation
+authority.
+**Current operating correction (2026-06-10):** References to "plan first"
+mean plan enough to act safely. Current authority prefers safe, reversible,
+evaluable probes and evidence-grounded bounded retries; high-risk effects
+remain plan-first and human-gated.
 
 ---
 
@@ -238,16 +245,16 @@ The exact neutral, subscription-preserving, editor-native orchestrator remains u
 
 ## 3.1 Product landscape summary
 
-| Product | How close is it? | Best description | Main weakness versus future editor-native path |
-|---|---:|---|---|
-| Zed | High substrate, incomplete orchestrator | Editor-native ACP cockpit | No full meta-orchestrator yet |
-| Parallel Code | Very close operationally | Standalone multi-agent worktree manager | Not editor-native; less deep code/symbol/diff integration than a future editor-native path |
-| Conductor | Close for Mac + Codex/Claude | Mac app for parallel Codex + Claude workspaces | Mac-only; apparently Codex/Claude-focused; not clearly Gemini/Antigravity-centered |
-| Cursor | Strong AI IDE | Integrated AI IDE with agents/worktrees | Uses Cursor usage pools/on-demand/BYOK API, not first-party Codex/Claude CLI entitlements |
-| Warp/Oz | Strong terminal/control-plane option | Agentic terminal / cloud agent platform | Credit-based Warp agent economics; terminal-first, not editor-first |
-| Google Antigravity | Strong manager/browser surface | Google agent-first IDE with artifacts | Google-centric; not obviously preserving Codex/Claude subscriptions |
-| Claude Agent Teams | Strong internal orchestration | Multi-Claude coordination | Claude-only unless external tools exposed through MCP |
-| GitHub Agent HQ | Strong platform direction | Select agents inside GitHub/Copilot | Copilot subscription/premium request model; not Zed/local-first |
+| Product            |                        How close is it? | Best description                               | Main weakness versus future editor-native path                                             |
+| ------------------ | --------------------------------------: | ---------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| Zed                | High substrate, incomplete orchestrator | Editor-native ACP cockpit                      | No full meta-orchestrator yet                                                              |
+| Parallel Code      |                Very close operationally | Standalone multi-agent worktree manager        | Not editor-native; less deep code/symbol/diff integration than a future editor-native path |
+| Conductor          |            Close for Mac + Codex/Claude | Mac app for parallel Codex + Claude workspaces | Mac-only; apparently Codex/Claude-focused; not clearly Gemini/Antigravity-centered         |
+| Cursor             |                           Strong AI IDE | Integrated AI IDE with agents/worktrees        | Uses Cursor usage pools/on-demand/BYOK API, not first-party Codex/Claude CLI entitlements  |
+| Warp/Oz            |    Strong terminal/control-plane option | Agentic terminal / cloud agent platform        | Credit-based Warp agent economics; terminal-first, not editor-first                        |
+| Google Antigravity |          Strong manager/browser surface | Google agent-first IDE with artifacts          | Google-centric; not obviously preserving Codex/Claude subscriptions                        |
+| Claude Agent Teams |           Strong internal orchestration | Multi-Claude coordination                      | Claude-only unless external tools exposed through MCP                                      |
+| GitHub Agent HQ    |               Strong platform direction | Select agents inside GitHub/Copilot            | Copilot subscription/premium request model; not Zed/local-first                            |
 
 ---
 

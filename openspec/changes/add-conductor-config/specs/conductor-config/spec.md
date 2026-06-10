@@ -25,28 +25,60 @@ SHALL be exposed to the renderer through the `ConductorLoadConfig` IPC channel.
 - **THEN** the returned config uses only the `conductor.yaml` role bindings
 - **AND** no error is raised for the missing overlay file
 
-### Requirement: Missing config generates the default preset
+### Requirement: Missing config resolves to an in-memory default without writing
 
-When a project has no `.parallel-code/conductor.yaml`, the app SHALL generate
-one containing the **Ameen's Default — Subscription Aware** preset rather than
-treating the absence as an error.
+When a project has no `.parallel-code/conductor.yaml`, the app SHALL resolve the
+effective config to the **Ameen's Default — Subscription Aware** preset
+**in memory** and SHALL NOT write any file as a side effect of loading. Loading
+never treats absence as an error. Persisting the default to disk is a separate,
+explicit action (see the next requirement) so that read-only/preview flows such
+as the dry-run produce no filesystem side effects.
 
-#### Scenario: First load on a project without config
+#### Scenario: First load on a project without config writes nothing
 
 - **WHEN** the renderer sends `ConductorLoadConfig` for a project that has no
   `.parallel-code/conductor.yaml`
-- **THEN** the main process writes a default `conductor.yaml` binding
+- **THEN** the returned `ConductorConfig` is the in-memory default binding
   `planner→claude-code`, `implementer→codex`, `reviewer→claude-code`,
   `ui_verifier→antigravity` (fallback `gemini`), and `fixer→codex`
-- **AND** the generated capacity block sets `mode: consumer_subscription`,
-  `target_active_agents: 3`, `max_active_agents: 6`, and `default_effort: medium`
-- **AND** the returned `ConductorConfig` reflects that generated file
+- **AND** the capacity block is `mode: consumer_conservative`,
+  `target_active_agents: 3`, `max_active_agents: 6`, `default_effort: medium`
+- **AND** no file is written under `.parallel-code/` or the project working tree
 
-#### Scenario: Defaulting never overwrites committed config
+#### Scenario: Existing committed config is loaded as-is
 
 - **WHEN** a `.parallel-code/conductor.yaml` already exists
 - **THEN** the app does not overwrite or regenerate it
 - **AND** the existing file's contents are loaded as-is
+
+### Requirement: Persisting the default config is explicit, never implicit
+
+The app SHALL write the default `conductor.yaml` (and any missing
+workflow/policy presets) only in response to an explicit initialize action,
+exposed through `ConductorSaveConfig`. Approving or starting a run SHALL
+continue using the resolved in-memory config and SHALL NOT persist defaults as a
+side effect. When initialization writes, it SHALL NOT overwrite an existing
+committed file.
+
+#### Scenario: Dry-run preview on an unconfigured project writes nothing
+
+- **WHEN** a dry-run preview is built for a project that has no
+  `.parallel-code/conductor.yaml`
+- **THEN** the preview uses the in-memory default config
+- **AND** no `conductor.yaml`, workflow, or policy file is written
+
+#### Scenario: Explicit initialize persists the default
+
+- **WHEN** the user explicitly initializes conductor config
+- **THEN** the app writes `conductor.yaml` with the Ameen's Default preset
+- **AND** it does not overwrite an existing committed `conductor.yaml`
+
+#### Scenario: Run approval does not initialize config
+
+- **WHEN** the user approves a run in a project with no persisted conductor
+  config
+- **THEN** the run uses the resolved in-memory defaults
+- **AND** no config, workflow, or policy file is written by the approval
 
 ### Requirement: Invalid config fails loudly, never silently
 
@@ -78,7 +110,7 @@ fall back to defaults when the file exists but is invalid.
 ### Requirement: Deterministic role resolution with precedence
 
 The app SHALL resolve a workflow role to a concrete registered agent using the
-precedence: explicit command override → `roles.yaml` (overlay) →
+precedence: explicit conduct-request override → `roles.yaml` (overlay) →
 `conductor.yaml` (base) → built-in defaults. `roles.yaml` acts as an overlay: a
 binding it defines replaces the entire corresponding binding from `conductor.yaml`
 rather than merging with it. Resolution SHALL be exposed through the
@@ -101,23 +133,24 @@ the configuration did not specify.
 
 #### Scenario: Fallback when primary unavailable
 
-- **WHEN** a role's primary agent is not present in the registry
-- **AND** a fallback agent is present
+- **WHEN** a role's registered primary agent has no available compatible adapter
+- **AND** a registered fallback agent has an available compatible adapter
 - **THEN** the resolver returns the first available fallback
 
 #### Scenario: No resolvable agent
 
-- **WHEN** neither the primary nor any fallback for a role is present in the
-  registry
+- **WHEN** neither the registered primary nor any registered fallback for a role
+  has an available compatible adapter
 - **THEN** the resolver returns an explicit unresolved result for that role
 - **AND** does not substitute an unrelated agent
 
 ### Requirement: roles.yaml overlay takes priority over conductor.yaml
 
-When `.parallel-code/roles.yaml` is present, its entries replace, not merge
-into, the corresponding role bindings from `conductor.yaml`. This is why
+When `.parallel-code/roles.yaml` is present, the app SHALL replace, not merge,
+its entries into the corresponding role bindings from `conductor.yaml`.
 `roles.yaml` has higher precedence than `conductor.yaml` in the resolution
-chain: command override → roles.yaml → conductor.yaml → built-in defaults.
+chain: conduct-request override → roles.yaml → conductor.yaml → built-in
+defaults.
 
 #### Scenario: roles.yaml entry replaces conductor.yaml entry
 
@@ -145,65 +178,67 @@ file). **Do not create a separate `src/ipc/conductor-types.ts`.** Keeping all
 IPC types in one file ensures they remain discoverable.
 
 ```typescript
-type RoleName = 'planner' | 'implementer' | 'reviewer' | 'ui_verifier' | 'fixer'
-type AgentId = string  // must exist in electron/ipc/agents.ts AgentDef registry
+type RoleName = 'planner' | 'implementer' | 'reviewer' | 'ui_verifier' | 'fixer';
+type AgentId = string; // must exist in electron/ipc/agents.ts AgentDef registry
 
 interface RoleBinding {
-  roleId: RoleName
-  primary: AgentId
-  fallback?: AgentId
-  mode?: 'plan' | 'implement' | 'review' | 'verify' | 'fix'
-  purpose?: string
+  roleId: RoleName;
+  primary: AgentId;
+  fallback?: AgentId;
+  mode?: 'plan' | 'implement' | 'review' | 'verify' | 'fix';
+  purpose?: string;
 }
 
 interface CapacityConfig {
-  maxActiveAgents: number   // default 3
-  hardCap: number           // default 6
-  defaultEffort: 'low' | 'medium' | 'high'  // default 'medium'
+  // Field names mirror the YAML keys 1:1 to avoid the target/hard-cap ambiguity.
+  mode: 'consumer_conservative'; // YAML: mode (only selectable MVP value)
+  targetActiveAgents: number; // YAML: target_active_agents, default 3 (soft target)
+  maxActiveAgents: number; // YAML: max_active_agents,    default 6 (hard cap)
+  defaultEffort: 'low' | 'medium' | 'high'; // YAML: default_effort, default 'medium'
 }
 
 interface AuthPolicy {
-  warnOnApiKeys: boolean
-  preferSubscriptionAuth: boolean          // default true
-  blockApiKeysUnlessExplicit: boolean      // default true
-  envApiKeys: string[]
+  warnOnApiKeys: boolean;
+  preferSubscriptionAuth: boolean; // default true
+  blockApiKeysUnlessExplicit: boolean; // default true
+  envApiKeys: string[];
 }
 
 interface ApprovalConfig {
-  requirePlanApproval: boolean             // default true
-  requireMergeApproval: boolean            // default true
-  requireFixApproval: boolean              // default true
-  requirePackageInstallApproval: boolean   // default true
-  requireMigrationApproval: boolean        // default true
-  requirePushApproval: boolean             // default true
-  blockOnDenyPath: boolean                 // default true
-  persistGatesAcrossRestarts: boolean      // default true
-  beforeFirstWrite: boolean                // default false
-  beforeCommit: boolean                    // default true
-  beforeMerge: boolean                     // default true
-  beforePush: boolean                      // default true
-  beforePackageInstall: boolean            // default true
-  beforeDatabaseMigration: boolean         // default true
-  beforeDelete: boolean                    // default true
-  beforeTouchingProtectedPaths: boolean    // default true
+  requirePlanApproval: boolean; // default true
+  requireMergeApproval: boolean; // default true
+  requireFixApproval: boolean; // default true
+  requirePackageInstallApproval: boolean; // default true
+  requireMigrationApproval: boolean; // default true
+  requirePushApproval: boolean; // default true
+  blockOnDenyPath: boolean; // default true
+  persistGatesAcrossRestarts: boolean; // default true
+  beforeFirstWrite: boolean; // default false
+  beforeCommit: boolean; // default true
+  beforeMerge: boolean; // default true
+  beforePush: boolean; // default true
+  beforePackageInstall: boolean; // default true
+  beforeDatabaseMigration: boolean; // default true
+  beforeDelete: boolean; // default true
+  beforeTouchingProtectedPaths: boolean; // default true
 }
 
 interface WorktreeConfig {
-  baseDir: string       // default '.worktrees' (matches existing project convention)
-  branchPrefix: string  // default 'conductor'
+  baseDir: string; // default '.worktrees' (matches existing project convention)
+  branchPrefix: string; // default 'conductor'
 }
 
 interface ConductorConfig {
-  schemaVersion: '1'
-  project: { name: string }
+  schemaVersion: '1';
+  project: { name: string };
   agents: {
-    roles: RoleBinding[]
-    capacity: CapacityConfig
-    authPolicy: AuthPolicy
-  }
-  workflows: { presets: string[] }
-  worktrees: WorktreeConfig
-  approval: ApprovalConfig
+    roles: RoleBinding[];
+    capacity: CapacityConfig;
+    authPolicy: AuthPolicy;
+  };
+  workflows: { presets: string[] };
+  worktrees: WorktreeConfig;
+  approval: ApprovalConfig;
 }
 ```
 
@@ -214,9 +249,9 @@ New channels use the `Conductor*` prefix exclusively. The existing
 `electron/ipc/channels.ts` belong to the separate `coordinator-mcp-backend`
 OpenSpec change and must not be modified.
 
-| Enum member | String value |
-|---|---|
-| `ConductorLoadConfig` | `'conductor_load_config'` |
+| Enum member               | String value                  |
+| ------------------------- | ----------------------------- |
+| `ConductorLoadConfig`     | `'conductor_load_config'`     |
 | `ConductorValidateConfig` | `'conductor_validate_config'` |
-| `ConductorSaveConfig` | `'conductor_save_config'` |
-| `ConductorResolveRole` | `'conductor_resolve_role'` |
+| `ConductorSaveConfig`     | `'conductor_save_config'`     |
+| `ConductorResolveRole`    | `'conductor_resolve_role'`    |

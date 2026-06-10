@@ -16,6 +16,10 @@ paths.
 - Bind worktree writability to role mode: `implementer`/`fixer` get a writable
   worktree; `fixer` reuses the implementer's worktree; `planner`/`reviewer` are
   read-only and get no writable worktree.
+- Classify canonicalized protected paths and surface the result to the
+  privileged-operation broker, which performs final enforcement.
+- Treat shared Git metadata, symlinks, and paths outside the worktree as
+  explicit risks; a worktree is not a filesystem sandbox.
 - Enforce a protected-paths policy
   (`.parallel-code/policies/protected-paths.yaml`): `deny_write` paths (`.env*`,
   `secrets/**`, `credentials/**`, `infra/prod/**`, deploy workflows) are blocked;
@@ -41,7 +45,9 @@ paths.
   `ConductorCleanupWorktree`, and `ConductorCheckProtectedPath` on the `IPC`
   enum + preload allowlist; `WorktreeRef` and payload types in
   `src/ipc/types.ts`.
-- **Depends on:** `add-conductor-config` (worktree + protected-path policy).
+- **Depends on:** `add-conductor-config` (worktree + protected-path policy) and
+  `add-conductor-run-store` (durable worktree references).
 - **Filesystem:** creates branches and directories under `.worktrees/`.
-- **Approval coupling:** the `ask_before_write` gate and the no-merge/no-push
-  rule are enforced jointly with `add-conductor-approval-gates`.
+- **Enforcement coupling:** classification feeds the privileged-operation
+  broker in `add-conductor-execution-adapter`; approvals authorize `ask`
+  operations through `add-conductor-approval-gates`.

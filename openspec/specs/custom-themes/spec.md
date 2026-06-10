@@ -120,9 +120,9 @@ custom theme overrides color variables.
 
 ### Requirement: Terminal readability for light custom themes
 
-When a custom theme's `terminalBackground` has luminance > 0.5, the terminal
-emulator SHALL use a dark foreground color and a GitHub-light-compatible ANSI
-palette so that colored output remains legible.
+The terminal emulator SHALL use a dark foreground color and a
+GitHub-light-compatible ANSI palette when a custom theme's `terminalBackground`
+has luminance > 0.5 so that colored output remains legible.
 
 #### Scenario: Light background gets dark foreground
 

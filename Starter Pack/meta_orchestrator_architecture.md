@@ -1,7 +1,13 @@
 # Current Architecture Decision: Parallel Code Fork First
 
 **Update date:** 2026-06-01 13:32:40 UTC
-**Current status:** This document is now Parallel Code-based.
+**Status:** Retained architecture reference; not authoritative for MVP
+interfaces, safety guarantees, or implementation order. Use `README.md`,
+`Goal.md`, `Plan.md`, and OpenSpec for current delivery decisions.
+Historical "plan first" wording means plan enough to choose a safe probe, not
+extended speculative deliberation. Current authority uses bounded,
+evidence-grounded execution-feedback loops while keeping protected and
+irreversible effects plan-first and human-gated.
 
 ```text
 Parallel Code fork first.
@@ -19,7 +25,8 @@ Keep editor integration optional.
 
 The MVP is **not** a future editor-native path. The MVP is a **Parallel Code fork** amended into Parallel Code with Agent Conductor.
 
-Use this architecture as the source of truth:
+Use this as a reference model only; current delivery authority is defined in
+`README.md`, `Goal.md`, `Plan.md`, and OpenSpec:
 
 ```text
 Parallel Code fork
@@ -396,7 +403,7 @@ steps:
   - id: fix
     role: fixer
     depends_on: [code_review]
-    condition: "review.blocking_issues > 0"
+    condition: 'review.blocking_issues > 0'
     prompt: |
       Fix only the accepted blocking issues.
       Re-run checks.
@@ -406,7 +413,7 @@ steps:
 
   - id: human_gate
     type: approval
-    prompt: "Approve final diff for merge?"
+    prompt: 'Approve final diff for merge?'
 ```
 
 Built-in workflows:
@@ -1113,7 +1120,7 @@ file_leases(
 
 ---
 
-## 21. MVP Implementation Plan
+## 21. Historical Architecture Phase Sketch
 
 ### Phase 1: Manual Cross-Thread Routing
 
@@ -1383,7 +1390,6 @@ Parallel Code with Agent Conductor as the neutral cockpit
 Git as the safety boundary
 Human as the final decision-maker
 ```
-
 
 ---
 

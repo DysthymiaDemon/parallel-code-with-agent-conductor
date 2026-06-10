@@ -37,7 +37,9 @@ changes safe to connect to real agent launches.
   `ConductorResolveApproval` on the `IPC` enum + preload allowlist; payload
   types in `src/ipc/types.ts`.
 - **Depends on:** `add-conductor-config` (approval policy),
+  `add-conductor-run-store` (manifest, gate, and effect persistence),
   `add-conductor-worktrees` (protected-path classification), and
   `add-conductor-artifacts` (plan/final artifacts the gates reference).
-- **Behavioral guarantee:** no commit, push, merge, package install, migration,
-  delete, or protected-path write proceeds without an approve result.
+- **Behavioral guarantee:** no brokered conductor commit, push, merge, package
+  install, migration, delete, or protected-path write proceeds without its
+  required approve result.

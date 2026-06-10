@@ -5,8 +5,23 @@
 **Product context:** Parallel Code with Agent Conductor
 **Project context:** Parallel Code/Electron app first; optional editor bridge later
 **Feature type:** Local desktop multi-agent CLI orchestration with editor bridge
-**Status:** Draft feature specification
-**Date:** 2026-06-01
+**Status:** Broad product-intent reference. `Goal.md` fixes the MVP scope;
+OpenSpec changes define executable requirements; `Plan.md` defines delivery
+order and records discoveries.
+
+> **Superseded implementation guidance:** This document preserves broad product
+> intent and historical exploration. Commands, phases, tickets, state models,
+> auth assumptions, and configuration examples below are not implementation
+> authority. Use `Starter Pack/README.md`, `Goal.md`, `Plan.md`,
+> `openspec/conductor-governance.json`, and the ten active OpenSpec changes.
+> **Date:** 2026-06-01
+>
+> **Current operating correction (2026-06-10):** Historical "plan first"
+> guidance below means plan enough to choose a safe action. Current authority
+> uses a risk-calibrated `reason -> act -> observe -> reflect -> retry` loop for
+> reversible, evaluable probes, with bounded retries. Protected, irreversible,
+> or ambiguous effects remain plan-first, human-gated, and never blindly
+> retried.
 
 ---
 
@@ -57,7 +72,6 @@ Git is the source of truth
 ```
 
 The future editor-native version should be treated as a later product path, not the first implementation.
-
 
 ## 1. Feature Summary
 
@@ -353,10 +367,9 @@ The app should not assume editor-specific internals in the MVP. It should work w
 editor_bridge:
   preferred_editor: configured_editor
   commands:
-    open_project: "{editor} {worktree_path}"
-    open_file: "{editor} {file_path}"
+    open_project: '{editor} {worktree_path}'
+    open_file: '{editor} {file_path}'
 ```
-
 
 ## 8. Main Config: `.parallel-code/conductor.yaml`
 
@@ -413,35 +426,35 @@ roles:
     fallback:
       - codex
     mode: read_only
-    purpose: "Architecture, planning, decomposition, risk analysis."
+    purpose: 'Architecture, planning, decomposition, risk analysis.'
 
   implementer:
     primary: codex
     fallback:
       - claude
     mode: writable
-    purpose: "Implementation, test repair, bug fixing, PR preparation."
+    purpose: 'Implementation, test repair, bug fixing, PR preparation.'
 
   reviewer:
     primary: claude
     fallback:
       - codex
     mode: read_only
-    purpose: "Code review, security review, maintainability review."
+    purpose: 'Code review, security review, maintainability review.'
 
   ui_verifier:
     primary: google_visual
     fallback:
       - claude
     mode: browser_or_read_only
-    purpose: "UI verification, screenshots, browser checks, responsive review."
+    purpose: 'UI verification, screenshots, browser checks, responsive review.'
 
   fixer:
     primary: codex
     fallback:
       - claude
     mode: writable
-    purpose: "Apply accepted review fixes only."
+    purpose: 'Apply accepted review fixes only.'
 
 workflow:
   default: plan-implement-review
@@ -453,7 +466,7 @@ workflow:
 worktrees:
   enabled: true
   root: .worktrees
-  naming: "{workflow}-{role}-{slug}-{timestamp}"
+  naming: '{workflow}-{role}-{slug}-{timestamp}'
   writable_roles:
     - implementer
     - fixer
@@ -567,7 +580,7 @@ Workflow templates define the order of execution and the handoff between roles.
 ```yaml
 schema: parallel-code-conductor-workflow/v1
 name: plan-implement-review
-description: "Claude plans, Codex implements, Claude reviews, Codex fixes."
+description: 'Claude plans, Codex implements, Claude reviews, Codex fixes.'
 
 steps:
   - id: plan
@@ -588,7 +601,7 @@ steps:
     type: human_approval
     depends_on:
       - plan
-    prompt: "Approve this plan for implementation?"
+    prompt: 'Approve this plan for implementation?'
 
   - id: implement
     type: agent
@@ -626,7 +639,7 @@ steps:
     type: human_approval
     depends_on:
       - review
-    prompt: "Select which blocking issues Codex should fix."
+    prompt: 'Select which blocking issues Codex should fix.'
 
   - id: fix
     type: agent
@@ -648,7 +661,7 @@ steps:
     type: human_approval
     depends_on:
       - fix
-    prompt: "Approve final diff for commit/merge?"
+    prompt: 'Approve final diff for commit/merge?'
 ```
 
 ### 10.2 `ui-build-verify.yaml`
@@ -656,7 +669,7 @@ steps:
 ```yaml
 schema: parallel-code-conductor-workflow/v1
 name: ui-build-verify
-description: "Codex implements UI, Google Visual verifies, Claude reviews if needed."
+description: 'Codex implements UI, Google Visual verifies, Claude reviews if needed.'
 
 steps:
   - id: plan
@@ -726,7 +739,7 @@ steps:
     mode: read_only
     depends_on:
       - fix_visual_issues
-    condition: "change_size != small"
+    condition: 'change_size != small'
     prompt: |
       Review the final UI code for maintainability and correctness.
     outputs:
@@ -1367,7 +1380,7 @@ The feature is complete when:
 
 ---
 
-## 21. Implementation Phases
+## 21. Historical Implementation Phases (Superseded)
 
 ### Phase 1: Config and Role Resolver
 
@@ -1543,7 +1556,6 @@ structured artifacts
 editor-native review
 human approval
 ```
-
 
 ---
 
@@ -1726,7 +1738,7 @@ steps:
       - implementation_diff
       - accepted_plan
     expected_output:
-      status_marker: "STATUS: verified"
+      status_marker: 'STATUS: verified'
       artifact: verification-report.md
     on_failure:
       retry: 1
@@ -2551,31 +2563,31 @@ Generated context should include:
 
 ## 28. Delta Table: What To Add To Role-Aware Conductor
 
-| Source | Feature / Rule | Present in Parallel Code? | Present in Previous MD? | Add to This Project? | Priority |
-|---|---|---:|---:|---:|---:|
-| Antfarm | Deterministic workflow contracts | No | Partial | Yes | P0 |
-| Antfarm | Planner/developer/verifier/tester/reviewer role separation | No | Partial | Yes | P0 |
-| Antfarm | Fresh context per step | No | Weak | Yes | P0 |
-| Antfarm | Retry and escalate | No | Weak | Yes | P0 |
-| Antfarm | Step expected-output markers | No | No | Yes | P1 |
-| Antfarm | YAML/Markdown workflow packs | No | Partial | Yes | P0 |
-| Antfarm | Workflow registry security review | No | No | Yes | P1 |
-| Antfarm | Dashboard for run progress/logs | Partial | Partial | Yes | P1 |
-| Antfarm | Resume failed run | No | No | Yes | P1 |
-| Gas Town | Top coordinator as primary interface | No | Partial | Yes | P0 |
-| Gas Town | Work tracker: run/work item/step hierarchy | No | Partial | Yes | P0 |
-| Gas Town | Persistent agent identity | No | No | Yes | P1 |
-| Gas Town | Persistent work state survives crashes | Partial | Partial | Yes | P0 |
-| Gas Town | Watchdog / health monitoring | No | No | Yes | P0 |
-| Gas Town | Problems view | No | No | Yes | P1 |
-| Gas Town | Nudge/handoff/retry/reassign recovery | No | No | Yes | P0 |
-| Gas Town | Activity feed / event stream | No | Weak | Yes | P1 |
-| Gas Town | Scheduler / concurrency cap | No | No | Yes | P0 |
-| Gas Town | Severity-based escalation | No | Weak | Yes | P0 |
-| Gas Town | Merge queue | No | No | Yes, simplified first | P1 |
-| Gas Town | Bors-style bisecting merge queue | No | No | Later | P2 |
-| Gas Town | Formulas/recipes | No | Partial | Yes | P1 |
-| Gas Town | Context recovery / prime | No | No | Yes | P1 |
+| Source   | Feature / Rule                                             | Present in Parallel Code? | Present in Previous MD? |  Add to This Project? | Priority |
+| -------- | ---------------------------------------------------------- | ------------------------: | ----------------------: | --------------------: | -------: |
+| Antfarm  | Deterministic workflow contracts                           |                        No |                 Partial |                   Yes |       P0 |
+| Antfarm  | Planner/developer/verifier/tester/reviewer role separation |                        No |                 Partial |                   Yes |       P0 |
+| Antfarm  | Fresh context per step                                     |                        No |                    Weak |                   Yes |       P0 |
+| Antfarm  | Retry and escalate                                         |                        No |                    Weak |                   Yes |       P0 |
+| Antfarm  | Step expected-output markers                               |                        No |                      No |                   Yes |       P1 |
+| Antfarm  | YAML/Markdown workflow packs                               |                        No |                 Partial |                   Yes |       P0 |
+| Antfarm  | Workflow registry security review                          |                        No |                      No |                   Yes |       P1 |
+| Antfarm  | Dashboard for run progress/logs                            |                   Partial |                 Partial |                   Yes |       P1 |
+| Antfarm  | Resume failed run                                          |                        No |                      No |                   Yes |       P1 |
+| Gas Town | Top coordinator as primary interface                       |                        No |                 Partial |                   Yes |       P0 |
+| Gas Town | Work tracker: run/work item/step hierarchy                 |                        No |                 Partial |                   Yes |       P0 |
+| Gas Town | Persistent agent identity                                  |                        No |                      No |                   Yes |       P1 |
+| Gas Town | Persistent work state survives crashes                     |                   Partial |                 Partial |                   Yes |       P0 |
+| Gas Town | Watchdog / health monitoring                               |                        No |                      No |                   Yes |       P0 |
+| Gas Town | Problems view                                              |                        No |                      No |                   Yes |       P1 |
+| Gas Town | Nudge/handoff/retry/reassign recovery                      |                        No |                      No |                   Yes |       P0 |
+| Gas Town | Activity feed / event stream                               |                        No |                    Weak |                   Yes |       P1 |
+| Gas Town | Scheduler / concurrency cap                                |                        No |                      No |                   Yes |       P0 |
+| Gas Town | Severity-based escalation                                  |                        No |                    Weak |                   Yes |       P0 |
+| Gas Town | Merge queue                                                |                        No |                      No | Yes, simplified first |       P1 |
+| Gas Town | Bors-style bisecting merge queue                           |                        No |                      No |                 Later |       P2 |
+| Gas Town | Formulas/recipes                                           |                        No |                 Partial |                   Yes |       P1 |
+| Gas Town | Context recovery / prime                                   |                        No |                      No |                   Yes |       P1 |
 
 ## 29. Updated MVP Based on Research
 
@@ -2682,7 +2694,6 @@ The app launches the right CLIs.
 The app hands artifacts between steps.
 The user can inspect everything and approve final output.
 ```
-
 
 ## 30. Updated Architecture
 
@@ -3045,7 +3056,6 @@ persistent agent identity
 prime context recovery
 Gas Town-style operational scale
 ```
-
 
 ---
 
@@ -3541,8 +3551,8 @@ capacity_plan:
       agent: claude
       effort: medium
   notes:
-    - "No parallel swarm required."
-    - "UI verification runs only after implementation."
+    - 'No parallel swarm required.'
+    - 'UI verification runs only after implementation.'
 ```
 
 ## 45. Acceptance Criteria Additions
@@ -3730,7 +3740,7 @@ The name keeps the Parallel Code base visible,
 while making the new conductor layer explicit.
 ```
 
-## 52. First Build Tickets
+## 52. Historical First Build Tickets (Superseded)
 
 Use these as the first implementation tickets.
 

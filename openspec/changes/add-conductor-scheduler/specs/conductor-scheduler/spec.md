@@ -2,11 +2,12 @@
 
 ## ADDED Requirements
 
-### Requirement: Consumer Subscription is the default capacity mode
+### Requirement: Consumer Conservative is the default capacity mode
 
-The app SHALL default to a `consumer_subscription` capacity mode with a target
+The app SHALL default to a `consumer_conservative` capacity mode with a target
 of 3 active agents and a hard maximum of 6, and SHALL apply this mode whenever
-the config does not specify another.
+the config does not specify another. These limits SHALL be described as
+user-configured local safety policy, not measured provider entitlement.
 
 #### Scenario: Default caps applied
 
@@ -39,24 +40,36 @@ cap. Evaluation is exposed through `ConductorCheckCapacity`.
 - **THEN** the evaluation queues the 2nd and 3rd `claude-code` steps
 - **AND** the result records the reason as the per-agent Claude cap
 
-### Requirement: Refuse agent-swarm fan-out under consumer subscription
+### Requirement: Refuse agent-swarm fan-out under conservative mode
 
-Under `consumer_subscription`, the app SHALL refuse a plan that requests a
-20–30 agent fan-out and SHALL require an explicit switch to a higher-capacity
-mode before exceeding the hard cap.
+Under `consumer_conservative`, the app SHALL refuse a plan that requests a
+20–30 agent fan-out. No higher-capacity mode is selectable in the MVP.
 
 #### Scenario: Large fan-out refused
 
-- **WHEN** a plan requests 20 active agents under `consumer_subscription`
+- **WHEN** a plan requests 20 active agents under `consumer_conservative`
 - **THEN** the evaluation result is `exceeds_hard_cap`
-- **AND** the result states that an explicit capacity-mode change is required to
-  proceed
+- **AND** the result states that no supported MVP mode permits it
 
-#### Scenario: Higher mode permits more, still capped
+#### Scenario: Exceeding the hard cap requires an out-of-scope mode change
 
-- **WHEN** the active mode is `api_budget` (max 12)
-- **AND** a plan requests 10 active agents
-- **THEN** the evaluation result is `fits`
+- **WHEN** a plan requests more than 6 active agents under `consumer_conservative`
+- **THEN** the evaluation result is `exceeds_hard_cap`
+- **AND** no higher mode is selectable in the MVP: only `consumer_conservative` is
+  enabled, and `api_budget` / `enterprise_or_research` are reserved future modes
+  (out of MVP scope per `Goal.md`)
+
+### Requirement: Provider backpressure reduces admission
+
+The app SHALL consume secret-safe backpressure and rate-limit metadata exposed
+by an agent adapter and SHALL pause admission for an affected provider. Missing
+or unknown provider capacity SHALL NOT be interpreted as spare capacity.
+
+#### Scenario: Provider reports limit reached
+
+- **WHEN** an adapter reports that its provider is rate limited
+- **THEN** queued steps for that provider remain queued
+- **AND** unrelated providers may continue within the local caps
 
 ### Requirement: Per-role reasoning-effort defaults
 

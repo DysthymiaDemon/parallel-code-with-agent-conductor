@@ -4,18 +4,15 @@
 
 ### Requirement: Approving a dry-run starts the run
 
-When the user approves a dry-run, the app SHALL assign a run id and create the
-run directory by invoking the run-directory utility provided by
-`add-conductor-artifacts`. This requirement owns the run-start trigger;
-`add-conductor-artifacts` owns the directory mechanics. (This split resolves the
-circular dependency where artifacts could not own "a run starts" because a run
-only starts on approval.)
+When the user approves a dry-run, the app SHALL freeze its immutable approved
+manifest, allocate the run transactionally through `add-conductor-run-store`,
+and create the run directory through `add-conductor-artifacts`.
 
 #### Scenario: Approval creates the run directory
 
 - **WHEN** the user approves a dry-run
 - **THEN** a run directory `.parallel-code/artifacts/runs/<run-id>/` is created
-- **AND** a run id formatted `run_<YYYYMMDD>_<NNN>` is assigned
+- **AND** a unique run id is assigned transactionally
 
 #### Scenario: Cancel creates no run directory
 
@@ -104,9 +101,9 @@ gated operation not performed.
 
 ### Requirement: Pending gates persist across restarts
 
-The app SHALL persist pending gate state in
-`.parallel-code/state/pending-gates.json` and SHALL re-present a pending gate
-after an app restart rather than auto-rejecting or auto-approving it.
+The app SHALL persist pending gate state transactionally through
+`add-conductor-run-store` and SHALL re-present a pending gate after restart
+rather than auto-rejecting or auto-approving it.
 
 #### Scenario: Pending gate survives a restart
 
@@ -117,37 +114,50 @@ after an app restart rather than auto-rejecting or auto-approving it.
 
 #### Scenario: Gate state is persisted
 
-- **WHEN** a gate becomes pending
-- **THEN** its state is written to `.parallel-code/state/pending-gates.json`
-- **AND** a resolved gate is removed from that file
+- **WHEN** a gate becomes pending or resolved
+- **THEN** its state transition and event commit atomically in the run store
 
-### Requirement: Runs expose basic lifecycle states
+### Requirement: Approved operations execute at most once
 
-The app SHALL track each run's lifecycle as a `RunState` and SHALL transition
-the state in response to gate outcomes, failures, and step completions.
+Each gate SHALL bind the immutable effect intent defined by
+`add-conductor-run-store`. Resolution SHALL transition execution state
+atomically and SHALL NOT execute the bound operation more than once. An
+ambiguous state after restart SHALL block for recovery rather than retrying.
 
-```
-RunState = 'ready-for-review' | 'ready-for-merge' | 'blocked' | 'failed'
-         | 'needs-human' | 'retry-once'
-```
+#### Scenario: Duplicate approval resolution is harmless
+
+- **WHEN** the same gate approval is resolved more than once
+- **THEN** the bound operation executes at most once
+
+#### Scenario: Restart during execution blocks ambiguous retry
+
+- **WHEN** the app restarts after a gated operation entered execution but before
+  completion was durably recorded
+- **THEN** the app does not automatically retry the operation
+- **AND** the run enters a recovery-required state
+
+### Requirement: Gates update orthogonal lifecycle fields
+
+The app SHALL update the run store's separate execution, readiness, outcome,
+and retry-policy fields rather than an overloaded flat `RunState`.
 
 #### Scenario: Denied path transitions to failed
 
 - **WHEN** a write targets a `deny`-classified protected path
-- **THEN** the run's state transitions to `failed`
+- **THEN** the run's outcome transitions to `failed`
 
 #### Scenario: Pending gate transitions to needs-human
 
 - **WHEN** a gate is raised for any gated operation
-- **THEN** the run's state transitions to `needs-human` until the gate is
-  resolved
+- **THEN** the run's execution state transitions to `waiting-human` until the
+  gate is resolved
 
 #### Scenario: Review complete transitions to ready-for-review
 
 - **WHEN** a reviewer step completes and produces `code-review.md`
-- **THEN** the run's state transitions to `ready-for-review`
+- **THEN** the run's readiness transitions to `ready-for-review`
 
 #### Scenario: Final approval transitions to ready-for-merge
 
 - **WHEN** the user approves the final-approval gate
-- **THEN** the run's state transitions to `ready-for-merge`
+- **THEN** the run's readiness transitions to `ready-for-merge`
