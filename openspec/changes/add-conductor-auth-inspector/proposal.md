@@ -1,10 +1,11 @@
 ## Why
 
-The conductor must not silently change a provider billing route. Environment
-variables can indicate API billing, but their absence does not prove that a CLI
-is using a consumer subscription. Provider helpers, cloud credentials, and
-enterprise login routes also make auth posture uncertain. The conductor needs a
-secret-safe, provider-aware inspection result before launch.
+Parallel Code normally launches installed interactive CLIs that own login and
+subscription usage. The conductor must preserve that behavior while preventing
+ambient API-key variables, provider helpers, cloud credentials, or enterprise
+credentials from silently changing billing. Environment-variable absence does
+not prove subscription login, so unknown posture must remain visible without
+forcing the user onto an API-key route.
 
 ## What Changes
 
@@ -15,6 +16,9 @@ secret-safe, provider-aware inspection result before launch.
 - Treat missing key variables as `unknown`, never as proof of subscription auth.
 - Record an explicit per-run billing-route decision when posture is uncertain
   or an API key is detected.
+- Make `subscription_only` the built-in policy: use installed provider CLIs,
+  exclude detected API-key variables from child environments, permit
+  provider-owned interactive login, and reject other billing routes.
 - Provide the execution adapter a strict child-environment decision; enforcement
   occurs at the launch boundary.
 

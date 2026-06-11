@@ -1,6 +1,6 @@
 # ADR 0003: Provider-Specific Agent Adapters
 
-- Status: Accepted
+- Status: Superseded by ADR 0006
 - Date: 2026-06-07
 
 ## Decision

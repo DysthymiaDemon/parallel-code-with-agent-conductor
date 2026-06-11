@@ -38,8 +38,10 @@ absence of a key variable as proof of subscription auth.
 
 The app SHALL apply `auth_policy` and record an explicit per-run decision before
 launch for `api_key_detected`, `cloud_or_enterprise`, or `unknown` posture. The
-available decisions SHALL be `use_provider_default`, `use_api_key_once`,
-`exclude_detected_keys`, and `cancel`.
+available decisions SHALL include `use_subscription_cli`,
+`use_provider_default`, `use_api_key_once`, `exclude_detected_keys`, and
+`cancel`. `use_api_key_once` and non-subscription `use_provider_default` SHALL
+be unavailable under `subscription_only`.
 
 #### Scenario: Block-unless-explicit holds launch
 
@@ -52,6 +54,52 @@ available decisions SHALL be `use_provider_default`, `use_api_key_once`,
 - **THEN** the launch decision instructs the execution adapter to omit those
   names from the child environment
 - **AND** `process.env` is unchanged
+
+### Requirement: Subscription-only is the built-in auth policy
+
+The built-in auth policy SHALL be `subscription_only`. Under this policy, the
+app SHALL launch only the installed provider CLI route approved for subscription
+usage, SHALL omit configured API-key names from the child environment, SHALL
+permit provider-owned interactive login when posture is `unknown` or
+`unauthenticated`, and SHALL reject API-key, cloud, enterprise, SDK-credit, or
+headless-credit routes.
+
+#### Scenario: Ambient API key exists under subscription-only policy
+
+- **WHEN** a configured provider API-key variable is present
+- **AND** policy is `subscription_only`
+- **THEN** the launch decision is `use_subscription_cli`
+- **AND** the strict child environment omits every configured API-key name for
+  that provider
+- **AND** the app does not mutate `process.env`
+
+#### Scenario: Subscription login is not yet confirmed
+
+- **WHEN** posture is `unknown` or `unauthenticated`
+- **AND** the selected installed CLI supports interactive subscription login
+- **THEN** the app may launch that native interactive CLI with
+  `use_subscription_cli`
+- **AND** the CLI remains responsible for prompting or completing login
+
+#### Scenario: Non-subscription route is the only available route
+
+- **WHEN** only API-key, cloud, enterprise, SDK-credit, or headless-credit
+  execution is available
+- **AND** policy is `subscription_only`
+- **THEN** launch fails closed with the rejected billing route
+- **AND** the app does not offer or perform silent fallback
+
+#### Scenario: Codex subscription route is confirmed
+
+- **WHEN** Codex App Server reports managed ChatGPT authentication
+- **THEN** posture is `confirmed_subscription`
+- **AND** `use_subscription_cli` preserves that route
+
+#### Scenario: Claude API key would override subscription login
+
+- **WHEN** `ANTHROPIC_API_KEY` is present for a subscription-only Claude launch
+- **THEN** the child environment omits `ANTHROPIC_API_KEY`
+- **AND** native interactive Claude owns subscription OAuth
 
 ### Requirement: Secret values never leave the inspection boundary
 

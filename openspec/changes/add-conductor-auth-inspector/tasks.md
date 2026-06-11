@@ -15,15 +15,21 @@
 - [ ] 2.1 Produce per-agent posture records and a per-run aggregate.
 - [ ] 2.2 Require an explicit billing-route decision for `api_key_detected`,
       `cloud_or_enterprise`, or `unknown` according to `auth_policy`.
-- [ ] 2.3 Represent launch decisions as `use_provider_default`,
-      `use_api_key_once`, `exclude_detected_keys`, or `cancel`.
+- [ ] 2.3 Represent launch decisions as `use_subscription_cli`,
+      `use_provider_default`, `use_api_key_once`, `exclude_detected_keys`, or
+      `cancel`; reject non-subscription decisions under `subscription_only`.
 - [ ] 2.4 Hand the execution adapter a strict child-environment decision;
       never mutate `process.env`.
+- [ ] 2.5 Make `subscription_only` the built-in policy: omit configured API-key
+      names, preserve installed interactive CLI login, and reject cloud,
+      enterprise, SDK-credit, headless-credit, and API-key routes.
 
 ## 3. IPC and verification
 
 - [ ] 3.1 Add `ConductorInspectAuth` to the IPC enum and preload allowlist, with
       secret-free payload types in `src/ipc/types.ts`.
-- [ ] 3.2 Test all classifications, unknown-on-key-absence, explicit decisions,
-      and redaction from results/events/logs.
+- [ ] 3.2 Test all classifications, unknown-on-key-absence, interactive login
+      from unknown/unauthenticated posture, subscription-only key exclusion,
+      rejected non-subscription routes, explicit non-default decisions, and
+      redaction from results/events/logs.
 - [ ] 3.3 Run `npm run typecheck` and `npm run check:spec`.

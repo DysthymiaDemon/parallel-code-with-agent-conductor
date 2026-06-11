@@ -22,6 +22,28 @@ backpressure.
 - **THEN** the conductor may select a PTY fallback adapter
 - **AND** the dry-run identifies the reduced capability set
 
+### Requirement: Approved billing route takes precedence over adapter structure
+
+The app SHALL preserve the billing route approved in the run manifest before
+preferring a structured adapter. It SHALL NOT select SDK credits, API-key
+billing, cloud credentials, enterprise credentials, or another provider merely
+because that route exposes a more structured interface.
+
+#### Scenario: Structured interface changes billing route
+
+- **WHEN** a structured provider interface would change the approved
+  subscription billing route
+- **THEN** the conductor does not select that interface
+- **AND** selects a capable native interactive adapter or fails closed
+
+#### Scenario: Subscription-backed PTY is approved
+
+- **WHEN** native interactive PTY is the supported route for the approved
+  subscription login
+- **THEN** PTY is a first-class provider adapter for that step
+- **AND** its reduced capabilities are recorded without treating the billing
+  route as a fallback
+
 ### Requirement: Required adapter capabilities fail closed
 
 The app SHALL refuse to launch a conductor step when the selected adapter lacks
@@ -45,6 +67,33 @@ NOT extract, copy, return, log, or persist provider credential values.
 - **THEN** the result contains only secret-safe auth metadata
 - **AND** no OAuth token, refresh token, API-key value, or credential-file
   content is returned
+
+### Requirement: Subscription-only default uses installed CLIs
+
+The built-in subscription-only policy SHALL use locally installed official
+provider software and SHALL preserve provider-owned interactive login:
+`codex app-server` with managed ChatGPT login (or native Codex PTY fallback),
+native interactive `claude`, and native interactive `agy`.
+
+#### Scenario: Claude subscription step resolves
+
+- **WHEN** a Claude role uses the built-in subscription-only policy
+- **THEN** the selected adapter launches native interactive `claude`
+- **AND** does not launch `claude -p` or an Agent SDK process
+
+#### Scenario: Antigravity subscription step resolves
+
+- **WHEN** an Antigravity role uses the built-in subscription-only policy
+- **THEN** the selected adapter launches native interactive `agy`
+- **AND** does not select Docker execution while its keychain-backed login is
+  unavailable there
+
+#### Scenario: Consumer Gemini CLI is selected after transition
+
+- **WHEN** the consumer-subscription profile selects Gemini CLI on or after
+  June 18, 2026
+- **THEN** the adapter reports it unavailable
+- **AND** does not silently switch to API-key, enterprise, or cloud billing
 
 ### Requirement: Provider adapters do not own conductor workflow state
 
