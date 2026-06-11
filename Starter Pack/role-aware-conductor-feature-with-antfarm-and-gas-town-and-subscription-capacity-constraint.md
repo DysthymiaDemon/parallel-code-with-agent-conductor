@@ -22,6 +22,13 @@ order and records discoveries.
 > reversible, evaluable probes, with bounded retries. Protected, irreversible,
 > or ambiguous effects remain plan-first, human-gated, and never blindly
 > retried.
+>
+> Current `plan-implement-review` authority also requires: Claude secure design,
+> Codex repository validation, human/spec approval where required, one small
+> Codex implementation work unit, deterministic test/security evidence,
+> evidence-grounded Codex fixes, Claude intent/security review, conductor-owned
+> final evidence synthesis, and final human approval. Baked-in model guardrails
+> alone do not replace a reviewable threat model.
 
 ---
 
@@ -415,10 +422,9 @@ agents:
     preferred_auth: google_account
     backend_priority:
       - antigravity-cli
-      - gemini-cli
     env_api_keys:
       - GEMINI_API_KEY
-      - GOOGLE_AI_API_KEY
+      - GOOGLE_API_KEY
 
 roles:
   planner:
@@ -502,12 +508,15 @@ approval:
   before_touching_protected_paths: true
 
 auth_policy:
+  mode: subscription_only
   warn_on_api_keys: true
   block_api_keys_unless_explicit: true
   prefer_subscription_auth: true
+  exclude_detected_api_keys: true
+  never_switch_billing_route: true
   codex_preferred_login: chatgpt
-  claude_preferred_login: claude_pro_or_max
-  google_preferred_login: google_account
+  claude_preferred_login: subscription_oauth
+  google_preferred_login: antigravity_account
 
 budget_policy:
   use_codex_heavily: true
@@ -1155,8 +1164,7 @@ Warning:
 Codex may use API billing instead of ChatGPT subscription access.
 
 Options:
-[Use ChatGPT login]
-[Use API key once]
+[Use installed Codex CLI with ChatGPT login]
 [Cancel]
 ```
 
@@ -1176,26 +1184,27 @@ Warning:
 ANTHROPIC_API_KEY is set. Claude Code may use API configuration instead of plan allocation.
 
 Options:
-[Unset for this run]
-[Use API key once]
+[Use native Claude subscription login]
 [Cancel]
 ```
 
-### 16.3 Gemini / Antigravity
+### 16.3 Antigravity and Gemini CLI transition
 
 Check:
 
 ```text
 GEMINI_API_KEY
-GOOGLE_AI_API_KEY
-Gemini CLI auth state
+GOOGLE_API_KEY
 Antigravity CLI availability
 ```
 
-If both Gemini CLI and Antigravity CLI are available:
+For the built-in consumer-subscription profile:
 
 ```text
-Prefer Antigravity for UI/browser verification unless config says otherwise.
+Use native interactive Antigravity.
+Do not launch Antigravity in Docker while keychain login is unavailable there.
+Do not use consumer Gemini CLI as a fallback after June 18, 2026.
+Do not silently switch to Gemini API-key or enterprise billing.
 ```
 
 ---

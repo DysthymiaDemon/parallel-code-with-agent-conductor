@@ -15,6 +15,10 @@
       commit/merge.
 - [ ] 2.2 Gate commit, push, merge, install, migration, delete, and `ask` paths
       per policy; refuse `deny` paths outright.
+- [ ] 2.3 Require explicit plan approval for a labeled model-fallback threat
+      model; guardrails alone cannot satisfy or bypass the gate.
+- [ ] 2.4 Open final approval only after conductor-owned `final-summary.md` and
+      all declared evidence inputs verify.
 
 ## 3. Lifecycle and IPC
 

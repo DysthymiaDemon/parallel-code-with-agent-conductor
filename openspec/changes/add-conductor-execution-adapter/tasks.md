@@ -4,6 +4,8 @@
 - [ ] 1.2 Translate each step into an `AgentAdapter` request using only declared
       inputs, capabilities, permissions, and outputs.
 - [ ] 1.3 Preserve existing manual task behavior outside conductor runs.
+- [ ] 1.4 Preserve approved installed-CLI subscription routes; structured
+      preference never changes billing route or provider.
 
 ## 2. Privileged-operation broker
 
@@ -21,6 +23,9 @@
       auth decision; never inherit the full host environment.
 - [ ] 3.3 Treat canonical paths, symlinks, shared Git metadata, dependencies,
       and outside-cwd access as explicit tests.
+- [ ] 3.4 Add provider-specific native subscription profiles that expose only
+      declared provider-owned login facilities; keep Antigravity native while
+      Docker/keychain login is unsupported.
 
 ## 4. Lifecycle and recovery
 
@@ -34,6 +39,9 @@
       feedback and failure class, require a changed strategy/input/precondition,
       and stop or escalate when the budget is exhausted or evidence is
       ambiguous.
+- [ ] 4.5 After Claude intent/security review, invoke conductor-owned final
+      synthesis from verified declared evidence and block final approval until
+      canonical `final-summary.md` verifies.
 
 ## 5. Verification
 

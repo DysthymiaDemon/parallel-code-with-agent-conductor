@@ -25,6 +25,35 @@ fail closed. Structured interfaces SHALL be preferred over PTY fallback.
 - **THEN** the step does not launch
 - **AND** the unsupported capability is recorded
 
+### Requirement: Execution preserves approved installed-CLI subscription routes
+
+The execution adapter SHALL launch the installed official CLI and billing route
+frozen in the approved manifest. It SHALL NOT translate a subscription-backed
+step into SDK credits, headless credits, API-key billing, cloud credentials,
+enterprise credentials, or another provider. Structured interfaces SHALL be
+preferred only when they preserve that route.
+
+#### Scenario: Codex subscription execution
+
+- **WHEN** the approved Codex route is managed ChatGPT login
+- **THEN** execution uses Codex App Server with that login or the approved
+  native interactive Codex PTY fallback
+- **AND** never substitutes API-key billing
+
+#### Scenario: Claude subscription execution
+
+- **WHEN** the approved Claude route is subscription OAuth
+- **THEN** execution launches native interactive `claude`
+- **AND** omits configured Claude API-key variables from the child environment
+- **AND** never launches `claude -p` or Agent SDK credits
+
+#### Scenario: Antigravity subscription execution
+
+- **WHEN** the approved Google route is Antigravity account login
+- **THEN** execution launches native interactive `agy` using its approved
+  native profile
+- **AND** never substitutes Gemini CLI or API-key billing
+
 ### Requirement: Privileged effects are brokered at final entrypoints
 
 The app SHALL execute conductor file writes, Git mutations, installs,
@@ -55,11 +84,27 @@ allowlisted child environments. Read-only roles SHALL have no writable
 repository view. If a required profile cannot be enforced, launch SHALL fail.
 A worktree SHALL NOT be described as filesystem containment.
 
+Provider-specific native profiles MAY expose only the provider-owned login
+facility required by the approved subscription CLI. Such access SHALL be
+declared in the manifest, SHALL NOT expose credential values to the conductor,
+and SHALL NOT broaden repository, environment, network, or privileged-effect
+permissions.
+
 #### Scenario: Read-only profile unavailable
 
 - **WHEN** a planner or reviewer requires a read-only profile
 - **AND** the platform cannot enforce it
 - **THEN** the step does not launch
+
+#### Scenario: Native subscription login needs provider-owned credential access
+
+- **WHEN** an approved native CLI requires its provider-owned OAuth or keychain
+  login facility
+- **THEN** the provider-specific native profile grants only that declared login
+  access
+- **AND** the conductor neither reads nor copies credential values
+- **AND** all non-required environment keys and privileged effects remain
+  blocked
 
 ### Requirement: Run store owns lifecycle and reconciliation
 
@@ -94,6 +139,28 @@ requirements instead of this retry path.
 - **WHEN** a step has no new evidence, changed strategy, inputs, or preconditions
 - **THEN** the adapter does not retry
 - **AND** the step stops or escalates according to the approved manifest
+
+### Requirement: Final review advances through conductor synthesis
+
+The execution adapter SHALL advance a completed Claude intent/security review
+through conductor-owned final synthesis before final approval. It SHALL verify
+all declared evidence inputs, invoke `final-summary.md` synthesis, verify the
+resulting artifact, and SHALL NOT launch a model role to produce or replace
+canonical `final-summary.md`.
+
+#### Scenario: Claude review completes
+
+- **WHEN** the reviewer produces valid `code-review.md`
+- **THEN** the adapter invokes conductor synthesis from verified declared
+  artifacts
+- **AND** the final-approval gate remains unavailable until canonical
+  `final-summary.md` verifies
+
+#### Scenario: Model-authored summary is offered
+
+- **WHEN** a model role offers a file as canonical `final-summary.md`
+- **THEN** the adapter refuses it as a workflow input
+- **AND** invokes only the conductor-owned synthesis path
 
 ### Requirement: Manual task behavior is unchanged
 

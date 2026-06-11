@@ -23,10 +23,15 @@
 ## 3. Default preset generation
 
 - [ ] 3.1 Provide **Ameen's Default — Subscription Aware** in memory when no
-      config exists: roles `planner→claude-code`, `implementer→codex`,
-      `reviewer→claude-code`, `ui_verifier→antigravity` (fallback `gemini`),
-      `fixer→codex`; capacity `mode: consumer_conservative`,
+      config exists: roles `planner→claude-code`, `validator→codex`,
+      `implementer→codex`, `tester→codex`, `reviewer→claude-code`,
+      `ui_verifier→antigravity`, `fixer→codex`; capacity
+      `mode: consumer_conservative`,
       `target_active_agents: 3`, `max_active_agents: 6`, `default_effort: medium`.
+- [ ] 3.1a Default auth policy to `mode: subscription_only`,
+      `exclude_detected_api_keys: true`, `never_switch_billing_route: true`,
+      Codex ChatGPT login, Claude subscription OAuth, and Antigravity account
+      login.
 - [ ] 3.2 Never overwrite an existing committed `conductor.yaml`/`roles.yaml`.
 - [ ] 3.3 Add narrow rules and negations to the **root** `.gitignore` so
       committed config (`conductor.yaml`, `roles.yaml`, `workflows/`, `policies/`)

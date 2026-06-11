@@ -37,6 +37,25 @@ implementer step starts, and SHALL record the approved plan.
 - **WHEN** the user rejects the plan at the plan-approval gate
 - **THEN** the implementer step does not start
 
+#### Scenario: Trust-boundary fallback requires explicit approval
+
+- **WHEN** `security-design.md` declares a model-generated fallback because
+  `security-threat-model` was unavailable
+- **THEN** writable implementation remains blocked at plan approval
+- **AND** baked-in model guardrails alone cannot satisfy or bypass the gate
+
+### Requirement: Final approval requires conductor-synthesized evidence
+
+The app SHALL block final approval until the conductor has synthesized and
+verified canonical `final-summary.md` from all required declared artifacts. A
+model-authored summary SHALL NOT satisfy this gate.
+
+#### Scenario: Claude review complete but summary absent
+
+- **WHEN** Claude has produced `code-review.md`
+- **AND** conductor-owned `final-summary.md` is absent or fails verification
+- **THEN** the final-approval gate does not open
+
 ### Requirement: Final approval before commit or merge
 
 The app SHALL require explicit human approval before any commit or merge of
@@ -160,4 +179,5 @@ and retry-policy fields rather than an overloaded flat `RunState`.
 #### Scenario: Final approval transitions to ready-for-merge
 
 - **WHEN** the user approves the final-approval gate
+- **AND** conductor-owned `final-summary.md` and its declared inputs verify
 - **THEN** the run's readiness transitions to `ready-for-merge`

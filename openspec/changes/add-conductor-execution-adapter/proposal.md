@@ -8,8 +8,9 @@ provider-adapter launches and mediates privileged effects.
 ## What Changes
 
 - Execute only an immutable approved run manifest.
-- Launch through `AgentAdapter`; use structured provider interfaces when
-  available and identify PTY fallback limitations.
+- Launch through `AgentAdapter`; preserve the approved installed-CLI billing
+  route first, then use structured provider interfaces when compatible and
+  identify native PTY capability limits.
 - Add a privileged-operation broker at final backend effect entrypoints for
   writes, Git mutation, installs, migrations, deletes, and pushes.
 - Enforce strict child environments, sender validation, sandbox profiles, and
@@ -18,6 +19,8 @@ provider-adapter launches and mediates privileged effects.
   transactional run store after restart.
 - Permit bounded retries for reversible steps only when external feedback is
   recorded and the next attempt changes strategy, inputs, or preconditions.
+- Advance completed Claude review through conductor-owned verified final
+  synthesis before exposing final approval.
 - Keep the existing manual task flow unchanged.
 
 ## Capabilities

@@ -39,10 +39,13 @@ as the dry-run produce no filesystem side effects.
 - **WHEN** the renderer sends `ConductorLoadConfig` for a project that has no
   `.parallel-code/conductor.yaml`
 - **THEN** the returned `ConductorConfig` is the in-memory default binding
-  `planner→claude-code`, `implementer→codex`, `reviewer→claude-code`,
-  `ui_verifier→antigravity` (fallback `gemini`), and `fixer→codex`
+  `planner→claude-code`, `validator→codex`, `implementer→codex`,
+  `tester→codex`, `reviewer→claude-code`, `ui_verifier→antigravity`, and
+  `fixer→codex`
 - **AND** the capacity block is `mode: consumer_conservative`,
   `target_active_agents: 3`, `max_active_agents: 6`, `default_effort: medium`
+- **AND** the auth policy is `mode: subscription_only`, excludes detected API
+  keys from child environments, and never switches billing route
 - **AND** no file is written under `.parallel-code/` or the project working tree
 
 #### Scenario: Existing committed config is loaded as-is
@@ -178,14 +181,21 @@ file). **Do not create a separate `src/ipc/conductor-types.ts`.** Keeping all
 IPC types in one file ensures they remain discoverable.
 
 ```typescript
-type RoleName = 'planner' | 'implementer' | 'reviewer' | 'ui_verifier' | 'fixer';
+type RoleName =
+  | 'planner'
+  | 'validator'
+  | 'implementer'
+  | 'tester'
+  | 'reviewer'
+  | 'ui_verifier'
+  | 'fixer';
 type AgentId = string; // must exist in electron/ipc/agents.ts AgentDef registry
 
 interface RoleBinding {
   roleId: RoleName;
   primary: AgentId;
   fallback?: AgentId;
-  mode?: 'plan' | 'implement' | 'review' | 'verify' | 'fix';
+  mode?: 'plan' | 'validate' | 'implement' | 'test' | 'review' | 'verify' | 'fix';
   purpose?: string;
 }
 
@@ -198,9 +208,15 @@ interface CapacityConfig {
 }
 
 interface AuthPolicy {
+  mode: 'subscription_only'; // only selectable MVP value
   warnOnApiKeys: boolean;
   preferSubscriptionAuth: boolean; // default true
   blockApiKeysUnlessExplicit: boolean; // default true
+  excludeDetectedApiKeys: boolean; // default true
+  neverSwitchBillingRoute: boolean; // default true
+  codexPreferredLogin: 'chatgpt';
+  claudePreferredLogin: 'subscription_oauth';
+  googlePreferredLogin: 'antigravity_account';
   envApiKeys: string[];
 }
 

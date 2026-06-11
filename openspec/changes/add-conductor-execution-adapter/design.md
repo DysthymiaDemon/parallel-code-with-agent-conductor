@@ -9,9 +9,12 @@ immutable approved manifest from the run store and verifies its digest.
 
 ### Provider adapters own provider integration
 
-The execution layer invokes the selected `AgentAdapter`. Structured interfaces
-are preferred; PTY fallback is explicit and may not satisfy a manifest that
-requires richer lifecycle or approval capabilities.
+The execution layer invokes the selected `AgentAdapter`. Approved billing route
+is preserved first; structured interfaces are preferred only within that route.
+Native interactive PTY is a first-class adapter when it is the supported
+subscription route. The execution layer never silently substitutes API-key,
+cloud, enterprise, SDK-credit, headless-credit, or different-provider
+execution.
 
 ### Privilege is enforced at final effect boundaries
 
@@ -26,6 +29,9 @@ Writable and read-only conductor roles receive explicit macOS/Linux sandbox
 profiles, minimal allowlisted child environments, canonical path checks, and
 separate artifact access. If the required profile cannot be enforced, launch
 fails. Worktrees remain Git-integration isolation, not filesystem containment.
+Provider-specific native profiles may expose only the provider-owned login
+facility required by the approved subscription CLI. Antigravity stays native
+while its keychain-backed login cannot authenticate inside Docker.
 
 ### Run store owns lifecycle and recovery
 

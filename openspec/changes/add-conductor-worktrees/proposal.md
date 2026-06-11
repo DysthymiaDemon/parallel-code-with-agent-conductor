@@ -1,9 +1,9 @@
 ## Why
 
-Writable conductor work (implementer, fixer) must never run directly on the
+Writable conductor work (implementer, tester, fixer) must never run directly on the
 user's branch and must never silently edit sensitive files. The conductor needs
 to create an isolated git worktree per writable task, keep read-only roles
-(planner, reviewer) out of write mode, and enforce protected-path rules so an
+(planner, validator, reviewer) out of write mode, and enforce protected-path rules so an
 agent cannot touch secrets, lockfiles, infra, or migrations without a gate.
 Parallel Code already creates worktrees for manual tasks; the conductor needs a
 policy-driven wrapper that ties worktree creation to role mode and protected
@@ -13,9 +13,9 @@ paths.
 
 - Create an isolated worktree under `.worktrees/` for writable roles, named
   `{workflow}-{role}-{slug}-{timestamp}`, on a fresh branch.
-- Bind worktree writability to role mode: `implementer`/`fixer` get a writable
-  worktree; `fixer` reuses the implementer's worktree; `planner`/`reviewer` are
-  read-only and get no writable worktree.
+- Bind worktree writability to role mode: `implementer`/`tester`/`fixer` get a
+  writable worktree; `tester` and `fixer` reuse the implementer's worktree;
+  `planner`/`validator`/`reviewer` are read-only and get no writable worktree.
 - Classify canonicalized protected paths and surface the result to the
   privileged-operation broker, which performs final enforcement.
 - Treat shared Git metadata, symlinks, and paths outside the worktree as

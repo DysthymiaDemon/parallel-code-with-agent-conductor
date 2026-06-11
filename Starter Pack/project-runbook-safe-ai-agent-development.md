@@ -238,21 +238,20 @@ Every non-trivial task follows this flow:
 
 ```text
 1. Human writes or approves task.
-2. Claude produces a conceptual architecture and readable initial plan.
+2. Claude produces a secure conceptual design and readable initial plan.
 3. Codex inspects the repository and pressure-tests that plan against actual
    files, existing patterns, tests, edge cases, dependencies, migration risks,
    and recovery behavior.
 4. Claude resolves architectural ambiguity and updates the spec/plan.
-5. Human approves or edits the repository-validated plan.
-6. Codex implements in a dedicated branch/worktree.
-7. Codex runs required checks.
-8. Gemini/Antigravity verifies UI if the task affects UI.
-9. Claude reviews the diff.
-10. Human selects accepted review items.
-11. Codex fixes accepted review items only.
-12. Checks run again.
-13. Human approves final diff.
-14. Human merges.
+5. Human approves or edits the repository-validated design/spec where required.
+6. Codex implements one small approved work unit in a dedicated branch/worktree.
+7. Codex runs deterministic tests and required security checks.
+8. Codex applies bounded evidence-grounded fixes from real failures.
+9. Gemini/Antigravity verifies UI if the task affects UI.
+10. Claude reviews intent, security, and evidence.
+11. The conductor synthesizes final-summary.md from verified declared artifacts.
+12. Human reviews the final summary and grants or rejects final approval.
+13. Human merges only after final approval.
 ```
 
 Within implementation and verification steps, do not wait for speculative
@@ -286,6 +285,18 @@ The simplified flow must not be used for:
 - sandboxing
 - auto-dispatch logic
 ```
+
+For trust-boundary work, use `security-threat-model` before writable
+implementation. If the skill is unavailable, Claude may produce a clearly
+labeled repository-grounded fallback threat model containing trust boundaries,
+assets, attackers, abuse cases, mitigations, and residual risks. Baked-in model
+guardrails alone are not reviewable evidence and never satisfy this gate.
+Fallback use requires explicit human approval before writable implementation.
+
+Before final approval, the conductor must synthesize `final-summary.md` from
+verified declared artifacts. Claude may write `code-review.md` explaining
+design intent, security findings, and evidence, but no model role may directly
+own or write canonical `final-summary.md`.
 
 ---
 
@@ -544,15 +555,19 @@ Shell command handling requirements:
 
 ## 13. Auth and Billing Policy
 
-The project’s product goal includes preserving first-party CLI subscription usage where possible.
+The project’s product goal is to preserve installed first-party CLI
+subscription usage by default.
 
 Therefore:
 
 ```text
-Codex should prefer ChatGPT/Codex login.
-Claude should prefer Claude Code subscription login.
-Gemini/Antigravity should prefer Google account entitlement where possible.
-API-key usage must be explicit.
+Codex uses managed ChatGPT login through Codex App Server or native Codex PTY.
+Claude uses native interactive Claude Code subscription OAuth.
+Antigravity uses native interactive Google-account/keychain login.
+Consumer Gemini CLI is not a built-in fallback after June 18, 2026.
+Built-in conductor policy is subscription_only.
+API-key, cloud, enterprise, SDK-credit, and headless-credit usage is rejected
+unless a separate non-default policy is explicitly enabled.
 ```
 
 Before any agent run, the app must inspect environment variables.
@@ -580,11 +595,12 @@ GOOGLE_API_KEY
 Required behavior:
 
 ```text
-- show warning if API key may override subscription mode
-- allow "unset for this run"
-- allow "use API key once"
+- show warning when ambient credentials may override subscription mode
+- omit configured API-key variables from subscription-only child environments
+- allow provider-owned interactive login when subscription state is unknown
+- reject non-subscription routes under subscription_only
 - allow cancel
-- log selected auth mode in run metadata
+- log secret-safe selected auth mode and installed CLI route in run metadata
 ```
 
 Run metadata must include:
@@ -594,7 +610,8 @@ Run metadata must include:
   "agent": "codex",
   "preferred_auth": "chatgpt_subscription",
   "api_key_env_detected": ["OPENAI_API_KEY"],
-  "user_decision": "unset_for_this_run"
+  "user_decision": "use_subscription_cli",
+  "excluded_env_names": ["OPENAI_API_KEY"]
 }
 ```
 
@@ -612,7 +629,9 @@ Rules:
 - build a minimal child env
 - redact known secret patterns
 - show env diff in debug mode only
-- API keys are opt-in per run
+- API keys are excluded under subscription_only
+- provider-owned OAuth/keychain login access is exposed only by the approved
+  provider-specific native profile
 ```
 
 Minimal child env should include:

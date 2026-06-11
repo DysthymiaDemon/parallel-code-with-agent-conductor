@@ -102,8 +102,20 @@
       "statement": "Retries are bounded, evidence-grounded, and change strategy, inputs, or preconditions."
     },
     {
+      "id": "COND-SEC-001",
+      "statement": "Baked-in model guardrails never substitute for a reviewable threat model and required human approval."
+    },
+    {
+      "id": "COND-ART-001",
+      "statement": "Only the conductor synthesizes canonical final-summary.md from verified declared artifacts before final approval."
+    },
+    {
       "id": "COND-AUTH-001",
       "statement": "The conductor never silently changes a provider billing route."
+    },
+    {
+      "id": "COND-AUTH-002",
+      "statement": "Built-in conductor execution preserves installed-CLI subscription routes and excludes detected API-key variables."
     }
   ],
   "documentationChecks": [
@@ -111,6 +123,7 @@
       "path": "AGENTS.md",
       "includes": [
         "## Execution-Feedback Rule",
+        "Baked-in model guardrails alone are not evidence",
         "## Skills, Plugins, MCP, and Online Research",
         "Discover and connect MCP servers/tools progressively"
       ]
@@ -129,7 +142,9 @@
         "### Task-to-Capability Matrix",
         "### MCP and External Tool Policy",
         "### Context7 Candidate Policy",
-        "### Execution-Feedback Policy"
+        "### Execution-Feedback Policy",
+        "### Secure Design-to-Approval Workflow",
+        "installed-CLI `subscription_only`"
       ]
     },
     {
@@ -137,7 +152,8 @@
       "includes": [
         "## 7. Evidence and Tooling Policy",
         "Every non-trivial task must produce a compact evidence packet",
-        "plan enough to choose a safe probe"
+        "plan enough to choose a safe probe",
+        "Before final approval, the conductor must synthesize"
       ]
     }
   ]

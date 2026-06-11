@@ -9,3 +9,5 @@ except for status/supersession updates.
 - `0002-transactional-run-store.md`
 - `0003-provider-specific-agent-adapters.md`
 - `0004-risk-calibrated-execution-feedback.md`
+- `0005-secure-design-and-conductor-summary.md`
+- `0006-installed-cli-subscription-routes.md`

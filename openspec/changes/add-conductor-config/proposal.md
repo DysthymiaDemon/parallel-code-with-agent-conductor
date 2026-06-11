@@ -5,8 +5,8 @@ Conductor's differentiator is letting the user _describe a task_ and have the
 app dispatch the right role→agent workflow. Every other conductor capability
 (dry-run, worktrees, artifacts, scheduler, approval gates) depends on one
 foundation: a project-local, validated configuration that binds roles
-(planner, implementer, reviewer, ui_verifier, fixer) to the agents already in
-the registry, with a sensible default preset. Today no such config, role
+(planner, validator, implementer, tester, reviewer, ui_verifier, fixer) to the
+agents already in the registry, with a sensible default preset. Today no such config, role
 model, or resolver exists in the codebase.
 
 This change delivers only that foundation: read/validate `.parallel-code/`
@@ -21,9 +21,13 @@ agents are launched and nothing is written to the working tree by this change.
 - Parse and **validate** that config; on invalid config, surface a precise,
   actionable error instead of failing silently.
 - Generate a default `conductor.yaml` (the **Ameen's Default** preset) when none
-  exists, binding `planner→claude-code`, `implementer→codex`,
-  `reviewer→claude-code`, `ui_verifier→antigravity` (fallback `gemini`),
-  `fixer→codex`, with Consumer Subscription capacity defaults.
+  exists, binding `planner→claude-code`, `validator→codex`,
+  `implementer→codex`, `tester→codex`, `reviewer→claude-code`,
+  `ui_verifier→antigravity`, and `fixer→codex`, with
+  Consumer Subscription capacity defaults.
+- Default auth to installed-CLI `subscription_only`; API-key, cloud,
+  enterprise, SDK-credit, and headless-credit routes require an explicit
+  non-default policy and never replace a subscription route silently.
 - Implement a **role resolver** with precedence: explicit conduct-request override →
   `roles.yaml` (overlay) → `conductor.yaml` → built-in defaults.
 - Keep durable committed config separate from generated runtime state inside

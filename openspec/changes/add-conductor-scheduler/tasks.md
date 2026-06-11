@@ -22,9 +22,9 @@
 
 ## 3. Reasoning effort
 
-- [ ] 3.1 Provide per-role effort defaults: medium for planner/implementer/
-      reviewer/architect; low for fixer/ui_verifier/test_runner/docs_writer; high
-      requires approval for all roles.
+- [ ] 3.1 Provide per-role effort defaults: medium for planner/validator/
+      implementer/reviewer/architect; low for fixer/ui_verifier/tester/
+      test_runner/docs_writer; high requires approval for all roles.
 - [ ] 3.2 Expose the chosen effort per step in the evaluation result.
 
 ## 4. IPC surface

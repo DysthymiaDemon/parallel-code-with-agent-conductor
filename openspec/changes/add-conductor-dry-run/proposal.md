@@ -26,8 +26,16 @@ one.
 - Compose the dry-run preview by combining: resolved roles (from
   `conductor-config`), the auth posture (from `conductor-auth-inspector`), and
   the capacity plan (from `conductor-scheduler`).
+- Show and freeze approved installed-CLI subscription routes, adapter kind,
+  native-versus-sandbox launch profile, and excluded credential-variable names;
+  never preview an implicit API-key or provider fallback.
 - For retry-capable steps, preview and freeze the evaluator, bounded attempt
   budget, and stop or escalation condition.
+- Make `plan-implement-review` the explicit secure design-to-approval workflow,
+  including Codex repository validation/testing/fixing, Claude security review,
+  conductor-owned final synthesis, and final human approval.
+- Disclose threat-model skill provenance or labeled model fallback; model
+  guardrails alone do not satisfy trust-boundary planning.
 - Require an explicit approve/cancel decision before anything proceeds; on
   cancel, no side effects occur.
 

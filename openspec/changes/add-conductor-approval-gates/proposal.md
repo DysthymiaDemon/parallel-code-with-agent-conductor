@@ -15,7 +15,10 @@ changes safe to connect to real agent launches.
   `before_push`, `before_package_install`, `before_database_migration`,
   `before_delete`, `before_touching_protected_paths`).
 - Two mandatory workflow gates: **plan approval** before implementation and
-  **final approval** before commit/merge.
+  **final approval** after conductor-synthesized evidence and before
+  commit/merge.
+- Require explicit plan approval for a labeled model-fallback threat model;
+  baked-in guardrails alone never satisfy the trust-boundary gate.
 - Block the gated operation until an explicit approve; a reject or timeout
   leaves the operation undone.
 - Couple with `conductor-worktrees`: an `ask`-classified protected path triggers

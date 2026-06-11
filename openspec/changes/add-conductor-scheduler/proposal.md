@@ -28,7 +28,7 @@ execution layer consult it.
 - Consume provider backpressure and rate-limit metadata when an adapter exposes
   it, without treating missing metadata as available capacity.
 - Per-role reasoning-effort defaults (medium default; low for routine
-  fixer/ui_verifier/tester; high requires approval).
+  fixer/ui_verifier/tester; medium for validator; high requires approval).
 
 ## Capabilities
 

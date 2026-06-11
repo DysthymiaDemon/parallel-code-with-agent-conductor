@@ -5,9 +5,11 @@
       `plan-implement-review.yaml`, `ui-build-verify.yaml`, `bug-hunt.yaml`.
       Include their step definitions with the correct agent ids per the spec's
       workflow-preset tables (`planner→claude-code`, `implementer→codex`,
-      `reviewer→claude-code`, `ui_verifier→antigravity` fallback `gemini`,
-      `fixer→codex`). Never use placeholder ids (`claude`, `google_visual`).
-- [ ] 0.2 Validate every step's `agent` against the `AgentDef` registry on load.
+      `validator→codex`, `tester→codex`, `reviewer→claude-code`,
+      `ui_verifier→antigravity`, `fixer→codex`). Never use
+      placeholder ids (`claude`, `google_visual`).
+- [ ] 0.2 Validate every model-role step's `agent` against the `AgentDef`
+      registry on load; gate and conductor-owned system steps have no agent id.
 
 ## 1. Task classifier
 
@@ -41,6 +43,12 @@
 - [ ] 2.5 For retry-capable steps, include the declared evaluator, bounded
       attempt budget, and stop/escalation condition in the preview and manifest
       draft.
+- [ ] 2.6 For trust-boundary workflows, disclose whether `security-design.md`
+      uses `security-threat-model` or a labeled model fallback; guardrails alone
+      are invalid.
+- [ ] 2.7 Show approved billing route, installed CLI command, adapter kind,
+      native-versus-sandbox launch profile, and excluded credential-variable
+      names; never preview an implicit billing-route or provider fallback.
 
 ## 3. Entry point & approval
 
@@ -62,7 +70,10 @@
       `bug-hunt`; an unmatched task falls back to `simple-codex`; matching is
       case-insensitive; workflow/role request overrides apply; the preview includes
       adapter capability, capacity, auth, gate, evaluator, attempt-budget,
-      stop/escalation, and manifest-digest details; a cancel produces zero side
-      effects.
+      stop/escalation, threat-model provenance, and manifest-digest details; a
+      cancel produces zero side effects; `plan-implement-review` follows the
+      secure design-to-final-approval sequence and gives `final-summary.md`
+      only to the conductor; subscription-only preview selects ChatGPT-backed
+      Codex, native Claude, and native Antigravity without Gemini/API fallback.
 - [ ] 5.2 `npm run typecheck` clean.
 - [ ] 5.3 `openspec validate --all --strict` passes.

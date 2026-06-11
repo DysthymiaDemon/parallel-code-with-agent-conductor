@@ -45,15 +45,16 @@ Branch-name construction:
 - **AND** the returned `WorktreeRef` records the `worktreePath`, `branchName`,
   `role`, and `runId`
 
-#### Scenario: Reviewer gets no writable worktree
+#### Scenario: Read-only role gets no writable worktree
 
-- **WHEN** worktree creation is requested for the `reviewer` or `planner` role
+- **WHEN** worktree creation is requested for the `reviewer`, `validator`, or
+  `planner` role
 - **THEN** no writable worktree is created for that role
 
-#### Scenario: Fixer reuses the implementer worktree
+#### Scenario: Tester or fixer reuses the implementer worktree
 
-- **WHEN** `ConductorCreateWorktree` is called for role `fixer` with the same
-  `runId` as a prior `implementer` step
+- **WHEN** `ConductorCreateWorktree` is called for role `tester` or `fixer` with
+  the same `runId` as a prior `implementer` step
 - **THEN** the existing implementer worktree path is returned rather than
   creating a new one
 - **AND** the returned `WorktreeRef` references the implementer's

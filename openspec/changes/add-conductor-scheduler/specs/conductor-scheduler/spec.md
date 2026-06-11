@@ -74,19 +74,20 @@ or unknown provider capacity SHALL NOT be interpreted as spare capacity.
 ### Requirement: Per-role reasoning-effort defaults
 
 The app SHALL assign a default reasoning effort per role — medium for planning,
-implementation, and review roles; low for routine fixer, UI-verifier, and
-tester roles — and SHALL mark high/maximum effort as requiring approval.
+validation, implementation, and review roles; low for routine fixer,
+UI-verifier, and tester roles — and SHALL mark high/maximum effort as requiring
+approval.
 
 #### Scenario: Routine role defaults to low effort
 
-- **WHEN** capacity is evaluated for a step whose role is `ui_verifier` or
-  `fixer`
+- **WHEN** capacity is evaluated for a step whose role is `ui_verifier`,
+  `tester`, or `fixer`
 - **THEN** the result assigns that step `effort: low`
 
 #### Scenario: Planning role defaults to medium effort
 
 - **WHEN** capacity is evaluated for a step whose role is `planner`,
-  `implementer`, or `reviewer`
+  `validator`, `implementer`, or `reviewer`
 - **THEN** the result assigns that step `effort: medium`
 
 #### Scenario: High effort requires approval

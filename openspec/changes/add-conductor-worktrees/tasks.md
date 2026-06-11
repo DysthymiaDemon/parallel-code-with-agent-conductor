@@ -7,11 +7,12 @@
       text, non-alphanumeric → `-`, lowercased to `[a-z0-9-]`; total name truncated
       to 100 chars. Return a `WorktreeRef { worktreePath, branchName, role, runId }`.
 - [ ] 1.2 Only create a writable worktree for writable roles
-      (`implementer`, `fixer`); when `ConductorCreateWorktree` is called for `fixer`
-      with the same `runId` as a prior `implementer` step, return the existing
-      implementer worktree path rather than creating a new one.
+      (`implementer`, `tester`, `fixer`); when `ConductorCreateWorktree` is
+      called for `tester` or `fixer` with the same `runId` as a prior
+      `implementer` step, return the existing implementer worktree path rather
+      than creating a new one.
 - [ ] 1.3 Do not create a writable worktree for read-only roles
-      (`planner`, `reviewer`).
+      (`planner`, `validator`, `reviewer`).
 - [ ] 1.4 Persist each run's `WorktreeRef`s through `add-conductor-run-store`
       so subsequent steps can look up a worktree by `role` + `runId`.
 
@@ -53,8 +54,8 @@
 ## 6. Verification
 
 - [ ] 6.1 Unit tests: writable role yields a worktree under `.worktrees/` on a
-      new branch and returns a `WorktreeRef`; `fixer` with the same `runId` reuses
-      the implementer worktree; read-only role yields none; `.env` → `deny`;
+      new branch and returns a `WorktreeRef`; `tester` and `fixer` with the same
+      `runId` reuse the implementer worktree; read-only role yields none; `.env` → `deny`;
       `package.json` → `ask`; `src/foo.ts` → `allow`; a missing policy file uses the
       built-in default (`.env` still `deny`); a `deny` write transitions the run to
       `failed`; dirty/failed creation returns an explicit error; symlink/path

@@ -9,7 +9,11 @@ Artifact identity and provenance must also survive restart and retries.
 - Use run IDs allocated transactionally by `add-conductor-run-store`.
 - Define canonical filenames and content-addressed `ArtifactRef` metadata.
 - Permit only declared artifact inputs and outputs.
-- Make the conductor the sole producer of the canonical `final-summary.md`.
+- Add explicit secure-design, repository-validation, and deterministic
+  security-check evidence artifacts.
+- Make the conductor the sole producer of the canonical `final-summary.md`,
+  synthesized from verified evidence after Claude review and before final human
+  approval.
 
 ## Capabilities
 

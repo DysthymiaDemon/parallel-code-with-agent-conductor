@@ -124,10 +124,11 @@ The app SHALL read the four fixed workflow presets from
 SHALL fall back to the **built-in default in memory** and SHALL persist the
 generated preset only on an explicit initialize action — never as a side effect
 of building, approving, or starting a run (consistent with the config change's
-"persisting is explicit" requirement). Each preset is an ordered list of steps;
-each step binds a `role` to its `agent` (a real agent id), declares its input and
-output artifacts, marks whether it is a human gate, and for retry-capable steps
-declares an evaluator, bounded attempt budget, and stop or escalation
+"persisting is explicit" requirement). Each preset is an ordered list of steps.
+Each model-role step binds a `role` to its `agent` (a real agent id); gate and
+conductor-owned system steps have no agent id. Every step declares its input
+and output artifacts, marks whether it is a human gate, and for retry-capable
+steps declares an evaluator, bounded attempt budget, and stop or escalation
 condition. The minimal step structure for each preset is:
 
 **`simple-codex.yaml`** — single-agent implement:
@@ -136,35 +137,54 @@ condition. The minimal step structure for each preset is:
 | ---- | ----------- | ----- | ------ | ------------------------------------- | ---- |
 | 1    | implementer | codex | —      | implementation.diff, test-report.json | —    |
 
-**`plan-implement-review.yaml`** — plan → gate → implement → review → gate:
+**`plan-implement-review.yaml`** — secure design → repository validation → gate
+→ small implementation → tests/security checks → evidence-grounded fix →
+intent/security review → conductor summary → final gate:
 
-| Step | role        | agent       | inputs                                                  | outputs                               | gate           |
-| ---- | ----------- | ----------- | ------------------------------------------------------- | ------------------------------------- | -------------- |
-| 1    | planner     | claude-code | —                                                       | plan.md                               | —              |
-| 2    | (gate)      | —           | plan.md                                                 | accepted-plan.md                      | plan-approval  |
-| 3    | implementer | codex       | accepted-plan.md                                        | implementation.diff, test-report.json | —              |
-| 4    | reviewer    | claude-code | accepted-plan.md, implementation.diff, test-report.json | code-review.md                        | —              |
-| 5    | (gate)      | —           | code-review.md, final-summary.md                        | —                                     | final-approval |
+| Step | role        | agent       | inputs                                                                                                                                                     | outputs                                                           | gate           |
+| ---- | ----------- | ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- | -------------- |
+| 1    | planner     | claude-code | —                                                                                                                                                          | security-design.md, plan.md                                       | —              |
+| 2    | validator   | codex       | security-design.md, plan.md                                                                                                                                | repository-validation.md                                          | —              |
+| 3    | (gate)      | —           | security-design.md, plan.md, repository-validation.md                                                                                                      | accepted-plan.md                                                  | plan-approval  |
+| 4    | implementer | codex       | accepted-plan.md                                                                                                                                           | implementation.diff                                               | —              |
+| 5    | tester      | codex       | accepted-plan.md, implementation.diff                                                                                                                      | test-report.json, security-check-report.json                      | —              |
+| 6    | fixer       | codex       | implementation.diff, test-report.json, security-check-report.json                                                                                          | implementation.diff, test-report.json, security-check-report.json | —              |
+| 7    | reviewer    | claude-code | security-design.md, accepted-plan.md, repository-validation.md, implementation.diff, test-report.json, security-check-report.json                          | code-review.md                                                    | —              |
+| 8    | (conductor) | —           | security-design.md, plan.md, accepted-plan.md, repository-validation.md, implementation.diff, test-report.json, security-check-report.json, code-review.md | final-summary.md                                                  | —              |
+| 9    | (gate)      | —           | final-summary.md                                                                                                                                           | —                                                                 | final-approval |
+
+The implementer step SHALL be one small approved work unit. The fixer step is
+conditional on observed failures and follows the evidence-grounded bounded
+retry policy.
 
 **`ui-build-verify.yaml`** — plan → implement → UI verify → review:
 
-| Step | role        | agent                         | inputs                            | outputs                               | gate           |
-| ---- | ----------- | ----------------------------- | --------------------------------- | ------------------------------------- | -------------- |
-| 1    | planner     | claude-code                   | —                                 | plan.md                               | —              |
-| 2    | (gate)      | —                             | plan.md                           | accepted-plan.md                      | plan-approval  |
-| 3    | implementer | codex                         | accepted-plan.md                  | implementation.diff, test-report.json | —              |
-| 4    | ui_verifier | antigravity (fallback gemini) | implementation.diff               | ui-review.md                          | —              |
-| 5    | reviewer    | claude-code                   | implementation.diff, ui-review.md | code-review.md                        | —              |
-| 6    | (gate)      | —                             | code-review.md, final-summary.md  | —                                     | final-approval |
+| Step | role        | agent       | inputs                                            | outputs                               | gate           |
+| ---- | ----------- | ----------- | ------------------------------------------------- | ------------------------------------- | -------------- |
+| 1    | planner     | claude-code | —                                                 | plan.md                               | —              |
+| 2    | (gate)      | —           | plan.md                                           | accepted-plan.md                      | plan-approval  |
+| 3    | implementer | codex       | accepted-plan.md                                  | implementation.diff, test-report.json | —              |
+| 4    | ui_verifier | antigravity | implementation.diff                               | ui-review.md                          | —              |
+| 5    | reviewer    | claude-code | implementation.diff, ui-review.md                 | code-review.md                        | —              |
+| 6    | (conductor) | —           | implementation.diff, ui-review.md, code-review.md | final-summary.md                      | —              |
+| 7    | (gate)      | —           | final-summary.md                                  | —                                     | final-approval |
 
 **`bug-hunt.yaml`** — implement fix → review → fix loop:
 
-| Step | role        | agent       | inputs                                | outputs                               | gate           |
-| ---- | ----------- | ----------- | ------------------------------------- | ------------------------------------- | -------------- |
-| 1    | implementer | codex       | —                                     | implementation.diff, test-report.json | —              |
-| 2    | reviewer    | claude-code | implementation.diff, test-report.json | code-review.md                        | —              |
-| 3    | fixer       | codex       | code-review.md, implementation.diff   | implementation.diff, test-report.json | —              |
-| 4    | (gate)      | —           | code-review.md, final-summary.md      | —                                     | final-approval |
+| Step | role        | agent       | inputs                                                | outputs                               | gate           |
+| ---- | ----------- | ----------- | ----------------------------------------------------- | ------------------------------------- | -------------- |
+| 1    | implementer | codex       | —                                                     | implementation.diff, test-report.json | —              |
+| 2    | reviewer    | claude-code | implementation.diff, test-report.json                 | code-review.md                        | —              |
+| 3    | fixer       | codex       | code-review.md, implementation.diff                   | implementation.diff, test-report.json | —              |
+| 4    | (conductor) | —           | implementation.diff, test-report.json, code-review.md | final-summary.md                      | —              |
+| 5    | (gate)      | —           | final-summary.md                                      | —                                     | final-approval |
+
+#### Scenario: Secure workflow preset is loaded
+
+- **WHEN** `plan-implement-review` is selected
+- **THEN** its ordered steps match the secure design-to-final-approval sequence
+  above
+- **AND** only the conductor step owns canonical `final-summary.md`
 
 #### Scenario: Missing preset uses built-in default without writing during preview
 
@@ -176,8 +196,52 @@ condition. The minimal step structure for each preset is:
 - **AND** no preset file is written under `.parallel-code/workflows/` as part of
   the preview or run approval (persistence happens only on explicit initialize)
 
-#### Scenario: Preset steps bind real agent ids
+#### Scenario: Model-role preset steps bind real agent ids
 
 - **WHEN** a workflow preset is loaded
-- **THEN** every step's `agent` is an id present in the `AgentDef` registry
-- **AND** no step references a placeholder id such as `claude` or `google_visual`
+- **THEN** every model-role step's `agent` is an id present in the `AgentDef`
+  registry
+- **AND** gate and conductor-owned system steps do not impersonate an agent
+- **AND** no model-role step references a placeholder id such as `claude` or
+  `google_visual`
+
+### Requirement: Trust-boundary planning has a reviewable fallback
+
+For a workflow that changes a trust boundary, the planner SHALL use the
+`security-threat-model` skill when available and SHALL produce
+`security-design.md`. If that skill is unavailable, the planner MAY produce a
+clearly labeled model-generated fallback containing trust boundaries, assets,
+attackers, abuse cases, mitigations, and residual risks. Baked-in model
+guardrails alone SHALL NOT satisfy this requirement. The dry-run SHALL disclose
+fallback use and require plan approval before writable implementation.
+
+#### Scenario: Threat-model skill unavailable
+
+- **WHEN** a trust-boundary workflow cannot use `security-threat-model`
+- **THEN** the preview labels `security-design.md` as model fallback
+- **AND** writable implementation remains blocked until explicit plan approval
+
+### Requirement: Preview exposes and preserves subscription execution routes
+
+The dry-run SHALL show each step's approved billing route, installed CLI
+command, adapter kind, native-versus-sandbox launch profile, and excluded
+credential-variable names. The built-in policy SHALL preview only subscription
+routes and SHALL identify an unavailable provider without substituting an
+API-key, SDK-credit, cloud, enterprise, headless-credit, or different-provider
+route.
+
+#### Scenario: Built-in provider routes are previewed
+
+- **WHEN** the built-in subscription-only config is previewed
+- **THEN** Codex steps show managed ChatGPT login through Codex App Server or
+  native Codex PTY fallback
+- **AND** Claude steps show native interactive `claude`
+- **AND** Antigravity steps show native interactive `agy`
+
+#### Scenario: Antigravity cannot use restricted Docker profile
+
+- **WHEN** the approved Antigravity account login cannot authenticate inside
+  Docker
+- **THEN** the preview selects its approved native launch profile or marks the
+  step unavailable
+- **AND** does not substitute Gemini CLI or an API-key route

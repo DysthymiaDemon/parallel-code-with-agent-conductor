@@ -59,6 +59,15 @@ are distinct concepts; capability/availability discovery belongs to
 `add-conductor-agent-adapters`, while auth posture belongs to
 `add-conductor-auth-inspector`.
 
+## Built-in auth policy
+
+The built-in config uses `subscription_only`. It preserves installed-CLI
+provider login, excludes detected API-key variables from conductor child
+environments, and rejects API-key, cloud, enterprise, SDK-credit, and
+headless-credit routes. Codex prefers managed ChatGPT login, Claude uses native
+subscription OAuth, and Google consumer use goes through native Antigravity.
+Gemini CLI is not a built-in consumer fallback after June 18, 2026.
+
 ## IPC Channel Namespace
 
 New conductor channels use the `Conductor*` prefix exclusively. The existing
