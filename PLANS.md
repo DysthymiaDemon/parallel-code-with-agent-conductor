@@ -12,7 +12,9 @@ than one session to complete. Single-file or single-function changes do not need
 one; inline context in the task is sufficient.
 
 For the **Conductor MVP**, the ExecPlan is at `Starter Pack/Plan.md`. Read it
-before beginning any multi-change implementation work.
+before beginning any multi-change implementation work. The MVP uses one shared
+ExecPlan across five milestone-scoped `/goal` runs; `Starter Pack/Goal.md`
+defines each run's singular objective and stop condition.
 
 ## How to use an ExecPlan
 
@@ -41,6 +43,10 @@ before beginning any multi-change implementation work.
    deterministic evaluator, attempt budget, changed retry strategy, and stop or
    escalation condition. Never use a protected or irreversible effect as a
    probe.
+10. **Run one milestone per goal.** For the Conductor MVP, never ask one
+    `/goal` run to complete the whole ExecPlan or cross a milestone checkpoint.
+    Verify the current milestone's stop condition, record evidence and plan
+    updates, then stop for the next human decision.
 
 ## Required Sections
 
@@ -67,6 +73,9 @@ Every ExecPlan contains these sections in this order. All are non-negotiable.
 - The plan is **self-contained**. A Codex session with no prior conversation must
   be able to pick it up and continue without asking questions. Define every
   abbreviation and every file path.
+- An ExecPlan may span multiple milestone goals, but each `/goal` must still
+  have one clear objective and one verifiable stopping condition. The ExecPlan
+  is shared working memory, not authorization to execute its entire backlog.
 - Progress checkboxes track **task-group-level** completion (one per major task
   block in `tasks.md`), not line-by-line.
 - Surprises belong in the plan, not in code comments. A future session reads

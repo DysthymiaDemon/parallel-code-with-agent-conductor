@@ -2,7 +2,8 @@
 
 Read `Starter Pack/README.md`, `Starter Pack/Goal.md`, `PLANS.md`, and
 `openspec/conductor-governance.json` before implementation. OpenSpec owns
-behavior; this plan owns sequence, progress, discoveries, and decisions.
+behavior; this shared ExecPlan owns sequence, progress, discoveries, and
+decisions across five separate milestone-scoped `/goal` runs.
 
 ## Purpose / Big Picture
 
@@ -25,21 +26,41 @@ Key terms: `AgentAdapter` is the provider boundary; approved manifest is the
 immutable execution input; privileged-operation broker is the final mutation
 authorization boundary; run store is the sole durable workflow authority.
 
+### Milestone Execution Model
+
+Use `Starter Pack/Goal.md` to start exactly one milestone per `/goal` run. A
+milestone begins only after the prior milestone's stop condition has been
+verified and its human checkpoint has accepted the evidence. This ExecPlan is
+shared across all five runs so discoveries, decisions, and progress remain
+single-source.
+
+| Milestone | Singular objective                              | Human checkpoint                                              |
+| --------- | ----------------------------------------------- | ------------------------------------------------------------- |
+| M1        | Establish validated deterministic configuration | Accept baseline and configuration evidence                    |
+| M2        | Resolve safe agent/auth/capacity decisions      | Accept fixture/probe evidence; no workflow launch path        |
+| M3        | Demonstrate complete zero-side-effect preview   | Inspect demo and authorize durable isolation work             |
+| M4        | Materialize durable isolated handoff envelope   | Inspect durable-state/filesystem evidence before live launch  |
+| M5        | Deliver end-to-end gated execution              | Mandatory authorization before work; final approval at finish |
+
+Do not use one `/goal` to implement multiple milestones. Within M5, keep real
+product-path launches disabled until execution adapter and approval gates are
+both implemented and the M5 acceptance checks pass.
+
 ## Plan of Work
 
-| Phase     | OpenSpec change                   | Outcome                                                   |
-| --------- | --------------------------------- | --------------------------------------------------------- |
-| Preflight | governance/tooling                | Aligned authority docs, valid graph, baseline checks      |
-| 0a        | `add-conductor-config`            | Validated config and role resolution                      |
-| 0b        | `add-conductor-agent-adapters`    | Structured provider adapters and explicit PTY fallback    |
-| 0c        | `add-conductor-auth-inspector`    | Secret-safe, uncertainty-aware auth posture               |
-| 0d        | `add-conductor-scheduler`         | Consumer-conservative pure admission policy               |
-| 0e        | `add-conductor-run-store`         | Transactional state, events, intents, immutable manifests |
-| 1         | `add-conductor-dry-run`           | Zero-side-effect preview and manifest draft               |
-| 2a        | `add-conductor-worktrees`         | Git integration isolation and protected-path policy       |
-| 2b        | `add-conductor-artifacts`         | Verified artifacts-only handoff                           |
-| 2c        | `add-conductor-execution-adapter` | Sandboxed adapter execution and privileged broker         |
-| 3         | `add-conductor-approval-gates`    | Bound human decisions and final authorization             |
+| Milestone | DAG phase | OpenSpec change                   | Outcome                                                   |
+| --------- | --------- | --------------------------------- | --------------------------------------------------------- |
+| M1        | Preflight | governance/tooling                | Aligned authority docs, valid graph, baseline checks      |
+| M1        | 0a        | `add-conductor-config`            | Validated config and role resolution                      |
+| M2        | 0b        | `add-conductor-agent-adapters`    | Subscription-route-preserving provider adapters           |
+| M2        | 0c        | `add-conductor-auth-inspector`    | Secret-safe subscription-only auth posture                |
+| M2        | 0d        | `add-conductor-scheduler`         | Consumer-conservative pure admission policy               |
+| M3        | 1         | `add-conductor-dry-run`           | Zero-side-effect preview and manifest draft               |
+| M4        | 0e        | `add-conductor-run-store`         | Transactional state, events, intents, immutable manifests |
+| M4        | 2a        | `add-conductor-worktrees`         | Git integration isolation and protected-path policy       |
+| M4        | 2b        | `add-conductor-artifacts`         | Verified artifacts-only handoff                           |
+| M5        | 2c        | `add-conductor-execution-adapter` | Sandboxed adapter execution and privileged broker         |
+| M5        | 3         | `add-conductor-approval-gates`    | Bound human decisions and final authorization             |
 
 ## Concrete Steps
 
@@ -58,9 +79,13 @@ human gate.
 ## Validation and Acceptance
 
 - Governance graph, authority docs, and identical agent instructions agree.
+- Each milestone's evidence satisfies its one stop condition before the next
+  milestone begins; completing individual change tasks is insufficient.
 - Dry-run performs no filesystem, process, provider, or run-store mutation.
 - Approval freezes a versioned manifest and execution never re-resolves it.
 - Missing adapter/sandbox capability fails closed.
+- Approved installed-CLI subscription routes never silently become API-key,
+  SDK-credit, headless-credit, cloud, enterprise, or different-provider routes.
 - Final backend mutation entrypoints reject unauthorized conductor effects.
 - Crash/restart and duplicate decisions do not blindly repeat effects.
 - Artifact traversal, digest mismatch, secret leakage, symlink/canonical-path,
@@ -90,6 +115,10 @@ launch/reconciliation; approval gates authorize immutable effect intents.
   safer implementation order before the plan is executable.
 - Use repository-grounded security threat modeling before writable execution
   and security-best-practice review before merging the broker/sandbox boundary.
+  If the `security-threat-model` skill is unavailable, Claude may create a
+  clearly labeled fallback threat model with the same required fields, but
+  baked-in model guardrails alone are not evidence and fallback use requires
+  explicit human approval before writable implementation.
 - Use the Browser/frontend-testing plugin for the dry-run and approval UI.
 - Use GitHub/CI tooling to inspect failing checks after each implementation
   phase.
@@ -192,6 +221,29 @@ planning phase.
 | Figma/product-design plugins                  | Use only when a real design source or explicit design task exists                              |
 | Additional MCP servers                        | Do not add by default; require a concrete capability gap, permissions review, and removal plan |
 
+### Secure Design-to-Approval Workflow
+
+For security-sensitive or trust-boundary work, the approved workflow is:
+
+```text
+Claude secure design
+-> Codex repository validation
+-> human/spec approval where required
+-> Codex small implementation
+-> deterministic tests/security checks
+-> Codex evidence-grounded fixes
+-> Claude intent/security review
+-> conductor synthesizes final evidence summary
+-> human final approval
+```
+
+Required artifacts are `security-design.md`, `plan.md`,
+`repository-validation.md`, `accepted-plan.md`, `implementation.diff`,
+`test-report.json`, `security-check-report.json`, `code-review.md`, and
+conductor-owned `final-summary.md`. A fallback model-generated threat model must
+be labeled in `security-design.md`; guardrails without that artifact do not
+satisfy the planning gate.
+
 Primary references for this policy:
 
 - Context7 documentation: `https://context7.com/docs`
@@ -227,8 +279,8 @@ Primary references for this policy:
 - [ ] Phase 0b: `add-conductor-agent-adapters`
 - [ ] Phase 0c: `add-conductor-auth-inspector`
 - [ ] Phase 0d: `add-conductor-scheduler`
-- [ ] Phase 0e: `add-conductor-run-store`
 - [ ] Phase 1: `add-conductor-dry-run`
+- [ ] Phase 0e: `add-conductor-run-store`
 - [ ] Phase 2a: `add-conductor-worktrees`
 - [ ] Phase 2b: `add-conductor-artifacts`
 - [ ] Phase 2c: `add-conductor-execution-adapter`
@@ -249,6 +301,10 @@ Primary references for this policy:
   exact CLI version instead of following `latest`.
 - 2026-06-10: Research supports feedback-grounded correction for tool-using
   agents, but does not support replacing all upfront reasoning with action.
+- 2026-06-11: Parallel Code launches installed CLIs as PTY subprocesses; native
+  CLI login and subscription usage are the default product contract.
+- 2026-06-11: Consumer Gemini CLI is not a built-in fallback after June 18,
+  2026; Antigravity is the native Google consumer route.
 
 ## Decision Log
 
@@ -262,6 +318,11 @@ Primary references for this policy:
 | 2026-06-07 | Call scheduling `consumer_conservative`                             | Provider subscription quota is not reliably measurable                                                                                               |
 | 2026-06-08 | Require Claude concept plan followed by Codex repository validation | Separates broad design strength from grounded implementation evidence and catches file, test, dependency, migration, and edge-case drift before code |
 | 2026-06-10 | Use risk-calibrated execution-feedback loops                        | Safe probes and deterministic feedback ground correction; bounded retries and existing gates contain action risk                                     |
+| 2026-06-10 | Require explicit secure design-to-approval workflow                 | Makes repository validation, deterministic security evidence, conductor summary ownership, and final human approval executable                       |
+| 2026-06-11 | Preserve approved billing route before adapter structure            | Structured control is useful only when it does not replace installed-CLI subscription usage with another billing route                               |
+| 2026-06-11 | Make installed-CLI `subscription_only` the built-in auth policy     | Parallel Code exists to reuse users' CLI subscriptions; ambient API keys and non-subscription routes must not silently override that intent          |
+| 2026-06-11 | Execute MVP through five milestone-scoped goals                     | One shared ExecPlan preserves cross-run memory while singular milestone goals create verifiable human checkpoints and recoverable stopping points    |
+| 2026-06-11 | Place run store with durable isolation in M4                        | DAG permits preview without run-store persistence; grouping all first durable run/filesystem effects creates a clearer checkpoint before execution   |
 
 ## Outcomes & Retrospective
 

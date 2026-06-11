@@ -4,9 +4,10 @@
 
 The ten OpenSpec changes are delivered as **five milestone goals**, each its own
 `/goal` run with a single, evidence-based stop condition. Kick off one milestone
-at a time, in order — the dependency DAG in
-`openspec/conductor-governance.json` makes M1 → M2 → M3 → M4 → M5 the only safe
-sequence, and the side-effect level rises monotonically across them. The shared
+at a time, in order. M1 → M2 → M3 → M4 → M5 is the approved linearization of
+the dependency DAG in `openspec/conductor-governance.json`; it deliberately
+keeps preview ahead of durable run materialization and keeps all live execution
+behind the final mandatory human checkpoint. The shared
 Objective, Overall Stop Condition, MVP Scope, Delivery Map, Non-Negotiables, and
 Validation below apply to **every** milestone and are not repeated per goal.
 
@@ -17,30 +18,31 @@ Log (the cross-goal memory) as it lands.
 
 ### M1 — Foundation
 
-- **Covers:** preflight baseline, `add-conductor-config`, `add-conductor-run-store`.
-- **Side-effect level:** zero runtime side effects — no agent launches, no
-  working-tree mutation; durable config/state confined to `.parallel-code/`.
+- **Covers:** preflight baseline and `add-conductor-config`.
+- **Side-effect level:** default resolution is read-only. Only an explicit
+  initialize action may write durable config under `.parallel-code/`; no run
+  state, worktree, artifact, provider call, or agent launch exists yet.
 
 ```text
 /goal Land the conductor foundation milestone (M1). Read Starter Pack/README.md,
-Goal.md, Plan.md, and openspec/conductor-governance.json first. Validate
-governance and OpenSpec, then implement add-conductor-config and
-add-conductor-run-store in dependency order. Update Plan.md Progress/Surprises/
-Decision Log. Stop when the milestone stop condition is met.
+Goal.md, Plan.md, and openspec/conductor-governance.json first. Complete the
+documented tooling preflight and validate governance/OpenSpec, then implement
+add-conductor-config. Update Plan.md Progress/Surprises/Decision Log. Stop when
+the milestone stop condition is met.
 ```
 
 - **Stop condition:** baseline checks pass, a missing config resolves
   **Ameen's Default** in memory with a deterministic role resolver, explicit
-  initialization can persist it without overwriting existing config, and the
-  single transactional run store persists append-only events and immutable
-  manifests — with no writes outside `.parallel-code/`.
+  initialization can persist it without overwriting existing config, and
+  loading or previewing config writes nothing.
 
-### M2 — Resolution (read-only)
+### M2 — Resolution (no workflow launches)
 
-- **Covers:** `add-conductor-agent-adapters`, `add-conductor-auth-inspector`,
-  `add-conductor-scheduler` (the three siblings on top of config).
-- **Side-effect level:** zero runtime side effects — structured resolution only,
-  no launches and no provider calls.
+- **Covers:** `add-conductor-agent-adapters`, then its
+  `add-conductor-auth-inspector` and `add-conductor-scheduler` dependents.
+- **Side-effect level:** resolution and secret-safe probes only. Contract tests
+  use recorded fixtures; no conductor workflow, run state, worktree, artifact,
+  or writable provider action is enabled.
 
 ```text
 /goal Land the conductor resolution milestone (M2). Read Starter Pack/README.md,
@@ -54,7 +56,8 @@ condition is met.
 - **Stop condition:** adapters preserve installed-CLI subscription routes
   before selecting structured or PTY control, auth posture is secret-safe and
   subscription-only by default, and admission is a pure function holding the
-  consumer-conservative target of 3 active agents / hard cap 6.
+  consumer-conservative target of 3 active agents / hard cap 6, with no
+  conductor workflow launch path enabled.
 
 ### M3 — Preview (first human demo gate)
 
@@ -73,28 +76,30 @@ condition is met.
 
 - **Stop condition:** a described task deterministically selects a fixed
   workflow and renders the full preview (roles/agents/adapters, capacity plan,
-  auth warnings, worktree plan, artifact contracts, gates, manifest digest) with
-  an approve/cancel decision that produces **zero** side effects on cancel.
+  auth warnings, worktree plan, artifact contracts, gates, manifest digest);
+  preview and cancel produce **zero** side effects, and approve returns only the
+  explicit decision for the later gated materialization path.
 
 ### M4 — Isolation + handoff
 
-- **Covers:** `add-conductor-worktrees`, `add-conductor-artifacts` (siblings on
-  config + run store).
-- **Side-effect level:** git/filesystem scaffolding only — worktree creation and
-  artifact storage; still **no agent launches** and no provider execution.
+- **Covers:** `add-conductor-run-store`, then `add-conductor-worktrees` and
+  `add-conductor-artifacts`.
+- **Side-effect level:** first durable run-state, git, and artifact writes;
+  still **no agent launches** and no provider execution.
 
 ```text
 /goal Land the conductor isolation-and-handoff milestone (M4). Read
 Starter Pack/README.md, Goal.md, Plan.md, and
-openspec/conductor-governance.json first. Requires M1. Validate governance and
-OpenSpec, then implement add-conductor-worktrees and add-conductor-artifacts in
-dependency order. Update Plan.md Progress/Surprises/Decision Log. Stop when the
-milestone stop condition is met.
+openspec/conductor-governance.json first. Requires M1 through M3. Validate
+governance and OpenSpec, then implement add-conductor-run-store followed by
+add-conductor-worktrees and add-conductor-artifacts. Update Plan.md Progress/
+Surprises/Decision Log. Stop when the milestone stop condition is met.
 ```
 
-- **Stop condition:** worktrees provide isolation under an enforced
-  protected-path policy without claiming a worktree as a sandbox, and roles
-  exchange only declared, digest-verified artifacts.
+- **Stop condition:** the single transactional run store persists append-only
+  events, immutable manifests, and effect intents; worktrees provide isolation
+  under an enforced protected-path policy without claiming a worktree as a
+  sandbox; and roles exchange only declared, digest-verified artifacts.
 
 ### M5 — Execution + gates (mandatory human gate)
 
@@ -102,6 +107,8 @@ milestone stop condition is met.
 - **Side-effect level:** **first real launches and mutations** — sandboxed agent
   execution, privileged broker, commit/merge/push/install/migrate/delete. A
   **mandatory human gate** precedes this milestone; it is the highest-risk run.
+  Real product-path launches remain disabled until both changes are implemented
+  and the milestone acceptance checks pass.
 
 ```text
 /goal Land the conductor execution-and-gates milestone (M5). Read
@@ -213,18 +220,17 @@ optimization, cloud collaboration, editor forks, and long-term agent memory.
 ## Delivery Map
 
 1. `add-conductor-config`
-2. `add-conductor-agent-adapters`
-3. `add-conductor-auth-inspector`
-4. `add-conductor-scheduler`
-5. `add-conductor-run-store`
-6. `add-conductor-dry-run`
-7. `add-conductor-worktrees`
-8. `add-conductor-artifacts`
-9. `add-conductor-execution-adapter`
-10. `add-conductor-approval-gates`
+2. `add-conductor-agent-adapters`, then `add-conductor-auth-inspector` and
+   `add-conductor-scheduler`
+3. `add-conductor-dry-run`
+4. `add-conductor-run-store`, then `add-conductor-worktrees` and
+   `add-conductor-artifacts`
+5. `add-conductor-execution-adapter`, then `add-conductor-approval-gates`
 
 The detailed dependency graph and invariant IDs are authoritative in
-`openspec/conductor-governance.json`.
+`openspec/conductor-governance.json`. Parallel work inside a milestone is
+allowed only where the graph permits it. Completing one OpenSpec change does
+not satisfy a milestone stop condition by itself.
 
 ## Non-Negotiables
 
