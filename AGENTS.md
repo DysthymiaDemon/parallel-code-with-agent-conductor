@@ -86,19 +86,24 @@ Claude and Codex have complementary strengths. Use each where it is strongest.
 
 **Recommended workflow for this project:**
 
-1. Claude sketches the conceptual architecture, user flow, risks, and readable
-   initial plan.
+1. Claude creates the secure conceptual design and readable initial plan.
 2. Codex performs a repository-validation pass before implementation: inspect
    the actual code, identify affected files/contracts, challenge assumptions,
    define tests, and report edge cases, dependency/migration risks, and a safer
    implementation order.
 3. Claude resolves product or architectural ambiguities and authors/reviews the
-   resulting OpenSpec changes.
-4. Codex implements the approved specs using `/goal` mode and records evidence
+   resulting OpenSpec changes; the human approves the repository-validated
+   design/spec where required.
+4. Codex implements one small approved work unit using `/goal` mode — one
+   milestone goal at a time per `Starter Pack/Goal.md` — and records evidence
    from the real working tree.
-5. Gemini/Antigravity verifies rendered UI behavior when applicable.
-6. Claude reviews the implementation against spec intent; Codex applies
-   accepted fixes and reruns validation until clean.
+5. Codex runs deterministic tests and required security checks, then applies
+   bounded evidence-grounded fixes from real failures.
+6. Gemini/Antigravity verifies rendered UI behavior when applicable.
+7. Claude reviews implementation intent, security, and evidence.
+8. The conductor synthesizes the canonical `final-summary.md` from verified
+   declared artifacts; no model role owns or writes that canonical summary.
+9. The human reviews the final summary and grants or rejects final approval.
 
 Claude's conceptual plan is never sufficient authorization to implement by
 itself. Codex's repository-validation pass is a required planning gate for
@@ -126,6 +131,12 @@ retried.
   every available integration or use a skill merely because it is installed.
 - Use `security-threat-model` before implementing conductor trust boundaries,
   and `security-best-practices` before merging security-sensitive changes.
+- If `security-threat-model` is unavailable, Claude may produce a clearly
+  labeled repository-grounded fallback threat model using the same required
+  trust-boundary, asset, attacker, abuse-case, mitigation, and residual-risk
+  fields. Baked-in model guardrails alone are not evidence and never satisfy
+  the trust-boundary planning gate; fallback use requires explicit human
+  approval before writable implementation.
 - Use `browser:control-in-app-browser`,
   `build-web-apps:frontend-testing-debugging`, or `playwright` for dry-run,
   approval, and other rendered UI flows; use `github:gh-fix-ci`,
